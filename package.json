@@ -1,32 +1,24 @@
 {
-  "name": "excelreader",
-  "version": "1.0.0",
-  "description": "Import Data from Excel",
-  "productName": "Excel Reader",
+  "name": "engineering-equipment",
+  "version": "0.0.1",
+  "description": "A Quasar Framework app",
+  "productName": "Engineering Equipment",
   "cordovaId": "org.cordova.quasar.app",
-  "author": "isnan",
+  "author": "Benny Hidayat <benny.hidayat@llinknet.co.id>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "convert-excel-to-json": "^1.4.1",
-    "vue-i18n": "^7.3.3",
-    "xlsx": "^0.14.0"
+    "axios": "^0.18.0"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.1",
-    "eslint": "^4.18.2",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-friendly-formatter": "^4.0.1",
-    "eslint-loader": "^2.0.0",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "eslint-plugin-vue": "^4.3.0",
+    "@vue/eslint-config-airbnb": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^5.0.0",
     "quasar-cli": "^0.17.0",
     "strip-ansi": "=3.0.1"
   },
@@ -39,5 +31,8 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 10"
-  ]
+  ],
+  "resolutions": {
+    "ajv": "6.8.1"
+  }
 }

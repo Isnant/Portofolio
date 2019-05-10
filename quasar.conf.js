@@ -1,23 +1,23 @@
 // Configuration for your app
 
-module.exports = function (ctx) {
+module.exports = function exports(ctx) {
   return {
     // app plugins (/src/plugins)
     plugins: [
-      'i18n',
-      'axios'
+      'axios',
+      
     ],
     css: [
-      'app.styl'
+      'app.styl',
     ],
     extras: [
       ctx.theme.mat ? 'roboto-font' : null,
       'material-icons', // optional, you are not bound to it
       'ionicons',
-      // 'mdi',
-      'fontawesome'
+      'mdi',
+      'fontawesome',
     ],
-    supportIE: true,
+    supportIE: false,
     build: {
       scopeHoisting: true,
       // vueRouterMode: 'history',
@@ -25,17 +25,17 @@ module.exports = function (ctx) {
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
-      extendWebpack (cfg) {
+      extendWebpack(cfg) {
         cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
-          exclude: /node_modules/
-        })
+          exclude: /node_modules/,
+        });
       },
       env: ctx.dev
         ? {
-          urlPrefix: JSON.stringify('http://localhost:8080/'),
+          urlPrefix: JSON.stringify('http://localhost:7866/'),
         }
         : {
           urlPrefix: JSON.stringify('//'),
@@ -44,7 +44,7 @@ module.exports = function (ctx) {
     devServer: {
       // https: true,
       port: 8082,
-      open: true // opens browser window automatically
+      open: true, // opens browser window automatically
     },
     // framework: 'all' --- includes everything; for dev only!
     framework: {
@@ -54,8 +54,11 @@ module.exports = function (ctx) {
         'QLayoutDrawer',
         'QPageContainer',
         'QPage',
+        'QPageSticky',
         'QToolbar',
         'QToolbarTitle',
+        'QScrollArea',
+        'QModal',
         'QBtn',
         'QIcon',
         'QList',
@@ -63,64 +66,30 @@ module.exports = function (ctx) {
         'QItem',
         'QItemMain',
         'QItemSide',
-        'QPageSticky',
-        'QScrollArea',
-        'QTable',
-        'QTd',
-        'QSearch',
-        'QModal',
-        'QTooltip',
-        'QBreadcrumbs',
-        'QBreadcrumbsEl',
-        'QCarousel',
-        'QCarouselSlide',
-        'QCarouselControl',
-        'QPagination',
-        'QPopupEdit',
-        'QBtnGroup',   // if using QBtn
-        'QBtnDropdown',
-        'QTh',
-        'QTr',
-        'QTableColumns',
-        'QInput',
-        'QAlert',
-        'QAjaxBar',
-        'QDatetime',
-        'QDatetimePicker',
-        'QCard',
-        'QCardTitle',
-        'QCardMain',
-        'QCardMedia',
-        'QCardSeparator',
-        'QCardActions',
-        'QChip',
-        'QToggle',
         'QField',
-        'QTabs',
-        'QTab',
-        'QTabPane',
-        'QRouteTab',
+        'QInput',
         'QSelect',
-        'QUploader'
+        'QCheckbox',
+        'QTable',
+        'QUploader',
+        'QCard',
+        'QOptionGroup',
       ],
       directives: [
         'Ripple',
-        'BackToTop',
-        'CloseOverlay'
       ],
       // Quasar plugins
       plugins: [
         'Notify',
-        'Dialog',
-        'Loading'
+        'Loading',
       ],
-      iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
+      // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language
     },
     // animations: 'all' --- includes all animations
     animations: [],
     ssr: {
-      pwa: false
+      pwa: false,
     },
     pwa: {
       // workboxPluginMode: 'InjectManifest',
@@ -135,39 +104,39 @@ module.exports = function (ctx) {
         theme_color: '#027be3',
         icons: [
           {
-            'src': 'statics/icons/icon-128x128.png',
-            'sizes': '128x128',
-            'type': 'image/png'
+            src: 'statics/icons/icon-128x128.png',
+            sizes: '128x128',
+            type: 'image/png',
           },
           {
-            'src': 'statics/icons/icon-192x192.png',
-            'sizes': '192x192',
-            'type': 'image/png'
+            src: 'statics/icons/icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
           },
           {
-            'src': 'statics/icons/icon-256x256.png',
-            'sizes': '256x256',
-            'type': 'image/png'
+            src: 'statics/icons/icon-256x256.png',
+            sizes: '256x256',
+            type: 'image/png',
           },
           {
-            'src': 'statics/icons/icon-384x384.png',
-            'sizes': '384x384',
-            'type': 'image/png'
+            src: 'statics/icons/icon-384x384.png',
+            sizes: '384x384',
+            type: 'image/png',
           },
           {
-            'src': 'statics/icons/icon-512x512.png',
-            'sizes': '512x512',
-            'type': 'image/png'
-          }
-        ]
-      }
+            src: 'statics/icons/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
+      },
     },
     cordova: {
       // id: 'org.cordova.quasar.app'
     },
     electron: {
       // bundler: 'builder', // or 'packager'
-      extendWebpack (cfg) {
+      extendWebpack() {
         // do something with Electron process Webpack cfg
       },
       packager: {
@@ -186,7 +155,7 @@ module.exports = function (ctx) {
         // https://www.electron.build/configuration/configuration
 
         // appId: 'quasar-app'
-      }
-    }
-  }
-}
+      },
+    },
+  };
+};
