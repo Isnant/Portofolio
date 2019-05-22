@@ -71,9 +71,12 @@ module.exports = function exports(ctx) {
         'QSelect',
         'QCheckbox',
         'QTable',
+        'QTd',
+        'QSearch',
         'QUploader',
         'QCard',
         'QOptionGroup',
+        'QTooltip',
       ],
       directives: [
         'Ripple',

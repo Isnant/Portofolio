@@ -7,10 +7,9 @@
 
         <div class="col-2" style="margin-right: 10px">
           <q-select
-          v-model="searchVal.assetCategory"
-          stack-label="Asset Category"
-          :options="assetCategoryList"
-          @input="getProductType(searchVal.assetCategory)"
+          v-model="searchVal.equipmentCategory"
+          stack-label="Equipment Category"
+          :options="equipmentCategoryList"
           />
         </div>
 
@@ -19,7 +18,6 @@
           v-model="searchVal.productType"
           stack-label="Product Type"
           :options="productTypeList"
-          @input="getSubType(searchVal.productType)"
           />
         </div>
 
@@ -57,6 +55,7 @@
         <div class="col-1">
           <q-btn round color="primary" @click="getContentByFilter(searchVal)">
             <q-icon name="search"/>
+            <q-tooltip>Search</q-tooltip>
           </q-btn>
         </div>
 
@@ -73,20 +72,28 @@
       row-key="id"
       dense>
 
-      <template slot="top-left">
+      <!-- eslint-disable-next-line vue/no-unused-vars -->
+      <template slot="top-left" slot-scope="scope">
         <q-search
           hide-underline
-          color="secondary"
           v-model="filter"
-          class="col-6"
         />
       </template>
+
+      <q-td slot="body-cell-action" slot-scope="cell">
+        <q-btn color="primary" round size="sm" @click="openMigrationForm(cell)"
+            v-show="cell.row.productTypeSubType == 'FIBERNODE'">
+          <q-icon name="fas fa-exchange-alt" />
+          <q-tooltip>Migrate</q-tooltip>
+        </q-btn>
+      </q-td>
 
     </q-table>
 
     <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="secondary" @click.native="modalUpload=true">
         <q-icon name="backup" />
+        <q-tooltip>Upload</q-tooltip>
       </q-btn>
     </q-page-sticky>
 
@@ -110,6 +117,59 @@
         </div>
       </div>
     </q-modal>
+
+    <q-modal v-model="showMigrationForm" maximized no-esc-dismiss
+      :content-css="{padding: '20px', minWidth: '50vw'}">
+
+      <q-page>
+        <fieldset>
+          <legend>General Info</legend>
+
+          <div class="row">
+
+            <div style="margin-right: 20px">
+              <q-input readonly v-model="equipmentToMigrate.hubCode"
+                float-label="Source Hub"/>
+              <q-input readonly v-model="equipmentToMigrate.nodeCode"
+                float-label="Source Node"/>
+            </div>
+
+            <div>
+              <q-select
+                v-model="equipmentToMigrate.newHubCode"
+                @input="doMigrationHubChage()"
+                float-label="Destination Hub"
+                :options="hubCodeList"
+              />
+              <div class="row">
+                <q-select
+                  v-model="equipmentToMigrate.selectedNewNode"
+                  float-label="Destination Node"
+                  :options="filteredNodeList"
+                />
+                <q-input
+                  style="margin-left: 20px"
+                  @input="doValidateNewNode()"
+                  v-model="equipmentToMigrate.newNode" float-label="New Node"
+                  v-show="equipmentToMigrate.selectedNewNode == 'N'"
+                />
+              </div>
+            </div>
+
+          </div>
+
+        </fieldset>
+      </q-page>
+
+      <q-page-sticky position="top-right" :offset="[50, 0]">
+        <q-btn color="primary" round @click="showMigrationForm = false">
+          <q-icon name="fas fa-undo-alt"/>
+          <q-tooltip>Cancel</q-tooltip>
+        </q-btn>
+      </q-page-sticky>
+
+    </q-modal>
+
 
   </q-page>
 </template>

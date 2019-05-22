@@ -3,26 +3,40 @@ export default {
     return {
       modalUpload: false,
       searchVal: {
-        assetCategory: 'All',
+        equipmentCategory: 'All',
         productType: 'All',
         subType: 'All',
         productSeries: '',
         hubCode: 'All',
         bdfCode: 'All',
       },
+      equipmentToMigrate: {
+        hubCode: undefined,
+        nodeCode: undefined,
+        newHubCode: undefined,
+        selectedNewNode: undefined,
+        newNode: undefined,
+      },
+      migrateDestination: {
+        destinationHub: '',
+      },
+      children: [],
       filter: '',
       selection: 'multiple',
       dataList: [],
       selected: [],
       resultList: [],
-      assetCategoryList: [],
+      equipmentCategoryList: [],
       productTypeList: [],
       subTypeList: [],
       hubCodeList: [],
       bdfCodeList: [],
+      nodeList: [],
+      filteredNodeList: [],
       pagination: {
         rowsPerPage: 50,
       },
+      showMigrationForm: false,
       columns: [
         {
           name: 'id',
@@ -94,6 +108,11 @@ export default {
           align: 'left',
           sortable: true,
         },
+        {
+          name: 'action',
+          label: 'Action',
+          align: 'center',
+        },
       ],
       uploadCategory: 'field',
     };
@@ -115,6 +134,8 @@ export default {
           this.hubCodeList = response.data.listOfHub;
           this.bdfCodeList = response.data.listOfBdf;
 
+          this.nodeList = response.data.listOfNodes;
+
           this.$q.loading.hide();
         })
         .catch((error) => {
@@ -131,6 +152,21 @@ export default {
           this.$q.loading.hide();
         })
         .catch((error) => {
+          this.$q.loading.hide();
+          this.$q.notify({
+            message: error,
+          });
+        });
+    },
+    getEquipmentChild(nodeCodeParam) {
+      this.$q.loading.show();
+      this.$axios.get(`${process.env.urlPrefix}getNodeChildMig/`, { params: { nodeCode: nodeCodeParam } })
+        .then((response) => {
+          this.children = response.data;
+          this.$q.loading.hide();
+        })
+        .catch((error) => {
+          this.$q.loading.hide();
           this.$q.notify({
             message: error,
           });
@@ -144,9 +180,8 @@ export default {
         this.$axios.post(`${process.env.urlPrefix}uploadField`, formData, {
           headers: { 'Content-Type': undefined },
         })
-          .then((response) => {
+          .then(() => {
             updateProgress(1);
-            console.log(response);
             resolve(file);
           })
           .catch((error) => {
@@ -154,6 +189,35 @@ export default {
             reject(error);
           });
       });
+    },
+    openMigrationForm(cell) {
+      this.showMigrationForm = true;
+      this.equipmentToMigrate = cell.row;
+      this.equipmentToMigrate.newHubCode = this.equipmentToMigrate.hubCode;
+      // this.equipmentToMigrate.selectedNewNode = this.equipmentToMigrate.nodeCode;
+      this.filteredNodeList = this.nodeList
+        .filter(node => node.cascadeValue === this.equipmentToMigrate.newHubCode)
+        .map(({ label, value }) => ({ label, value }));
+      console.log(this.filteredNodeList);
+      this.filteredNodeList.unshift({ label: '[New]', value: 'N' });
+      this.getEquipmentChild(cell.row.equipmentName);
+    },
+    doMigrationHubChage() {
+      this.equipmentToMigrate.selectedNewNode = undefined;
+      this.filteredNodeList = this.nodeList
+        .filter(node => node.cascadeValue === this.equipmentToMigrate.newHubCode)
+        .map(({ label, value }) => ({ label, value }));
+      this.filteredNodeList.unshift({ label: '[New]', value: 'N' });
+    },
+    doValidateNewNode() {
+      const existingNode = this.nodeList
+        .filter(node => node.value === this.equipmentToMigrate.newNode);
+
+      if (existingNode.length > 0) {
+        this.$q.notify({
+          message: `Node ${this.equipmentToMigrate.newNode} already used. Please specify other value.`,
+        });
+      }
     },
   },
 };
