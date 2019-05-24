@@ -143,7 +143,8 @@
               />
               <div class="row">
                 <q-select
-                  v-model="equipmentToMigrate.selectedNewNode"
+                  v-model="selectedNewNode"
+                  @input="doMigrationNodeChange()"
                   float-label="Destination Node"
                   :options="filteredNodeList"
                 />
@@ -151,7 +152,13 @@
                   style="margin-left: 20px"
                   @input="doValidateNewNode()"
                   v-model="equipmentToMigrate.newNode" float-label="New Node"
-                  v-show="equipmentToMigrate.selectedNewNode == 'N'"
+                  v-show="selectedNewNode == 'N'"
+                />
+                <q-toggle
+                  style="margin-left: 20px"
+                  @input="doChangeMoveNode()"
+                  v-model="moveNode"
+                  label="Move Node"
                 />
               </div>
             </div>
@@ -159,11 +166,42 @@
           </div>
 
         </fieldset>
+
+        <q-tabs class="shadow-1" inverted align="justify">
+          <q-tab slot="title" name="original" label="Original" />
+          <q-tab slot="title" name="newConfig" label="New Configuration" default />
+
+          <q-tab-pane name="original">
+            <q-table
+              :data="migrationListOriginal"
+              :columns="migrationOriginalColumns"
+              :pagination.sync="migrationOriginalPagination"
+              row-key="id">
+            </q-table>
+          </q-tab-pane>
+
+          <q-tab-pane name="newConfig">
+            <q-table
+              :data="migrationListNew"
+              :columns="migrationNewColumns"
+              :pagination.sync="migrationNewPagination"
+              row-key="id">
+
+              <q-td slot="body-cell-newEquipmentName" slot-scope="cell">
+                <strong>{{ cell.row.newEquipmentName }}</strong>
+                <q-popup-edit v-model="cell.row.newEquipmentName" title="Update New Code">
+                  <q-input v-model="cell.row.newEquipmentName" />
+                </q-popup-edit>
+              </q-td>
+
+            </q-table>
+          </q-tab-pane>
+        </q-tabs>
       </q-page>
 
       <q-page-sticky position="top-right" :offset="[50, 0]">
         <q-btn color="primary" round @click="showMigrationForm = false">
-          <q-icon name="fas fa-undo-alt"/>
+          <q-icon name="fas fa-times-circle"/>
           <q-tooltip>Cancel</q-tooltip>
         </q-btn>
       </q-page-sticky>
