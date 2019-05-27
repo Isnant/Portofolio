@@ -122,81 +122,128 @@
       :content-css="{padding: '20px', minWidth: '50vw'}">
 
       <q-page>
-        <fieldset>
-          <legend>General Info</legend>
 
-          <div class="row">
+        <q-stepper flat ref="stepper" v-model="migrationStep" color="primary"
+            style="max-width: 90%" @step="doCheckStep()">
+          <q-step default name="setupDestination" title="Setup Destination">
+            <div class="row">
 
-            <div style="margin-right: 20px">
-              <q-input readonly v-model="equipmentToMigrate.hubCode"
-                float-label="Source Hub"/>
-              <q-input readonly v-model="equipmentToMigrate.nodeCode"
-                float-label="Source Node"/>
-            </div>
-
-            <div>
-              <q-select
-                v-model="equipmentToMigrate.newHubCode"
-                @input="doMigrationHubChage()"
-                float-label="Destination Hub"
-                :options="hubCodeList"
-              />
-              <div class="row">
-                <q-select
-                  v-model="selectedNewNode"
-                  @input="doMigrationNodeChange()"
-                  float-label="Destination Node"
-                  :options="filteredNodeList"
-                />
-                <q-input
-                  style="margin-left: 20px"
-                  @input="doValidateNewNode()"
-                  v-model="equipmentToMigrate.newNode" float-label="New Node"
-                  v-show="selectedNewNode == 'N'"
-                />
-                <q-toggle
-                  style="margin-left: 20px"
-                  @input="doChangeMoveNode()"
-                  v-model="moveNode"
-                  label="Move Node"
-                />
+              <div style="margin-right: 20px">
+                <q-input readonly v-model="equipmentToMigrate.hubCode"
+                  float-label="Source Hub"/>
+                <q-input readonly v-model="equipmentToMigrate.nodeCode"
+                  float-label="Source Node"/>
               </div>
+
+              <div>
+                <q-select
+                  v-model="equipmentToMigrate.newHubCode"
+                  @input="doChageMigrationHub()"
+                  float-label="Destination Hub"
+                  :options="hubCodeList"
+                />
+                <div class="row">
+                  <q-select
+                    v-model="selectedNewNode"
+                    @input="doChangeMigrationNode()"
+                    float-label="Destination Node"
+                    :options="filteredNodeList"
+                  />
+                  <q-input
+                    style="margin-left: 20px"
+                    @input="doValidateNewNode()"
+                    v-model="equipmentToMigrate.newNode" float-label="New Node"
+                    v-show="selectedNewNode == 'N'"
+                  />
+                  <q-toggle
+                    style="margin-left: 20px"
+                    v-model="moveNode"
+                    @input="doChangeMoveNode()"
+                    label="Move Node"
+                  />
+                </div>
+              </div>
+
             </div>
+          </q-step>
 
-          </div>
+          <q-step name="setupNewHierarchy" title="Setup New Hierarchy">
+            <q-tabs class="shadow-1" inverted align="justify">
+              <q-tab slot="title" name="original" label="Original" />
+              <q-tab slot="title" name="newConfig" label="New Configuration" default />
 
-        </fieldset>
+              <q-tab-pane name="original">
+                <q-table
+                  :data="migrationListOriginal"
+                  :columns="migrationOriginalColumns"
+                  :pagination.sync="migrationOriginalPagination"
+                  row-key="id">
+                </q-table>
+              </q-tab-pane>
 
-        <q-tabs class="shadow-1" inverted align="justify">
-          <q-tab slot="title" name="original" label="Original" />
-          <q-tab slot="title" name="newConfig" label="New Configuration" default />
+              <q-tab-pane name="newConfig">
+                <q-table
+                  :data="migrationListNew"
+                  :columns="migrationNewColumns"
+                  :pagination.sync="migrationNewPagination"
+                  row-key="id">
 
-          <q-tab-pane name="original">
-            <q-table
-              :data="migrationListOriginal"
-              :columns="migrationOriginalColumns"
-              :pagination.sync="migrationOriginalPagination"
-              row-key="id">
-            </q-table>
-          </q-tab-pane>
+                  <q-td slot="body-cell-equipmentName" slot-scope="cell"
+                      :style="{ background: getMigrationRowColor(cell.row) }">
+                    {{ cell.row.equipmentName }}
+                  </q-td>
+                  <q-td slot="body-cell-newEquipmentName" slot-scope="cell"
+                      :style="{ background: getMigrationRowColor(cell.row) }">
+                    <strong>{{ cell.row.newEquipmentName }}</strong>
+                    <q-popup-edit v-model="cell.row.newEquipmentName"
+                        title="Update New Code" :disable="isMigrationEditDisabled(cell.row)">
+                      <q-input v-model="cell.row.newEquipmentName" />
+                    </q-popup-edit>
+                  </q-td>
+                  <q-td slot="body-cell-productTypeSubType" slot-scope="cell"
+                      :style="{ background: getMigrationRowColor(cell.row) }">
+                    {{ cell.row.productTypeSubType }}
+                  </q-td>
+                  <q-td slot="body-cell-predecessor" slot-scope="cell"
+                      :style="{ background: getMigrationRowColor(cell.row) }">
+                    {{ cell.row.predecessor }}
+                  </q-td>
+                  <q-td slot="body-cell-psCode" slot-scope="cell"
+                      :style="{ background: getMigrationRowColor(cell.row) }">
+                    {{ cell.row.psCode }}
+                  </q-td>
+                  <q-td slot="body-cell-action" slot-scope="cell"
+                      :style="{ background: getMigrationRowColor(cell.row) }">
+                    {{ cell.row.productTypeSubType }}
+                  </q-td>
 
-          <q-tab-pane name="newConfig">
-            <q-table
-              :data="migrationListNew"
-              :columns="migrationNewColumns"
-              :pagination.sync="migrationNewPagination"
-              row-key="id">
+                </q-table>
+              </q-tab-pane>
+            </q-tabs>
+          </q-step>
 
-              <q-td slot="body-cell-newEquipmentName" slot-scope="cell">
-                <strong>{{ cell.row.newEquipmentName }}</strong>
-                <q-popup-edit v-model="cell.row.newEquipmentName" title="Update New Code">
-                  <q-input v-model="cell.row.newEquipmentName" />
-                </q-popup-edit>
-              </q-td>
+          <q-step name="validation" title="Validation">
+            <p>An ad group contains one or more ads which target a shared set of keywords.</p>
+          </q-step>
 
-            </q-table>
-          </q-tab-pane>
-        </q-tabs>
+          <q-stepper-navigation>
+            <q-btn
+              v-if="migrationStep !== 'setupDestination'"
+              color="primary"
+              flat
+              @click="$refs.stepper.previous()"
+            >
+              Back
+            </q-btn>
+
+            <q-btn class="q-ml-sm" color="primary" @click="$refs.stepper.next()">
+              {{ migrationStep === 'validation' ? 'Finalize' : 'Next' }}
+            </q-btn>
+          </q-stepper-navigation>
+
+          <q-inner-loading />
+
+        </q-stepper>
       </q-page>
 
       <q-page-sticky position="top-right" :offset="[50, 0]">

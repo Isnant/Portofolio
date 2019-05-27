@@ -31,6 +31,7 @@ export default {
       bdfCodeList: [],
       nodeList: [],
       filteredNodeList: [],
+      migrationStep: 'setupDestination',
       migrationListOriginal: [],
       migrationListNew: [],
       originalNode: {},
@@ -230,22 +231,6 @@ export default {
           });
         });
     },
-    getEquipmentChild(nodeCodeParam) {
-      this.$q.loading.show();
-      this.$axios.get(`${process.env.urlPrefix}getNodeChildMig/`, { params: { nodeCode: nodeCodeParam } })
-        .then((response) => {
-          this.migrationListOriginal = response.data;
-          this.migrationListNew = JSON.parse(JSON.stringify(this.migrationListOriginal));
-          this.doChangeMoveNode();
-          this.$q.loading.hide();
-        })
-        .catch((error) => {
-          this.$q.loading.hide();
-          this.$q.notify({
-            message: error,
-          });
-        });
-    },
     uploadFile(file, updateProgress) {
       return new Promise((resolve, reject) => {
         const formData = new FormData();
@@ -266,27 +251,20 @@ export default {
     },
     openMigrationForm(cell) {
       this.showMigrationForm = true;
+      this.migrationStep = 'setupDestination';
 
       this.equipmentToMigrate.hubCode = cell.row.hubCode;
       this.equipmentToMigrate.nodeCode = cell.row.nodeCode;
       this.equipmentToMigrate.newHubCode = cell.row.hubCode;
-      this.equipmentToMigrate.newNodeCode = undefined;
 
       this.moveNode = false;
 
-      this.originalNode = undefined;
-
-      this.getEquipmentChild(cell.row.equipmentName);
-
-      this.doMigrationHubChage();
+      this.doChageMigrationHub();
     },
-    doMigrationHubChage() {
+    doChageMigrationHub() {
       this.filteredNodeList = this.nodeList
         .filter(node => node.cascadeValue === this.equipmentToMigrate.newHubCode)
         .map(({ label, value }) => ({ label, value }));
-      this.filteredNodeList.unshift({ label: '[New]', value: 'N' });
-      this.selectedNewNode = 'N';
-      this.equipmentToMigrate.newNode = undefined;
 
       if (this.equipmentToMigrate.newHubCode === this.equipmentToMigrate.hubCode) {
         for (let i = 0; i < this.filteredNodeList.length; i += 1) {
@@ -296,15 +274,25 @@ export default {
           }
         }
       }
+
+      // this.filteredNodeList.unshift({ label: '[New]', value: 'N' });
+
+      if (this.filteredNodeList.length < 1) {
+        this.$q.notify({
+          message: `Hub ${this.equipmentToMigrate.newHub} does not have nodes. Please add one before proceeding.`,
+        });
+        this.equipmentToMigrate.newNode = undefined;
+      } else {
+        this.selectedNewNode = this.filteredNodeList[0].value;
+        this.equipmentToMigrate.newNode = this.selectedNewNode;
+      }
     },
-    doMigrationNodeChange() {
+    doChangeMigrationNode() {
       if (this.selectedNewNode !== 'N') {
         this.equipmentToMigrate.newNode = this.selectedNewNode;
       } else {
         this.equipmentToMigrate.newNode = undefined;
       }
-
-      // this.doChangeMoveNode();
     },
     doValidateNewNode() {
       const existingNode = this.nodeList
@@ -317,17 +305,67 @@ export default {
       }
     },
     doChangeMoveNode() {
-      if (this.moveNode) {
-        console.log(this.originalNode);
-        this.migrationListNew.unshift(this.originalNode);
-      } else {
+      if (!this.moveNode) {
         for (let i = 0; i < this.migrationListNew.length; i += 1) {
           if (this.migrationListNew[i].equipmentName === this.equipmentToMigrate.nodeCode) {
-            this.originalNode = this.migrationListNew.splice(i, 1);
+            this.migrationListNew[i].newEquipmentName = undefined;
+            this.migrationListNew[i].productTypeSubType = this.originalNode.productTypeSubType;
+            this.migrationListNew[i].predecessor = this.originalNode.predecessor;
+            this.migrationListNew[i].psCode = this.originalNode.psCode;
             break;
           }
         }
       }
+    },
+    getEquipmentChild(nodeCodeParam) {
+      this.$q.loading.show();
+      this.$axios.get(`${process.env.urlPrefix}getNodeChildMig/`, { params: { nodeCode: nodeCodeParam } })
+        .then((response) => {
+          this.migrationListOriginal = response.data;
+          this.migrationListNew = JSON.parse(JSON.stringify(this.migrationListOriginal));
+
+          for (let i = 0; i < this.migrationListNew.length; i += 1) {
+            if (this.migrationListNew[i].equipmentName === this.equipmentToMigrate.nodeCode) {
+              this.originalNode = this.migrationListNew[i];
+              break;
+            }
+          }
+
+          this.$q.loading.hide();
+        })
+        .catch((error) => {
+          this.$q.loading.hide();
+          this.$q.notify({
+            message: error,
+          });
+        });
+    },
+    doSetupNewHierarchy() {
+      if (this.equipmentToMigrate.newNode === undefined) {
+        this.$refs.stepper.previous();
+      }
+    },
+    doValidateMigration() {
+      console.log('ya');
+    },
+    doCheckStep() {
+      if (this.migrationStep === 'setupNewHierarchy') {
+        this.doSetupNewHierarchy();
+      } else if (this.migrationStep === 'validation') {
+        this.doValidateMigration();
+      }
+    },
+    getMigrationRowColor(rec) {
+      if ((rec.equipmentName === this.equipmentToMigrate.nodeCode) && (!this.moveNode)) {
+        return '#999';
+      }
+      return '#fff';
+    },
+    isMigrationEditDisabled(rec) {
+      if ((rec.equipmentName === this.equipmentToMigrate.nodeCode) && (!this.moveNode)) {
+        return true;
+      }
+      return false;
     },
   },
 };

@@ -5,7 +5,6 @@ module.exports = function exports(ctx) {
     // app plugins (/src/plugins)
     plugins: [
       'axios',
-      
     ],
     css: [
       'app.styl',
@@ -75,6 +74,10 @@ module.exports = function exports(ctx) {
         'QTd',
         'QSearch',
         'QPopupEdit',
+        'QStepper',
+        'QStep',
+        'QStepperNavigation',
+        'QInnerLoading',
         'QTabs',
         'QTab',
         'QTabPane',
