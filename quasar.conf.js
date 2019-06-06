@@ -1,22 +1,83 @@
 // Configuration for your app
 
-module.exports = function exports(ctx) {
+module.exports = function (ctx) {
   return {
-    // app plugins (/src/plugins)
-    plugins: [
-      'axios',
+    // app boot file (/src/boot)
+    // --> boot files are part of "main.js"
+    boot: [
+      'axios'
     ],
+
     css: [
-      'app.styl',
+      'app.styl'
     ],
+
     extras: [
-      ctx.theme.mat ? 'roboto-font' : null,
+      'roboto-font',
       'material-icons', // optional, you are not bound to it
-      'ionicons',
-      'mdi',
-      'fontawesome',
+      'fontawesome-v5'
     ],
+
+    framework: {
+      // all: true, // --- includes everything; for dev only!
+
+      components: [
+        'QLayout',
+        'QHeader',
+        'QDrawer',
+        'QPageContainer',
+        'QPage',
+        'QPageSticky',
+        'QToolbar',
+        'QToolbarTitle',
+        'QScrollArea',
+        'QDialog',
+        'QCard',
+        'QCardSection',
+        'QBar',
+        'QSpace',
+        'QBtn',
+        'QIcon',
+        'QList',
+        'QItem',
+        'QItemSection',
+        'QItemLabel',
+        'QField',
+        'QInput',
+        'QSelect',
+        'QCheckbox',
+        'QUploader',
+        'QOptionGroup',
+        'QTooltip',
+        'QTable',
+        'QTd',
+        'QPopupEdit',
+        'QStepper',
+        'QStep',
+        'QStepperNavigation',
+        'QTabs',
+        'QTab',
+        'QTabPanel',
+        'QTabPanels'
+      ],
+
+      directives: [
+        'Ripple',
+        'ClosePopup'
+      ],
+
+      // Quasar plugins
+      plugins: [
+        'Notify',
+        'Loading'
+      ]
+
+      // iconSet: 'ionicons-v4'
+      // lang: 'de' // Quasar language
+    },
+
     supportIE: false,
+
     build: {
       scopeHoisting: true,
       // vueRouterMode: 'history',
@@ -24,87 +85,38 @@ module.exports = function exports(ctx) {
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
-      extendWebpack(cfg) {
+      extendWebpack (cfg) {
         cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
-          exclude: /node_modules/,
-        });
+          exclude: /node_modules/
+        })
       },
       env: ctx.dev
         ? {
-          urlPrefix: JSON.stringify('http://localhost:7866/'),
+          urlPrefix: JSON.stringify('http://localhost:7866/')
         }
         : {
-          urlPrefix: JSON.stringify('//'),
-        },
+          urlPrefix: JSON.stringify('//')
+        }
     },
     devServer: {
       // https: true,
       port: 8082,
-      open: true, // opens browser window automatically
+      open: true // opens browser window automatically
     },
-    // framework: 'all' --- includes everything; for dev only!
-    framework: {
-      components: [
-        'QLayout',
-        'QLayoutHeader',
-        'QLayoutDrawer',
-        'QPageContainer',
-        'QPage',
-        'QPageSticky',
-        'QToolbar',
-        'QToolbarTitle',
-        'QScrollArea',
-        'QModal',
-        'QBtn',
-        'QIcon',
-        'QList',
-        'QListHeader',
-        'QItem',
-        'QItemMain',
-        'QItemSide',
-        'QField',
-        'QInput',
-        'QSelect',
-        'QCheckbox',
-        'QToggle',
-        'QTable',
-        'QTd',
-        'QSearch',
-        'QPopupEdit',
-        'QStepper',
-        'QStep',
-        'QStepperNavigation',
-        'QInnerLoading',
-        'QTabs',
-        'QTab',
-        'QTabPane',
-        'QUploader',
-        'QCard',
-        'QOptionGroup',
-        'QTooltip',
-      ],
-      directives: [
-        'Ripple',
-      ],
-      // Quasar plugins
-      plugins: [
-        'Notify',
-        'Loading',
-      ],
-      // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
-      // i18n: 'de' // Quasar language
-    },
-    // animations: 'all' --- includes all animations
+
+    // animations: 'all', // --- includes all animations
     animations: [],
+
     ssr: {
-      pwa: false,
+      pwa: false
     },
+
     pwa: {
       // workboxPluginMode: 'InjectManifest',
-      // workboxOptions: {},
+      // workboxOptions: {}, // only for NON InjectManifest
       manifest: {
         // name: 'Quasar App',
         // short_name: 'Quasar-PWA',
@@ -115,41 +127,47 @@ module.exports = function exports(ctx) {
         theme_color: '#027be3',
         icons: [
           {
-            src: 'statics/icons/icon-128x128.png',
-            sizes: '128x128',
-            type: 'image/png',
+            'src': 'statics/icons/icon-128x128.png',
+            'sizes': '128x128',
+            'type': 'image/png'
           },
           {
-            src: 'statics/icons/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
+            'src': 'statics/icons/icon-192x192.png',
+            'sizes': '192x192',
+            'type': 'image/png'
           },
           {
-            src: 'statics/icons/icon-256x256.png',
-            sizes: '256x256',
-            type: 'image/png',
+            'src': 'statics/icons/icon-256x256.png',
+            'sizes': '256x256',
+            'type': 'image/png'
           },
           {
-            src: 'statics/icons/icon-384x384.png',
-            sizes: '384x384',
-            type: 'image/png',
+            'src': 'statics/icons/icon-384x384.png',
+            'sizes': '384x384',
+            'type': 'image/png'
           },
           {
-            src: 'statics/icons/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-      },
+            'src': 'statics/icons/icon-512x512.png',
+            'sizes': '512x512',
+            'type': 'image/png'
+          }
+        ]
+      }
     },
+
     cordova: {
       // id: 'org.cordova.quasar.app'
+      // noIosLegacyBuildFlag: true // uncomment only if you know what you are doing
     },
+
     electron: {
       // bundler: 'builder', // or 'packager'
-      extendWebpack() {
-        // do something with Electron process Webpack cfg
+
+      extendWebpack (cfg) {
+        // do something with Electron main process Webpack cfg
+        // chainWebpack also available besides this extendWebpack
       },
+
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
 
@@ -162,11 +180,12 @@ module.exports = function exports(ctx) {
         // Window only
         // win32metadata: { ... }
       },
+
       builder: {
         // https://www.electron.build/configuration/configuration
 
         // appId: 'quasar-app'
-      },
-    },
-  };
-};
+      }
+    }
+  }
+}

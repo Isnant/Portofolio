@@ -1,9 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-layout-header>
+    <q-header :reveal="true" :reveal-offset="100" elevated>
       <q-toolbar
-        color="primary"
-        :inverted="$q.theme === 'ios'">
+        color="primary">
         <q-btn
           flat
           round
@@ -15,39 +14,33 @@
           ENGINEERING ASSET MANAGEMENT SYSTEM
         </q-toolbar-title>
       </q-toolbar>
-    </q-layout-header>
-    <q-layout-drawer
+    </q-header>
+    <q-drawer
       v-model="leftDrawerOpen"
       content-class="bg-grey-2"
       overlay
+      bordered
       :breakpoint="2000"
     >
-      <q-scroll-area class="fit">
-        <q-btn
-          flat
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          aria-label="Menu">
-          <q-icon name="menu" />
-        </q-btn>
-          <q-item to="/" style="margin: 50px 0 10px 0">
-            <q-item-side icon="check_circle" color="primary"/>
-            <q-item-main label="Active Asset" />
-          </q-item>
-          <q-item to="/Inactive" tyle="margin: 0 0 10px 0">
-            <q-item-side icon="highlight_off" color="negative"/>
-            <q-item-main label="Inactive Asset" />
-          </q-item>
-          <q-item to="/UploadNode">
-            <q-item-side icon="far fa-file-excel" color="positive"/>
-            <q-item-main label="Upload Node" />
-          </q-item>
-           <q-item to="/Node">
-            <q-item-side icon="far fa-file-excel" color="positive"/>
-            <q-item-main label="FIBERNODE" />
-          </q-item>
-      </q-scroll-area>
-    </q-layout-drawer>
+      <q-list>
+        <q-item to="/">
+          <q-item-section avatar>
+            <q-icon name="check_circle" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Active Asset</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item to="/Inactive">
+          <q-item-section avatar>
+            <q-icon name="highlight_off" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Inactive Asset</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -55,19 +48,19 @@
 </template>
 
 <script>
-import { openURL } from 'quasar';
+import { openURL } from 'quasar'
 
 export default {
   name: 'default',
-  data() {
+  data () {
     return {
-      leftDrawerOpen: this.$q.platform.is.desktop,
-    };
+      leftDrawerOpen: this.$q.platform.is.desktop
+    }
   },
   methods: {
-    openURL,
-  },
-};
+    openURL
+  }
+}
 </script>
 
 <style>
