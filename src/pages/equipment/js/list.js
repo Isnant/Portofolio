@@ -14,7 +14,7 @@ export default {
         hubCode: undefined,
         nodeCode: undefined,
         newHubCode: undefined,
-        newNode: undefined
+        newNodeCode: undefined
       },
       migrateDestination: {
         destinationHub: ''
@@ -55,8 +55,13 @@ export default {
       migrationListNew: [],
       originalNode: {},
       pagination: {
-        rowsPerPage: 50
+        sortBy: 'equipmentName',
+        descending: false,
+        page: 1,
+        rowsPerPage: 20,
+        rowsNumber: 0
       },
+      loading: false,
       migrationOriginalPagination: {
         rowsPerPage: 0
       },
@@ -216,11 +221,16 @@ export default {
   },
 
   methods: {
+    fillTableResult (pagedEquipment) {
+      this.dataList = pagedEquipment.content
+      this.pagination.rowsNumber = pagedEquipment.totalElements
+    },
     initPage () {
       this.$axios.post(`${process.env.urlPrefix}getInitPage/`, {
       })
         .then((response) => {
-          this.dataList = response.data.listOfEquipment
+          this.fillTableResult(response.data.listOfEquipment)
+
           this.assetCategoryList = response.data.listOfAssetCategory
           this.productTypeList = response.data.listOfProductType
           this.subTypeList = response.data.listOfProductSubType
@@ -239,11 +249,21 @@ export default {
           })
         })
     },
-    getContent () {
+    getContent (props) {
       this.$q.loading.show()
-      this.$axios.post(`${process.env.urlPrefix}getListAssetByFilter/`, this.searchVal)
+
+      let { page, rowsPerPage, sortBy, descending } = props.pagination
+
+      this.$axios.get(`${process.env.urlPrefix}getPagedEquipment/`, {
+        params: {
+          pageIndex: page,
+          pageSize: rowsPerPage,
+          sortBy: sortBy,
+          descending: descending
+        }
+      })
         .then((response) => {
-          this.dataList = response.data.listOfEquipment
+          this.fillTableResult(response.data)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -313,31 +333,31 @@ export default {
         this.$q.notify({
           color: 'negative',
           icon: 'report_problem',
-          message: `Hub ${this.equipmentToMigrate.newHub} does not have nodes. Please add one before proceeding.`
+          message: `Hub ${this.equipmentToMigrate.newHubCode} does not have nodes. Please add one before proceeding.`
         })
         this.selectedNewNode = undefined
-        this.equipmentToMigrate.newNode = undefined
+        this.equipmentToMigrate.newNodeCode = undefined
       } else {
         this.selectedNewNode = this.filteredNodeList[0]
-        this.equipmentToMigrate.newNode = this.selectedNewNode.value
+        this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
       }
     },
     doChangeMigrationNode () {
       if (this.selectedNewNode !== 'N') {
-        this.equipmentToMigrate.newNode = this.selectedNewNode.value
+        this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
       } else {
-        this.equipmentToMigrate.newNode = undefined
+        this.equipmentToMigrate.newNodeCode = undefined
       }
     },
     doValidateNewNode () {
       const existingNode = this.nodeList
-        .filter(node => node.value === this.equipmentToMigrate.newNode)
+        .filter(node => node.value === this.equipmentToMigrate.newNodeCode)
 
       if (existingNode.length > 0) {
         this.$q.notify({
           color: 'negative',
           icon: 'report_problem',
-          message: `Node ${this.equipmentToMigrate.newNode} already used. Please specify other value.`
+          message: `Node ${this.equipmentToMigrate.newNodeCode} already used. Please specify other value.`
         })
       }
     },
@@ -366,8 +386,15 @@ export default {
         })
     },
     handleDoNotMoveNode () {
-      let lastAmpliCode = this.lastCodes.lastAmpliCode
-      let lastPsCode = this.lastCodes.lastPsCode
+      const ampliCodePrefix = this.lastCodes.lastAmplifierCode.substring(0, 3)
+      const psCode = this.lastCodes.lastPsCode
+      let ampliCounter = parseInt(this.lastCodes.lastAmplifierCode.substring(3, 7), 10) * 1000
+      let psCounter = 64
+      let oldNewMap = []
+
+      if (this.lastCodes.lastPsCode.length > 6) {
+        psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
+      }
 
       for (let i = 0; i < this.migrationListNew.length; i += 1) {
         if (this.migrationListNew[i].equipmentName === this.equipmentToMigrate.nodeCode) {
@@ -375,15 +402,47 @@ export default {
           i -= 1
         } else {
           if (this.migrationListNew[i].productTypeSubType === 'PS') {
-            let currentCounter = parseInt(lastPsCode.substring(3), 10)
-            currentCounter += 1
-            let counterStr = '000' + currentCounter
-            lastPsCode = lastPsCode.substring(0, 3) + counterStr.substr(counterStr.length - 3)
-            this.migrationListNew[i].newEquipmentName = lastPsCode
+            psCounter += 1
+            this.migrationListNew[i].newEquipmentName = psCode + String.fromCharCode(psCounter)
+            this.migrationListNew[i].psCode = this.migrationListNew[i].newEquipmentName
+            this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode
           } else {
-            lastAmpliCode = parseInt(lastAmpliCode, 10) + 100
-            this.migrationListNew[i].newEquipmentName = lastAmpliCode
+            let multiplier = 1000
+            const newPsCode = oldNewMap
+              .filter(map => map.oldCode === this.migrationListNew[i].psCode)
+
+            if (newPsCode !== undefined) {
+              this.migrationListNew[i].psCode = newPsCode[0].newCode
+            }
+
+            if (this.migrationListNew[i].productTypeSubType === 'AMPLI 1') {
+              this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode
+            } else {
+              if (this.migrationListNew[i].productTypeSubType === 'AMPLI 2') {
+                multiplier = 100
+              } else if (this.migrationListNew[i].productTypeSubType === 'AMPLI 3') {
+                multiplier = 10
+              } else if (this.migrationListNew[i].productTypeSubType === 'AMPLI 4') {
+                multiplier = 1
+              }
+
+              const newAmpliCode = oldNewMap
+                .filter(map => map.oldCode === this.migrationListNew[i].predecessor)
+
+              if (newAmpliCode !== undefined) {
+                this.migrationListNew[i].predecessor = newAmpliCode[0].newCode
+              }
+            }
+
+            ampliCounter = (Math.floor(ampliCounter / multiplier) * multiplier) + multiplier
+            let counterStr = '0000' + ampliCounter
+            this.migrationListNew[i].newEquipmentName = ampliCodePrefix + counterStr.substring(counterStr.length - 7)
           }
+
+          oldNewMap.push({
+            oldCode: this.migrationListNew[i].equipmentName,
+            newCode: this.migrationListNew[i].newEquipmentName
+          })
         }
       }
     },
@@ -391,8 +450,10 @@ export default {
     },
     handleMoveNodeAsAmplifier () {
     },
+    handleChangeService () {
+    },
     doSetupNewHierarchy () {
-      if (this.equipmentToMigrate.newNode === undefined) {
+      if (this.equipmentToMigrate.newNodeCode === undefined) {
         this.$refs.stepper.previous()
       } else {
         this.migrationListNew = JSON.parse(JSON.stringify(this.migrationListOriginal))
@@ -405,7 +466,7 @@ export default {
 
         if ((this.moveNode === 'X') && ('A')) {
           targetUrl = 'getLastAmpliPs'
-          parameter = { nodeCode: this.equipmentToMigrate.newNode }
+          parameter = { nodeCode: this.equipmentToMigrate.newNodeCode }
         }
 
         this.$axios.get(`${process.env.urlPrefix}${targetUrl}/`, { params: parameter })
@@ -419,6 +480,7 @@ export default {
             } else if (this.moveNode === 'A') {
               this.handleMoveNodeAsAmplifier()
             } else if (this.moveNode === 'C') {
+              this.handleChangeService()
             }
 
             this.$q.loading.hide()

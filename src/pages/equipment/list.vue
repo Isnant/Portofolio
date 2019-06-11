@@ -68,7 +68,10 @@
       selection="multiple"
       :selected.sync="selected"
       :pagination.sync="pagination"
+      :rows-per-page-options="[10, 20, 50]"
+      :loading="loading"
       :filter="filter"
+      @request="getContent"
       row-key="id"
       dense>
 
@@ -163,7 +166,7 @@
                     <q-input
                       style="margin-right: 20px"
                       @input="doValidateNewNode()"
-                      v-model="equipmentToMigrate.newNode" float-label="New Node"
+                      v-model="equipmentToMigrate.newNodeCode" float-label="New Node"
                       v-show="selectedNewNode == 'N'"
                     />
                     <q-option-group
@@ -199,12 +202,26 @@
                 </q-tab-panel>
 
                 <q-tab-panel name="newConfig">
-                  <strong>Target Node: <font style="color: green">{{ equipmentToMigrate.newNode }}</font><br/><br/></strong>
+                  <strong>Target Node: <font style="color: green">{{ equipmentToMigrate.newNodeCode }}</font><br/><br/></strong>
                   <q-table
                     :data="migrationListNew"
                     :columns="migrationNewColumns"
                     :pagination.sync="migrationNewPagination"
                     row-key="id">
+
+                    <q-td slot="body-cell-newEquipmentName" slot-scope="cell">
+                      {{ cell.row.newEquipmentName }}
+                      <q-popup-edit v-model="cell.row.newEquipmentName">
+                        <q-input v-model="cell.row.newEquipmentName" dense />
+                      </q-popup-edit>
+                    </q-td>
+                    <q-td slot="body-cell-productTypeSubType" slot-scope="cell">
+                      {{ cell.row.productTypeSubType }}
+                      <q-popup-edit v-model="cell.row.productTypeSubType">
+                        <q-input v-model="cell.row.productTypeSubType" dense />
+                      </q-popup-edit>
+                    </q-td>
+
                   </q-table>
                 </q-tab-panel>
               </q-tab-panels>

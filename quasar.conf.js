@@ -50,6 +50,7 @@ module.exports = function (ctx) {
         'QOptionGroup',
         'QTooltip',
         'QTable',
+        'QTr',
         'QTd',
         'QPopupEdit',
         'QStepper',
