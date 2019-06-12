@@ -141,28 +141,41 @@
 
                 <div style="margin-right: 20px">
                   <q-input readonly v-model="equipmentToMigrate.hubCode"
-                    float-label="Source Hub"/>
+                    label="Source Hub"/>
                   <q-input readonly v-model="equipmentToMigrate.nodeCode"
-                    float-label="Source Node"/>
+                    label="Source Node"/>
                 </div>
 
                 <div>
                   <q-select
                     v-model="equipmentToMigrate.newHubCode"
                     @input="doChageMigrationHub()"
-                    float-label="Destination Hub"
+                    label="Destination Hub"
                     :options="hubCodeList"
                     v-show="moveNode !== 'C'"
                   />
                   <div class="row">
                     <q-select
                       style="margin-right: 20px"
+                      use-input
+                      hide-selected
+                      fill-input
+                      input-debounce="0"
                       v-model="selectedNewNode"
-                      @input="doChangeMigrationNode()"
-                      float-label="Destination Node"
-                      :options="filteredNodeList"
+                      @input="doChangeMigrationNode"
+                      @filter="doFilterMigrationNode"
+                      label="Destination Node"
+                      :options="nodeOptions"
                       v-show="moveNode !== 'N' && moveNode !== 'C'"
-                    />
+                    >
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            No results
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
                     <q-input
                       style="margin-right: 20px"
                       @input="doValidateNewNode()"
@@ -187,7 +200,7 @@
                   indicator-color="primary"
                   align="justify"
                   narrow-indicator>
-                <q-tab name="original" label="Original" />
+                <!-- <q-tab name="original" label="Original" /> -->
                 <q-tab name="newConfig" label="New Configuration" default />
               </q-tabs>
 
@@ -209,16 +222,28 @@
                     :pagination.sync="migrationNewPagination"
                     row-key="id">
 
-                    <q-td slot="body-cell-newEquipmentName" slot-scope="cell">
-                      {{ cell.row.newEquipmentName }}
-                      <q-popup-edit v-model="cell.row.newEquipmentName">
-                        <q-input v-model="cell.row.newEquipmentName" dense />
+                    <q-td slot="body-cell-newName" slot-scope="cell">
+                      {{ cell.row.newName }}
+                      <q-popup-edit v-model="cell.row.newName">
+                        <q-input v-model="cell.row.newName" dense />
                       </q-popup-edit>
                     </q-td>
                     <q-td slot="body-cell-productTypeSubType" slot-scope="cell">
                       {{ cell.row.productTypeSubType }}
                       <q-popup-edit v-model="cell.row.productTypeSubType">
                         <q-input v-model="cell.row.productTypeSubType" dense />
+                      </q-popup-edit>
+                    </q-td>
+                    <q-td slot="body-cell-predecessor" slot-scope="cell">
+                      {{ cell.row.predecessor }}
+                      <q-popup-edit v-model="cell.row.predecessor">
+                        <q-input v-model="cell.row.predecessor" dense />
+                      </q-popup-edit>
+                    </q-td>
+                    <q-td slot="body-cell-psCode" slot-scope="cell">
+                      {{ cell.row.psCode }}
+                      <q-popup-edit v-model="cell.row.psCode">
+                        <q-input v-model="cell.row.psCode" dense />
                       </q-popup-edit>
                     </q-td>
 

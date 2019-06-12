@@ -48,6 +48,7 @@ export default {
       hubCodeList: [],
       bdfCodeList: [],
       nodeList: [],
+      nodeOptions: [],
       filteredNodeList: [],
       migrationStep: 1,
       migrationListOriginal: [],
@@ -183,9 +184,9 @@ export default {
           align: 'center'
         },
         {
-          name: 'newEquipmentName',
+          name: 'newName',
           label: 'New Code',
-          field: 'newEquipmentName',
+          field: 'newName',
           align: 'center'
         },
         {
@@ -302,6 +303,7 @@ export default {
     openMigrationForm (cell) {
       this.showMigrationForm = true
       this.migrationStep = 1
+      this.nodeOptions = []
 
       this.equipmentToMigrate.hubCode = cell.row.hubCode
       this.equipmentToMigrate.nodeCode = cell.row.nodeCode
@@ -341,13 +343,24 @@ export default {
         this.selectedNewNode = this.filteredNodeList[0]
         this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
       }
+
+      this.nodeOptions = []
     },
-    doChangeMigrationNode () {
-      if (this.selectedNewNode !== 'N') {
-        this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
-      } else {
+    doChangeMigrationNode (val) {
+      if (this.selectedNewNode === 'N') {
         this.equipmentToMigrate.newNodeCode = undefined
       }
+    },
+    doFilterMigrationNode (val, update, abort) {
+      if (val.length < 4) {
+        abort()
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.nodeOptions = this.filteredNodeList.filter(f => f.label.toLowerCase().indexOf(needle) > -1)
+      })
     },
     doValidateNewNode () {
       const existingNode = this.nodeList
@@ -403,8 +416,8 @@ export default {
         } else {
           if (this.migrationListNew[i].productTypeSubType === 'PS') {
             psCounter += 1
-            this.migrationListNew[i].newEquipmentName = psCode + String.fromCharCode(psCounter)
-            this.migrationListNew[i].psCode = this.migrationListNew[i].newEquipmentName
+            this.migrationListNew[i].newName = psCode + String.fromCharCode(psCounter)
+            this.migrationListNew[i].psCode = this.migrationListNew[i].newName
             this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode
           } else {
             let multiplier = 1000
@@ -436,12 +449,12 @@ export default {
 
             ampliCounter = (Math.floor(ampliCounter / multiplier) * multiplier) + multiplier
             let counterStr = '0000' + ampliCounter
-            this.migrationListNew[i].newEquipmentName = ampliCodePrefix + counterStr.substring(counterStr.length - 7)
+            this.migrationListNew[i].newName = ampliCodePrefix + counterStr.substring(counterStr.length - 7)
           }
 
           oldNewMap.push({
             oldCode: this.migrationListNew[i].equipmentName,
-            newCode: this.migrationListNew[i].newEquipmentName
+            newCode: this.migrationListNew[i].newName
           })
         }
       }
@@ -453,6 +466,10 @@ export default {
     handleChangeService () {
     },
     doSetupNewHierarchy () {
+      if (this.selectedNewNode.value !== 'N') {
+        this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
+      }
+
       if (this.equipmentToMigrate.newNodeCode === undefined) {
         this.$refs.stepper.previous()
       } else {
