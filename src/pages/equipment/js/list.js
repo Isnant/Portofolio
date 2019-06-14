@@ -25,12 +25,12 @@ export default {
           value: 'X'
         },
         {
-          label: 'Move Node as Node',
-          value: 'N'
-        },
-        {
           label: 'Move Node as Amplifier',
           value: 'A'
+        },
+        {
+          label: 'Move All with One as New Node',
+          value: 'N'
         },
         {
           label: 'Change Service',
@@ -73,6 +73,7 @@ export default {
       selectedNewNode: undefined,
       moveNode: undefined,
       migrationTab: 'newConfig',
+      nodeAtHub: false,
       columns: [
         {
           name: 'id',
@@ -290,7 +291,6 @@ export default {
             })
           })
           .catch((error) => {
-            console.log(error)
             this.$q.notify({
               color: 'negative',
               icon: 'report_problem',
@@ -405,8 +405,21 @@ export default {
       let psCounter = 64
       let oldNewMap = []
 
+      if (parseInt(this.lastCodes.lastAmplifierCode.substr(3), 10) < 10) {
+        this.nodeAtHub = true
+        ampliCounter = parseInt(this.lastCodes.lastAmplifierCode.substr(3), 10)
+        this.$q.notify({
+          color: 'info',
+          icon: 'info',
+          message: 'Because your destination node is a hub node, all amplifier will be first level amplifier. And only up to 9 amplifier is allowed.'
+        })
+      } else {
+        this.nodeAtHub = false
+      }
+
       if (this.lastCodes.lastPsCode.length > 6) {
         psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
+        if ((psCounter) < 64) psCounter = 64
       }
 
       for (let i = 0; i < this.migrationListNew.length; i += 1) {
@@ -414,43 +427,61 @@ export default {
           this.migrationListNew.splice(i, 1)
           i -= 1
         } else {
-          if (this.migrationListNew[i].productTypeSubType === 'PS') {
+          let selectedElement = this.migrationListNew[i]
+          this.$set(selectedElement, 'newName', '')
+          this.$set(selectedElement, 'migrate', true)
+
+          selectedElement.migrate = true
+          if (selectedElement.productTypeSubType === 'PS') {
             psCounter += 1
-            this.migrationListNew[i].newName = psCode + String.fromCharCode(psCounter)
-            this.migrationListNew[i].psCode = this.migrationListNew[i].newName
-            this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode
+            selectedElement.newName = psCode + String.fromCharCode(psCounter)
+            selectedElement.psCode = selectedElement.newName
+            selectedElement.predecessor = this.equipmentToMigrate.newNodeCode
           } else {
             let multiplier = 1000
             const newPsCode = oldNewMap
-              .filter(map => map.oldCode === this.migrationListNew[i].psCode)
+              .filter(map => map.oldCode === selectedElement.psCode)
 
             if (newPsCode !== undefined) {
-              this.migrationListNew[i].psCode = newPsCode[0].newCode
+              selectedElement.psCode = newPsCode[0].newCode
             }
 
-            if (this.migrationListNew[i].productTypeSubType === 'AMPLI 1') {
-              this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode
+            if (this.nodeAtHub) {
+              selectedElement.productTypeSubType = 'AMPLI 1'
+              selectedElement.predecessor = this.equipmentToMigrate.newNodeCode
+
+              ampliCounter += 1
+              if (ampliCounter < 10) {
+                selectedElement.newName = ampliCodePrefix + '000000' + ampliCounter
+              } else {
+                selectedElement.migrate = false
+              }
             } else {
-              if (this.migrationListNew[i].productTypeSubType === 'AMPLI 2') {
-                multiplier = 100
-              } else if (this.migrationListNew[i].productTypeSubType === 'AMPLI 3') {
-                multiplier = 10
-              } else if (this.migrationListNew[i].productTypeSubType === 'AMPLI 4') {
-                multiplier = 1
+              if (selectedElement.productTypeSubType === 'AMPLI 1') {
+                selectedElement.predecessor = this.equipmentToMigrate.newNodeCode
+              } else {
+                const newAmpliCode = oldNewMap
+                  .filter(map => map.oldCode === selectedElement.predecessor)
+
+                if (newAmpliCode !== undefined) {
+                  selectedElement.predecessor = newAmpliCode[0].newCode
+                }
+
+                if (selectedElement.productTypeSubType === 'AMPLI 2') {
+                  multiplier = 100
+                } else if (selectedElement.productTypeSubType === 'AMPLI 3') {
+                  multiplier = 10
+                } else if (selectedElement.productTypeSubType === 'AMPLI 4') {
+                  multiplier = 1
+                }
               }
 
-              const newAmpliCode = oldNewMap
-                .filter(map => map.oldCode === this.migrationListNew[i].predecessor)
-
-              if (newAmpliCode !== undefined) {
-                this.migrationListNew[i].predecessor = newAmpliCode[0].newCode
-              }
+              ampliCounter = (Math.floor(ampliCounter / multiplier) * multiplier) + multiplier
+              let counterStr = '0000' + ampliCounter
+              selectedElement.newName = ampliCodePrefix + counterStr.substring(counterStr.length - 7)
             }
-
-            ampliCounter = (Math.floor(ampliCounter / multiplier) * multiplier) + multiplier
-            let counterStr = '0000' + ampliCounter
-            this.migrationListNew[i].newName = ampliCodePrefix + counterStr.substring(counterStr.length - 7)
           }
+          this.$set(this.migrationListNew, i, selectedElement)
 
           oldNewMap.push({
             oldCode: this.migrationListNew[i].equipmentName,
@@ -474,6 +505,8 @@ export default {
         this.$refs.stepper.previous()
       } else {
         this.migrationListNew = JSON.parse(JSON.stringify(this.migrationListOriginal))
+        this.$set(this.migrationListNew, 'newName', '')
+        this.$set(this.migrationListNew, 'migrate', true)
 
         let targetUrl = 'getLastNode'
         let parameter = {
@@ -511,6 +544,9 @@ export default {
             })
           })
       }
+    },
+    doStayOrMoveElement (row) {
+      row.migrate = !row.migrate
     },
     doValidateMigration () {
       console.log('ya')

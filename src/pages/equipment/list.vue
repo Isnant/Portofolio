@@ -126,7 +126,7 @@
 
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
-          <strong>Migrate Node</strong>
+          <strong>Migration</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
@@ -200,7 +200,7 @@
                   indicator-color="primary"
                   align="justify"
                   narrow-indicator>
-                <!-- <q-tab name="original" label="Original" /> -->
+                <q-tab name="original" label="Original" />
                 <q-tab name="newConfig" label="New Configuration" default />
               </q-tabs>
 
@@ -210,6 +210,7 @@
                     :data="migrationListOriginal"
                     :columns="migrationOriginalColumns"
                     :pagination.sync="migrationOriginalPagination"
+                    dense
                     row-key="id">
                   </q-table>
                 </q-tab-panel>
@@ -220,31 +221,38 @@
                     :data="migrationListNew"
                     :columns="migrationNewColumns"
                     :pagination.sync="migrationNewPagination"
+                    dense
                     row-key="id">
 
-                    <q-td slot="body-cell-newName" slot-scope="cell">
+                    <q-td slot="body-cell-newName" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
                       {{ cell.row.newName }}
-                      <q-popup-edit v-model="cell.row.newName">
+                      <q-popup-edit v-model="cell.row.newName" :disable="!cell.row.migrate">
                         <q-input v-model="cell.row.newName" dense />
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-productTypeSubType" slot-scope="cell">
+                    <q-td slot="body-cell-productTypeSubType" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
                       {{ cell.row.productTypeSubType }}
-                      <q-popup-edit v-model="cell.row.productTypeSubType">
+                      <q-popup-edit v-model="cell.row.productTypeSubType" :disable="cell.row.productTypeSubType === 'PS' || nodeAtHub || !cell.row.migrate">
                         <q-input v-model="cell.row.productTypeSubType" dense />
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-predecessor" slot-scope="cell">
+                    <q-td slot="body-cell-predecessor" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
                       {{ cell.row.predecessor }}
-                      <q-popup-edit v-model="cell.row.predecessor">
+                      <q-popup-edit v-model="cell.row.predecessor" :disable="!cell.row.migrate">
                         <q-input v-model="cell.row.predecessor" dense />
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-psCode" slot-scope="cell">
+                    <q-td slot="body-cell-psCode" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
                       {{ cell.row.psCode }}
-                      <q-popup-edit v-model="cell.row.psCode">
+                      <q-popup-edit v-model="cell.row.psCode" :disable="cell.row.productTypeSubType === 'PS' || !cell.row.migrate">
                         <q-input v-model="cell.row.psCode" dense />
                       </q-popup-edit>
+                    </q-td>
+                    <q-td slot="body-cell-action" slot-scope="cell">
+                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm">
+                        <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
+                        <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
+                      </q-btn>
                     </q-td>
 
                   </q-table>
