@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <h4>Field Equipment</h4>
     <fieldset style="width: 100%">
       <legend>Search</legend>
 
@@ -70,15 +71,9 @@
       :pagination.sync="pagination"
       :rows-per-page-options="[10, 20, 50]"
       :loading="loading"
-      :filter="filter"
       @request="getContent"
       row-key="id"
       dense>
-
-      <!-- eslint-disable-next-line vue/no-unused-vars -->
-      <template v-slot:top-left>
-        <q-input v-model="filter" placeholder="Search"/>
-      </template>
 
       <q-td slot="body-cell-action" slot-scope="cell">
         <q-btn color="primary" round size="sm" @click="openMigrationForm(cell)"
@@ -224,25 +219,25 @@
                     dense
                     row-key="id">
 
-                    <q-td slot="body-cell-newName" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
+                    <q-td slot="body-cell-newName" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.newName }}
-                      <q-popup-edit v-model="cell.row.newName" :disable="!cell.row.migrate">
+                      <q-popup-edit v-model="cell.row.newName">
                         <q-input v-model="cell.row.newName" dense />
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-productTypeSubType" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
+                    <q-td slot="body-cell-productTypeSubType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.productTypeSubType }}
                       <q-popup-edit v-model="cell.row.productTypeSubType" :disable="cell.row.productTypeSubType === 'PS' || nodeAtHub || !cell.row.migrate">
                         <q-input v-model="cell.row.productTypeSubType" dense />
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-predecessor" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
+                    <q-td slot="body-cell-predecessor" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.predecessor }}
                       <q-popup-edit v-model="cell.row.predecessor" :disable="!cell.row.migrate">
                         <q-input v-model="cell.row.predecessor" dense />
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-psCode" slot-scope="cell" :style="cell.row.migrate ? 'color:#333' : 'color:#aaa'">
+                    <q-td slot="body-cell-psCode" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.psCode }}
                       <q-popup-edit v-model="cell.row.psCode" :disable="cell.row.productTypeSubType === 'PS' || !cell.row.migrate">
                         <q-input v-model="cell.row.psCode" dense />

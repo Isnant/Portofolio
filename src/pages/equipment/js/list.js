@@ -21,15 +21,11 @@ export default {
       },
       moveNodeOptions: [
         {
-          label: 'Do not move Node',
+          label: 'Split Node',
           value: 'X'
         },
         {
-          label: 'Move Node as Amplifier',
-          value: 'A'
-        },
-        {
-          label: 'Move All with One as New Node',
+          label: 'Swap Node',
           value: 'N'
         },
         {
@@ -37,7 +33,6 @@ export default {
           value: 'C'
         }
       ],
-      filter: '',
       selection: 'multiple',
       dataList: [],
       selected: [],
@@ -226,6 +221,7 @@ export default {
     fillTableResult (pagedEquipment) {
       this.dataList = pagedEquipment.content
       this.pagination.rowsNumber = pagedEquipment.totalElements
+      this.pagination.page = pagedEquipment.number + 1
     },
     initPage () {
       this.$axios.post(`${process.env.urlPrefix}getInitPage/`, {
@@ -254,14 +250,15 @@ export default {
     getContent (props) {
       this.$q.loading.show()
 
-      let { page, rowsPerPage, sortBy, descending } = props.pagination
+      let { page, rowsPerPage, sortBy } = props.pagination
+      console.log(props.pagination)
 
       this.$axios.get(`${process.env.urlPrefix}getPagedEquipment/`, {
         params: {
-          pageIndex: page,
+          pageIndex: page - 1,
           pageSize: rowsPerPage,
           sortBy: sortBy,
-          descending: descending
+          descending: false
         }
       })
         .then((response) => {
@@ -398,101 +395,194 @@ export default {
           })
         })
     },
-    handleDoNotMoveNode () {
+    doConstructNewAmpliCode (ampliCodePrefix, counter, selectedElement, oldNewMap, isMovedEquipment) {
+      let prefix = ''
+      let usedCounter = counter.ampliCounter
+
+      let staticCounter = ''
+      let newSequence = 0
+
+      if (!isMovedEquipment) {
+        usedCounter = counter.stayAmpliCounter
+      }
+
+      if (selectedElement.productTypeSubType === 'AMPLI 1') {
+        selectedElement.predecessor = this.equipmentToMigrate.newNodeCode + '00'
+
+        if (!isMovedEquipment) {
+          selectedElement.predecessor = selectedElement.originalPredecessor
+          selectedElement.psCode = selectedElement.originalPsCode
+        }
+
+        prefix = selectedElement.predecessor.substring(0, 6)
+        newSequence = usedCounter.charCodeAt(0) + 1
+      } else {
+        const newAmpliCode = oldNewMap
+          .filter(map => map.oldCode === selectedElement.originalPredecessor)
+
+        if (newAmpliCode.length > 0) {
+          selectedElement.predecessor = newAmpliCode[0].newCode
+        }
+
+        if (selectedElement.productTypeSubType === 'AMPLI 2') {
+          prefix = selectedElement.predecessor.substring(0, 7)
+          staticCounter = usedCounter.substring(0, 1)
+          if (usedCounter.length === 1) {
+            newSequence = 49
+          } else {
+            newSequence = usedCounter.charCodeAt(1) + 1
+          }
+        } else if (selectedElement.productTypeSubType === 'AMPLI 3') {
+          prefix = selectedElement.predecessor.substring(0, 8)
+          staticCounter = usedCounter.substring(0, 2)
+          if (usedCounter.length === 2) {
+            newSequence = 49
+          } else {
+            newSequence = usedCounter.charCodeAt(2) + 1
+          }
+        } else if (selectedElement.productTypeSubType === 'AMPLI 4') {
+          prefix = selectedElement.predecessor.substring(0, 9)
+          staticCounter = usedCounter.substring(0, 3)
+          if (usedCounter.length === 2) {
+            newSequence = 49
+          } else {
+            newSequence = usedCounter.charCodeAt(3) + 1
+          }
+        }
+      }
+
+      if (newSequence === 58) {
+        newSequence = 65
+      }
+      usedCounter = staticCounter + String.fromCharCode(newSequence)
+
+      if (isMovedEquipment) {
+        counter.ampliCounter = usedCounter
+      } else {
+        counter.stayAmpliCounter = usedCounter
+      }
+
+      let counterStr = prefix + usedCounter + '0000'
+      counterStr = counterStr.substring(0, 10)
+
+      selectedElement.newName = counterStr
+
+      oldNewMap.push({
+        oldCode: selectedElement.equipmentName,
+        newCode: selectedElement.newName
+      })
+
+      return selectedElement
+    },
+    doAssignNewName () {
       const ampliCodePrefix = this.lastCodes.lastAmplifierCode.substring(0, 3)
       const psCode = this.lastCodes.lastPsCode
-      let ampliCounter = parseInt(this.lastCodes.lastAmplifierCode.substring(3, 7), 10) * 1000
-      let psCounter = 64
-      let oldNewMap = []
+      let counter = {
+        ampliCounter: this.lastCodes.lastAmplifierCode.substring(6, 7),
+        stAmpliSecondaryCounter: 64,
+        ndAmpliSecondaryCounter: 64,
+        rdAmpliSecondaryCounter: 64,
+        thAmpliSecondaryCounter: 64,
+        psCounter: 64,
+        stayAmpliCounter: '0'.charCodeAt(0),
+        stStayAmpliSecondaryCounter: 64,
+        ndStayAmpliSecondaryCounter: 64,
+        rdStayAmpliSecondaryCounter: 64,
+        thStayAmpliSecondaryCounter: 64
+      }
 
-      if (parseInt(this.lastCodes.lastAmplifierCode.substr(3), 10) < 10) {
-        this.nodeAtHub = true
-        ampliCounter = parseInt(this.lastCodes.lastAmplifierCode.substr(3), 10)
-        this.$q.notify({
-          color: 'info',
-          icon: 'info',
-          message: 'Because your destination node is a hub node, all amplifier will be first level amplifier. And only up to 9 amplifier is allowed.'
-        })
-      } else {
-        this.nodeAtHub = false
+      let oldNewMap = []
+      let oldNewStayMap = []
+
+      if (this.nodeAtHub) {
+        counter.ampliCounter = parseInt(this.lastCodes.lastAmplifierCode.substr(3), 10)
       }
 
       if (this.lastCodes.lastPsCode.length > 6) {
-        psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
-        if ((psCounter) < 64) psCounter = 64
+        counter.psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
+        if ((counter.psCounter) < 64) counter.psCounter = 64
       }
 
+      for (let i = 0; i < this.migrationListNew.length; i += 1) {
+        if (this.migrationListNew[i].migrate) {
+          if (this.migrationListNew[i].productTypeSubType === 'PS') {
+            counter.psCounter += 1
+            this.migrationListNew[i].newName = psCode + String.fromCharCode(counter.psCounter)
+            this.migrationListNew[i].psCode = this.migrationListNew[i].newName
+            this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode
+          } else {
+            const newPsCode = oldNewMap
+              .filter(map => map.oldCode === this.migrationListNew[i].originalPsCode)
+
+            if ((newPsCode.length > 0) && (newPsCode[0].newCode !== '')) {
+              this.migrationListNew[i].psCode = newPsCode[0].newCode
+            } else {
+              this.migrationListNew[i].psCode = this.lastCodes.lastPsCode
+            }
+
+            if (this.nodeAtHub) {
+              this.migrationListNew[i].productTypeSubType = 'AMPLI 1'
+              this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode
+
+              counter.ampliCounter += 1
+              if (counter.ampliCounter < 10) {
+                this.migrationListNew[i].newName = ampliCodePrefix + '000000' + counter.ampliCounter
+              } else {
+                this.migrationListNew[i].migrate = false
+              }
+            } else {
+              this.migrationListNew[i] = this.doConstructNewAmpliCode(ampliCodePrefix, counter,
+                this.migrationListNew[i], oldNewMap, true)
+            }
+          }
+        } else {
+          this.migrationListNew[i] = this.doConstructNewAmpliCode(this.equipmentToMigrate.nodeCode.substring(0, 3),
+            counter, this.migrationListNew[i], oldNewStayMap, false)
+        }
+      }
+    },
+    handleDoNotMoveNode () {
       for (let i = 0; i < this.migrationListNew.length; i += 1) {
         if (this.migrationListNew[i].equipmentName === this.equipmentToMigrate.nodeCode) {
           this.migrationListNew.splice(i, 1)
           i -= 1
         } else {
           let selectedElement = this.migrationListNew[i]
+
+          this.$set(selectedElement, 'originalPredecessor', '')
+          this.$set(selectedElement, 'originalPsCode', '')
           this.$set(selectedElement, 'newName', '')
           this.$set(selectedElement, 'migrate', true)
 
-          selectedElement.migrate = true
-          if (selectedElement.productTypeSubType === 'PS') {
-            psCounter += 1
-            selectedElement.newName = psCode + String.fromCharCode(psCounter)
-            selectedElement.psCode = selectedElement.newName
-            selectedElement.predecessor = this.equipmentToMigrate.newNodeCode
-          } else {
-            let multiplier = 1000
-            const newPsCode = oldNewMap
-              .filter(map => map.oldCode === selectedElement.psCode)
+          selectedElement.originalPredecessor = selectedElement.predecessor
+          selectedElement.originalPsCode = selectedElement.psCode
 
-            if (newPsCode !== undefined) {
-              selectedElement.psCode = newPsCode[0].newCode
-            }
-
-            if (this.nodeAtHub) {
-              selectedElement.productTypeSubType = 'AMPLI 1'
-              selectedElement.predecessor = this.equipmentToMigrate.newNodeCode
-
-              ampliCounter += 1
-              if (ampliCounter < 10) {
-                selectedElement.newName = ampliCodePrefix + '000000' + ampliCounter
-              } else {
-                selectedElement.migrate = false
-              }
-            } else {
-              if (selectedElement.productTypeSubType === 'AMPLI 1') {
-                selectedElement.predecessor = this.equipmentToMigrate.newNodeCode
-              } else {
-                const newAmpliCode = oldNewMap
-                  .filter(map => map.oldCode === selectedElement.predecessor)
-
-                if (newAmpliCode !== undefined) {
-                  selectedElement.predecessor = newAmpliCode[0].newCode
-                }
-
-                if (selectedElement.productTypeSubType === 'AMPLI 2') {
-                  multiplier = 100
-                } else if (selectedElement.productTypeSubType === 'AMPLI 3') {
-                  multiplier = 10
-                } else if (selectedElement.productTypeSubType === 'AMPLI 4') {
-                  multiplier = 1
-                }
-              }
-
-              ampliCounter = (Math.floor(ampliCounter / multiplier) * multiplier) + multiplier
-              let counterStr = '0000' + ampliCounter
-              selectedElement.newName = ampliCodePrefix + counterStr.substring(counterStr.length - 7)
-            }
-          }
           this.$set(this.migrationListNew, i, selectedElement)
-
-          oldNewMap.push({
-            oldCode: this.migrationListNew[i].equipmentName,
-            newCode: this.migrationListNew[i].newName
-          })
         }
       }
-    },
-    handleMoveNodeAsNode () {
+
+      this.doAssignNewName()
     },
     handleMoveNodeAsAmplifier () {
+      for (let i = 0; i < this.migrationListNew.length; i += 1) {
+        let selectedElement = this.migrationListNew[i]
+
+        this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
+        this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
+        this.$set(selectedElement, 'newName', '')
+        this.$set(selectedElement, 'migrate', true)
+
+        if (selectedElement.equipmentName === this.equipmentToMigrate.nodeCode) {
+          selectedElement.productTypeSubType = 'AMPLI 1'
+        }
+
+        this.$set(this.migrationListNew, i, selectedElement)
+      }
+
+      this.doAssignNewName()
+    },
+    handleMoveNodeAsNode () {
+      // this.doAssignNewName()
     },
     handleChangeService () {
     },
@@ -514,7 +604,7 @@ export default {
           serviceType: this.equipmentToMigrate.nodeCode.substring(0, 1) === 'D' ? 'ANALOG' : 'DIGITAL'
         }
 
-        if ((this.moveNode === 'X') && ('A')) {
+        if ((this.moveNode === 'X') || (this.moveNode === 'A')) {
           targetUrl = 'getLastAmpliPs'
           parameter = { nodeCode: this.equipmentToMigrate.newNodeCode }
         }
@@ -523,12 +613,23 @@ export default {
           .then((response) => {
             this.lastCodes = response.data
 
+            if (parseInt(this.lastCodes.lastAmplifierCode.substr(3), 10) < 10) {
+              this.nodeAtHub = true
+              this.$q.notify({
+                color: 'info',
+                icon: 'info',
+                message: 'Because your destination node is a hub node, all amplifier will be first level amplifier. And only up to 9 amplifier is allowed.'
+              })
+            } else {
+              this.nodeAtHub = false
+            }
+
             if (this.moveNode === 'X') {
               this.handleDoNotMoveNode()
-            } else if (this.moveNode === 'N') {
-              this.handleMoveNodeAsNode()
             } else if (this.moveNode === 'A') {
               this.handleMoveNodeAsAmplifier()
+            } else if (this.moveNode === 'N') {
+              this.handleMoveNodeAsNode()
             } else if (this.moveNode === 'C') {
               this.handleChangeService()
             }
@@ -547,6 +648,7 @@ export default {
     },
     doStayOrMoveElement (row) {
       row.migrate = !row.migrate
+      this.doAssignNewName()
     },
     doValidateMigration () {
       console.log('ya')
