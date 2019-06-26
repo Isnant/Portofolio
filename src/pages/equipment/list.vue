@@ -77,7 +77,7 @@
 
       <q-td slot="body-cell-action" slot-scope="cell">
         <q-btn color="primary" round size="sm" @click="openMigrationForm(cell)"
-            v-show="cell.row.productTypeSubType == 'FIBERNODE'">
+            v-show="cell.row.productTypeSubType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10">
           <q-icon name="fas fa-exchange-alt" />
           <q-tooltip>Migrate</q-tooltip>
         </q-btn>
