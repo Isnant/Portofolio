@@ -64,14 +64,11 @@
     </fieldset>
 
     <q-table
-      :data="dataList"
-      :columns="columns"
-      selection="multiple"
-      :selected.sync="selected"
-      :pagination.sync="pagination"
+      :data="listOfEquipment"
+      :columns="equipmentListColumns"
+      :pagination.sync="equipmentPagination"
       :rows-per-page-options="[10, 20, 50]"
-      :loading="loading"
-      @request="getContent"
+      @request="doListOfEquipmentRefresh"
       row-key="id"
       dense>
 
@@ -131,7 +128,7 @@
               style="max-width: 90%" animated @before-transition="doCheckStep()">
             <q-step :name="1"
                 title="Setup Destination"
-                :error="filteredNodeList.length < 1">
+                :error="fullNodeListByHub.length < 1">
               <div class="row">
 
                 <div style="margin-right: 20px">
@@ -157,10 +154,10 @@
                       fill-input
                       input-debounce="0"
                       v-model="selectedNewNode"
-                      @input="doChangeMigrationNode"
+                      @input="doChangeTargetNode"
                       @filter="doFilterMigrationNode"
                       label="Destination Node"
-                      :options="nodeOptions"
+                      :options="destinationNodeOptions"
                       v-show="moveNode !== 'N' && moveNode !== 'C'"
                     >
                       <template v-slot:no-option>
@@ -171,11 +168,11 @@
                         </q-item>
                       </template>
                     </q-select>
-                    <q-input
+                    <q-input :prefix="nodePrefixByHub" mask="###" suffix="00"
                       style="margin-right: 20px"
                       @input="doValidateNewNode()"
                       v-model="equipmentToMigrate.newNodeCode" float-label="New Node"
-                      v-show="selectedNewNode == 'N'"
+                      v-show="selectedNewNode === 'New Node'"
                     />
                     <q-option-group
                         style="margin: 10px 0px 0px 0px"
@@ -211,7 +208,10 @@
                 </q-tab-panel>
 
                 <q-tab-panel name="newConfig">
-                  <strong>Target Node: <font style="color: green">{{ equipmentToMigrate.newNodeCode }}</font><br/><br/></strong>
+                  <strong v-show="this.moveNode === 'X'">Target Node: <font style="color: green">{{ equipmentToMigrate.newNodeCode }}</font><br/><br/></strong>
+                  <strong v-show="this.moveNode === 'N'">Target Hub: <font style="color: red">
+                      {{ equipmentToMigrate.newHubCode }}
+                    </font><br/><br/></strong>
                   <q-table
                     :data="migrationListNew"
                     :columns="migrationNewColumns"
@@ -227,7 +227,7 @@
                     </q-td>
                     <q-td slot="body-cell-productTypeSubType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.productTypeSubType }}
-                      <q-popup-edit v-model="cell.row.productTypeSubType" :disable="cell.row.productTypeSubType === 'PS' || nodeAtHub || !cell.row.migrate">
+                      <q-popup-edit v-model="cell.row.productTypeSubType" :disable="cell.row.productTypeSubType === 'PS' || !cell.row.migrate">
                         <q-input v-model="cell.row.productTypeSubType" dense />
                       </q-popup-edit>
                     </q-td>
@@ -244,7 +244,7 @@
                       </q-popup-edit>
                     </q-td>
                     <q-td slot="body-cell-action" slot-scope="cell">
-                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm">
+                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm" v-show="cell.row.productTypeSubType !== 'FIBERNODE'">
                         <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
                         <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
                       </q-btn>

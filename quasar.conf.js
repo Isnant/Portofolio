@@ -96,7 +96,7 @@ module.exports = function (ctx) {
       },
       env: ctx.dev
         ? {
-          urlPrefix: JSON.stringify('http://localhost:7866/')
+          urlPrefix: JSON.stringify('http://localhost:9876/')
         }
         : {
           urlPrefix: JSON.stringify('//')

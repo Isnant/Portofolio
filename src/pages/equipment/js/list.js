@@ -1,74 +1,7 @@
 export default {
   data () {
     return {
-      modalUpload: false,
-      searchVal: {
-        equipmentCategory: 'All',
-        productType: 'All',
-        subType: 'All',
-        productSeries: '',
-        hubCode: 'All',
-        bdfCode: 'All'
-      },
-      equipmentToMigrate: {
-        hubCode: undefined,
-        nodeCode: undefined,
-        newHubCode: undefined,
-        newNodeCode: undefined
-      },
-      migrateDestination: {
-        destinationHub: ''
-      },
-      moveNodeOptions: [
-        {
-          label: 'Split Node',
-          value: 'X'
-        },
-        {
-          label: 'Swap Node',
-          value: 'N'
-        },
-        {
-          label: 'Change Service',
-          value: 'C'
-        }
-      ],
-      selection: 'multiple',
-      dataList: [],
-      selected: [],
-      resultList: [],
-      equipmentCategoryList: [],
-      productTypeList: [],
-      subTypeList: [],
-      hubCodeList: [],
-      bdfCodeList: [],
-      nodeList: [],
-      nodeOptions: [],
-      filteredNodeList: [],
-      migrationStep: 1,
-      migrationListOriginal: [],
-      lastCodes: {},
-      migrationListNew: [],
-      originalNode: {},
-      pagination: {
-        sortBy: 'equipmentName',
-        descending: false,
-        page: 1,
-        rowsPerPage: 20,
-        rowsNumber: 0
-      },
-      loading: false,
-      migrationOriginalPagination: {
-        rowsPerPage: 0
-      },
-      migrationNewPagination: {
-        rowsPerPage: 0
-      },
-      showMigrationForm: false,
-      selectedNewNode: undefined,
-      moveNode: undefined,
-      migrationTab: 'newConfig',
-      columns: [
+      equipmentListColumns: [
         {
           name: 'id',
           label: 'Equipment Id',
@@ -145,6 +78,55 @@ export default {
           align: 'center'
         }
       ],
+      equipmentPagination: {
+        sortBy: 'equipmentName',
+        descending: false,
+        page: 1,
+        rowsPerPage: 20,
+        rowsNumber: 0
+      },
+      listOfEquipment: [],
+      equipmentCategoryList: [],
+      productTypeList: [],
+      subTypeList: [],
+      hubCodeList: [],
+      bdfCodeList: [],
+      modalUpload: false,
+      uploadCategory: 'field',
+      searchVal: {
+        equipmentCategory: 'All',
+        productType: 'All',
+        subType: 'All',
+        productSeries: '',
+        hubCode: 'All',
+        bdfCode: 'All'
+      },
+      equipmentToMigrate: {
+        hubCode: undefined,
+        nodeCode: undefined,
+        newHubCode: undefined,
+        newNodeCode: undefined
+      },
+      moveNodeOptions: [
+        {
+          label: 'Split Node',
+          value: 'X'
+        },
+        {
+          label: 'Swap Node',
+          value: 'N'
+        },
+        {
+          label: 'Change Service',
+          value: 'C'
+        }
+      ],
+      destinationNodeOptions: [],
+      fullNodeListByHub: [],
+      nodePrefixByHub: '',
+      lastCodes: {},
+      migrationStep: 1,
+      migrationListOriginal: [],
       migrationOriginalColumns: [
         {
           name: 'equipmentName',
@@ -171,6 +153,9 @@ export default {
           align: 'center'
         }
       ],
+      migrationOriginalPagination: {
+        rowsPerPage: 0
+      },
       migrationNewColumns: [
         {
           name: 'equipmentName',
@@ -208,7 +193,14 @@ export default {
           align: 'center'
         }
       ],
-      uploadCategory: 'field'
+      migrationNewPagination: {
+        rowsPerPage: 0
+      },
+      migrationListNew: [],
+      showMigrationForm: false,
+      selectedNewNode: undefined,
+      moveNode: undefined,
+      migrationTab: 'newConfig'
     }
   },
 
@@ -218,9 +210,9 @@ export default {
 
   methods: {
     fillTableResult (pagedEquipment) {
-      this.dataList = pagedEquipment.content
-      this.pagination.rowsNumber = pagedEquipment.totalElements
-      this.pagination.page = pagedEquipment.number + 1
+      this.listOfEquipment = pagedEquipment.content
+      this.equipmentPagination.rowsNumber = pagedEquipment.totalElements
+      this.equipmentPagination.page = pagedEquipment.number + 1
     },
     initPage () {
       this.$axios.post(`${process.env.urlPrefix}getInitPage/`, {
@@ -231,10 +223,8 @@ export default {
           this.assetCategoryList = response.data.listOfAssetCategory
           this.productTypeList = response.data.listOfProductType
           this.subTypeList = response.data.listOfProductSubType
-          this.hubCodeList = response.data.listOfHub
+          this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
-
-          this.nodeList = response.data.listOfNodes
 
           this.$q.loading.hide()
         })
@@ -246,10 +236,10 @@ export default {
           })
         })
     },
-    getContent (props) {
+    doListOfEquipmentRefresh (props) {
       this.$q.loading.show()
 
-      let { page, rowsPerPage, sortBy } = props.pagination
+      let { page, rowsPerPage, sortBy } = props.equipmentPagination
 
       this.$axios.get(`${process.env.urlPrefix}getPagedEquipment/`, {
         params: {
@@ -298,51 +288,68 @@ export default {
     openMigrationForm (cell) {
       this.showMigrationForm = true
       this.migrationStep = 1
-      this.nodeOptions = []
+      this.destinationNodeOptions = []
 
       this.equipmentToMigrate.hubCode = cell.row.hubCode
       this.equipmentToMigrate.nodeCode = cell.row.nodeCode
-      this.equipmentToMigrate.newHubCode = this.hubCodeList
-        .filter(hub => hub.value === cell.row.hubCode)[0]
+      this.equipmentToMigrate.newHubCode = cell.row.hubCode
 
       this.moveNode = this.moveNodeOptions[0].value
 
-      this.doChageMigrationHub()
       this.getEquipmentChild(this.equipmentToMigrate.nodeCode)
     },
     doChageMigrationHub () {
-      this.filteredNodeList = this.nodeList
-        .filter(node => node.cascadeValue === this.equipmentToMigrate.newHubCode.value)
-        .map(({ label, value }) => ({ label, value }))
-
-      if (this.equipmentToMigrate.newHubCode.value === this.equipmentToMigrate.hubCode) {
-        for (let i = 0; i < this.filteredNodeList.length; i += 1) {
-          if ((this.filteredNodeList[i].label === this.equipmentToMigrate.nodeCode) ||
-            (parseInt(this.filteredNodeList[i].label.substring(3)) < 10)) {
-            this.filteredNodeList.splice(i--, 1)
-          }
-        }
-      }
-
-      // this.filteredNodeList.unshift({ label: '[New]', value: 'N' });
-
-      if (this.filteredNodeList.length < 1) {
-        this.$q.notify({
-          color: 'negative',
-          icon: 'report_problem',
-          message: `Hub ${this.equipmentToMigrate.newHubCode} does not have nodes. Please add one before proceeding.`
+      this.$axios.get(`${process.env.urlPrefix}getNodeByHub/`,
+        {
+          params: { hubCode: this.equipmentToMigrate.newHubCode }
         })
-        this.selectedNewNode = undefined
-        this.equipmentToMigrate.newNodeCode = undefined
-      } else {
-        this.selectedNewNode = this.filteredNodeList[0]
-        this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
-      }
+        .then((response) => {
+          this.fullNodeListByHub = []
 
-      this.nodeOptions = []
+          if (response.data.length > 0) {
+            this.fullNodeListByHub = response.data.map(nodeChoice => nodeChoice.value)
+            this.nodePrefixByHub = this.fullNodeListByHub[0].substring(0, 3)
+
+            if (this.equipmentToMigrate.newHubCode === this.equipmentToMigrate.hubCode) {
+              for (let i = 0; i < this.fullNodeListByHub.length; i += 1) {
+                if ((this.fullNodeListByHub[i] === this.equipmentToMigrate.nodeCode) ||
+                  (parseInt(this.fullNodeListByHub[i].substring(3)) < 10)) {
+                  this.fullNodeListByHub.splice(i--, 1)
+                }
+              }
+            }
+          }
+
+          if (this.fullNodeListByHub.length < 1) {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: `Hub ${this.equipmentToMigrate.newHubCode} does not have nodes. Please add one before proceeding.`
+            })
+            this.selectedNewNode = undefined
+            this.equipmentToMigrate.newNodeCode = undefined
+
+            this.destinationNodeOptions = []
+          } else {
+            this.selectedNewNode = this.fullNodeListByHub[0]
+            this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
+
+            this.destinationNodeOptions.push(this.fullNodeListByHub[0])
+            this.destinationNodeOptions.unshift('New Node')
+          }
+
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
-    doChangeMigrationNode (val) {
-      if (this.selectedNewNode === 'N') {
+    doChangeTargetNode (val) {
+      if (this.selectedNewNode.value === 'New Node') {
         this.equipmentToMigrate.newNodeCode = undefined
       }
     },
@@ -354,14 +361,16 @@ export default {
 
       update(() => {
         const needle = val.toLowerCase()
-        this.nodeOptions = this.filteredNodeList.filter(f => f.label.toLowerCase().indexOf(needle) > -1)
+        this.destinationNodeOptions = this.fullNodeListByHub.filter(f => f.toLowerCase().indexOf(needle) > -1)
+        this.destinationNodeOptions.unshift('New Node')
       })
     },
     doValidateNewNode () {
-      const existingNode = this.nodeList
-        .filter(node => node.value === this.equipmentToMigrate.newNodeCode)
+      if (this.selectedNewNode !== 'New Node') {
+        return
+      }
 
-      if (existingNode.length > 0) {
+      if (this.fullNodeListByHub.includes(this.nodePrefixByHub + this.equipmentToMigrate.newNodeCode + '00')) {
         this.$q.notify({
           color: 'negative',
           icon: 'report_problem',
@@ -371,17 +380,11 @@ export default {
     },
     getEquipmentChild (nodeCodeParam) {
       this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}getNodeChildMig/`, { params: { nodeCode: nodeCodeParam } })
+      this.$axios.get(`${process.env.urlPrefix}getNodeChildMig`, { params: { nodeCode: nodeCodeParam } })
         .then((response) => {
           this.migrationListOriginal = response.data
 
-          for (let i = 0; i < this.migrationListNew.length; i += 1) {
-            if (this.migrationListNew[i].equipmentName === this.equipmentToMigrate.nodeCode) {
-              this.originalNode = this.migrationListNew[i]
-              break
-            }
-          }
-
+          this.doChageMigrationHub()
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -484,26 +487,35 @@ export default {
       return selectedElement
     },
     doAssignNewName () {
-      const ampliCodePrefix = this.lastCodes.lastAmplifierCode.substring(0, 3)
-      const psCodePrefix = this.lastCodes.lastPsCode.substring(0, 6)
+      let ampliCodePrefix
+      let psCodePrefix
+
       let counter = {
-        ampliCounter: this.lastCodes.lastAmplifierCode.substring(6, 7),
+        ampliCounter: '0',
         psCounter: 64,
         stayAmpliCounter: '0',
         stayPsCounter: 63
       }
 
+      if ((this.lastCodes.lastNodeCode !== undefined) && (this.lastCodes.lastNodeCode !== null)) {
+        ampliCodePrefix = this.lastCodes.lastNodeCode.substring(0, 3)
+        psCodePrefix = this.lastCodes.lastNodeCode.substring(0, 6)
+
+        const lastNodeNumber = '000' + (parseInt(this.lastCodes.lastNodeCode.substring(3, 6), 10) + 1)
+        this.equipmentToMigrate.newNodeCode = this.lastCodes.lastNodeCode.substring(0, 3) + lastNodeNumber.substr(lastNodeNumber.length - 3) + '00'
+      } else {
+        counter.ampliCounter = this.lastCodes.lastAmplifierCode.substring(6, 7)
+        ampliCodePrefix = this.lastCodes.lastAmplifierCode.substring(0, 3)
+        psCodePrefix = this.lastCodes.lastPsCode.substring(0, 6)
+
+        if (this.lastCodes.lastPsCode.length > 6) {
+          counter.psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
+          if ((counter.psCounter) < 64) counter.psCounter = 64
+        }
+      }
+
       let oldNewMap = []
       let oldNewStayMap = []
-
-      if (this.lastCodes.lastPsCode.length > 6) {
-        counter.psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
-      }
-
-      if (this.lastCodes.lastPsCode.length > 6) {
-        counter.psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
-        if ((counter.psCounter) < 64) counter.psCounter = 64
-      }
 
       for (let i = 0; i < this.migrationListNew.length; i++) {
         if (this.migrationListNew[i].migrate) {
@@ -543,9 +555,10 @@ export default {
         }
       }
     },
-    handleDoNotMoveNode () {
+    doInitializeMigrationList (removeNode) {
+      console.log('a')
       for (let i = 0; i < this.migrationListNew.length; i++) {
-        if (this.migrationListNew[i].equipmentName === this.equipmentToMigrate.nodeCode) {
+        if (removeNode && (this.migrationListNew[i].equipmentName === this.equipmentToMigrate.nodeCode)) {
           this.migrationListNew.splice(i--, 1)
         } else {
           let selectedElement = this.migrationListNew[i]
@@ -561,36 +574,24 @@ export default {
           this.$set(this.migrationListNew, i, selectedElement)
         }
       }
-
       this.doAssignNewName()
     },
-    handleMoveNodeAsAmplifier () {
-      for (let i = 0; i < this.migrationListNew.length; i++) {
-        let selectedElement = this.migrationListNew[i]
-
-        this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
-        this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
-        this.$set(selectedElement, 'newName', '')
-        this.$set(selectedElement, 'migrate', true)
-
-        if (selectedElement.equipmentName === this.equipmentToMigrate.nodeCode) {
-          selectedElement.productTypeSubType = 'AMPLI 1'
-        }
-
-        this.$set(this.migrationListNew, i, selectedElement)
-      }
-
-      this.doAssignNewName()
+    showSplitNode () {
+      this.doInitializeMigrationList(true)
     },
-    handleMoveNodeAsNode () {
-      // this.doAssignNewName()
+    showSwapNode () {
+      this.doInitializeMigrationList(false)
     },
-    handleChangeService () {
+    showChangeService () {
     },
     doSetupNewHierarchy () {
-      if (this.selectedNewNode.value !== 'N') {
+      console.log(this.selectedNewNode)
+      if (this.selectedNewNode !== 'New Node') {
         this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
+      } else {
+        this.equipmentToMigrate.newNodeCode = this.nodePrefixByHub + this.equipmentToMigrate.newNodeCode + '00'
       }
+      console.log(this.equipmentToMigrate.newNodeCode)
 
       if (this.equipmentToMigrate.newNodeCode === undefined) {
         this.$refs.stepper.previous()
@@ -601,7 +602,7 @@ export default {
 
         let targetUrl = 'getLastNode'
         let parameter = {
-          hubCode: this.equipmentToMigrate.newHubCode,
+          hubCode: this.equipmentToMigrate.newHubCode.label,
           serviceType: this.equipmentToMigrate.nodeCode.substring(0, 1) === 'D' ? 'ANALOG' : 'DIGITAL'
         }
 
@@ -615,13 +616,11 @@ export default {
             this.lastCodes = response.data
 
             if (this.moveNode === 'X') {
-              this.handleDoNotMoveNode()
-            } else if (this.moveNode === 'A') {
-              this.handleMoveNodeAsAmplifier()
+              this.showSplitNode()
             } else if (this.moveNode === 'N') {
-              this.handleMoveNodeAsNode()
+              this.showSwapNode()
             } else if (this.moveNode === 'C') {
-              this.handleChangeService()
+              this.showChangeService()
             }
 
             this.$q.loading.hide()
