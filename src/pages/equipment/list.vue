@@ -152,7 +152,7 @@
                       use-input
                       hide-selected
                       fill-input
-                      input-debounce="0"
+                      input-debounce="500"
                       v-model="selectedNewNode"
                       @input="doChangeTargetNode"
                       @filter="doFilterMigrationNode"
@@ -168,10 +168,13 @@
                         </q-item>
                       </template>
                     </q-select>
-                    <q-input :prefix="nodePrefixByHub" mask="###" suffix="00"
+                    <q-input :prefix="nodePrefixByHub" mask="###"
+                      fill-mask="#" suffix="00"
+                      debounce="500"
                       style="margin-right: 20px"
                       @input="doValidateNewNode()"
-                      v-model="equipmentToMigrate.newNodeCode" float-label="New Node"
+                      @keydown.enter="$refs.stepper.next()"
+                      v-model="equipmentToMigrate.newNodeNumber" float-label="New Node"
                       v-show="selectedNewNode === 'New Node'"
                     />
                     <q-option-group
@@ -208,10 +211,30 @@
                 </q-tab-panel>
 
                 <q-tab-panel name="newConfig">
-                  <strong v-show="this.moveNode === 'X'">Target Node: <font style="color: green">{{ equipmentToMigrate.newNodeCode }}</font><br/><br/></strong>
-                  <strong v-show="this.moveNode === 'N'">Target Hub: <font style="color: red">
-                      {{ equipmentToMigrate.newHubCode }}
-                    </font><br/><br/></strong>
+                  <q-bar class="bg-white">
+                    <strong v-show="this.moveNode === 'X'">Target Node:
+                      <font style="color: green">{{ equipmentToMigrate.newNodeCode }}</font>
+                    </strong>
+                    <strong v-show="this.moveNode === 'N'">Target Hub:
+                      <font style="color: red">
+                        {{ equipmentToMigrate.newHubCode }}
+                      </font>
+                    </strong>
+                    <q-space />
+                    <q-btn round color="primary" @click="doAddPowerSupply()" size="sm"
+                      v-show="checkAddPowerSupplyVisibility()"
+                      style="margin-right: 10px">
+                      <q-icon name="fas fa-car-battery"/>
+                      <q-tooltip>Add Power Supply</q-tooltip>
+                    </q-btn>
+                    <q-btn round color="primary" @click="doAddAmplifier()" size="sm"
+                      v-show="checkAddAmplifierVisibility()"
+                      style="margin-right: 10px">
+                      <q-icon name="fab fa-creative-commons-sampling"/>
+                      <q-tooltip>Add Amplifier</q-tooltip>
+                    </q-btn>
+                  </q-bar>
+                  <br/>
                   <q-table
                     :data="migrationListNew"
                     :columns="migrationNewColumns"
@@ -221,32 +244,38 @@
 
                     <q-td slot="body-cell-newName" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.newName }}
-                      <q-popup-edit v-model="cell.row.newName">
-                        <q-input v-model="cell.row.newName" dense />
+                      <q-popup-edit v-model="cell.row.newName" :disable="cell.row.productTypeSubType === 'FIBERNODE'">
+                        <q-input v-model="cell.row.newNumber" dense :prefix="getEquipmentPrefix(cell.row)"
+                          :mask="((cell.row.equipmentName !== undefined && cell.row.productTypeSubType === 'PS') ? 'A' : 'XXXX')"
+                          fill-mask="#" unmasked-value
+                          @change="doChangeName(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
                     <q-td slot="body-cell-productTypeSubType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.productTypeSubType }}
-                      <q-popup-edit v-model="cell.row.productTypeSubType" :disable="cell.row.productTypeSubType === 'PS' || !cell.row.migrate">
-                        <q-input v-model="cell.row.productTypeSubType" dense />
-                      </q-popup-edit>
                     </q-td>
                     <q-td slot="body-cell-predecessor" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.predecessor }}
-                      <q-popup-edit v-model="cell.row.predecessor" :disable="!cell.row.migrate">
-                        <q-input v-model="cell.row.predecessor" dense />
+                      <q-popup-edit v-model="cell.row.predecessor" :disable="cell.row.productTypeSubType !== 'PS'">
+                        <q-input v-model="cell.row.newPredecessorNumber" dense :prefix="getEquipmentPrefix(cell.row)"
+                          mask="XXXX"
+                          fill-mask="#"
+                          @change="doChangePredecessor(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
                     <q-td slot="body-cell-psCode" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.psCode }}
-                      <q-popup-edit v-model="cell.row.psCode" :disable="cell.row.productTypeSubType === 'PS' || !cell.row.migrate">
-                        <q-input v-model="cell.row.psCode" dense />
-                      </q-popup-edit>
                     </q-td>
+
                     <q-td slot="body-cell-action" slot-scope="cell">
-                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm" v-show="cell.row.productTypeSubType !== 'FIBERNODE'">
+                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm" v-show="checkStayOrMoveVisibility(cell.row)"
+                        style="margin-right: 10px">
                         <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
                         <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
+                      </q-btn>
+                      <q-btn round color="primary" @click="doPromoteToFibernode(cell.row)" size="sm" v-show="checkPromoteVisibility(cell.row)">
+                        <q-icon name="fas fa-medal"/>
+                        <q-tooltip>Promote To Fibernode</q-tooltip>
                       </q-btn>
                     </q-td>
 
