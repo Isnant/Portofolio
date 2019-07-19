@@ -99,7 +99,7 @@ module.exports = function (ctx) {
           urlPrefix: JSON.stringify('http://localhost:9876/')
         }
         : {
-          urlPrefix: JSON.stringify('//')
+          urlPrefix: JSON.stringify('/')
         }
     },
     devServer: {

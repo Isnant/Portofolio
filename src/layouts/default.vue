@@ -13,6 +13,9 @@
         <q-toolbar-title>
           ENGINEERING ASSET MANAGEMENT SYSTEM
         </q-toolbar-title>
+        <q-toolbar-title shrink>
+          {{userInfo.fullName}} [{{userInfo.department}}]
+        </q-toolbar-title>
       </q-toolbar>
     </q-header>
     <q-drawer
@@ -47,21 +50,7 @@
   </q-layout>
 </template>
 
-<script>
-import { openURL } from 'quasar'
-
-export default {
-  name: 'default',
-  data () {
-    return {
-      leftDrawerOpen: this.$q.platform.is.desktop
-    }
-  },
-  methods: {
-    openURL
-  }
-}
-</script>
+<script src="./js/default.js"></script>
 
 <style>
 </style>

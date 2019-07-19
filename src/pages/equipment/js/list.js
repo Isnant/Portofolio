@@ -337,9 +337,10 @@ export default {
           })
         })
     },
-    doChangeTargetNode (val) {
-      if (this.selectedNewNode.value === 'New Node') {
+    doChangeTargetNode () {
+      if (this.selectedNewNode === 'New Node') {
         this.equipmentToMigrate.newNodeCode = undefined
+        this.equipmentToMigrate.newNodeNumber = undefined
       }
     },
     doFilterMigrationNode (val, update, abort) {
@@ -570,6 +571,8 @@ export default {
         } else {
           let selectedElement = this.migrationListNew[i]
 
+          this.$set(selectedElement, 'varbaru', 'x')
+
           this.$set(selectedElement, 'originalPredecessor', '')
           this.$set(selectedElement, 'originalPsCode', '')
           this.$set(selectedElement, 'newName', '')
@@ -760,7 +763,21 @@ export default {
       }
     },
     doValidateMigration () {
-      console.log('ya')
+      for (let i = 0; i < this.migrationListNew.length; i++) {
+        this.migrationListNew[i].amplifierCode = (this.migrationListNew[i].newName + '0000').substring(0, 10)
+      }
+
+      this.$axios.post(`${process.env.urlPrefix}doValidate/`, this.migrationListNew)
+        .then((response) => {
+          console.log(response.data.length)
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     doCheckStep () {
       if (this.migrationStep === 2) {

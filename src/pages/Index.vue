@@ -6,8 +6,4 @@
 <style>
 </style>
 
-<script>
-export default {
-  name: 'PageIndex'
-}
-</script>
+<script src="./js/index.js"></script>
