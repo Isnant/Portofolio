@@ -106,7 +106,9 @@ export default {
         nodeCode: undefined,
         newHubCode: undefined,
         newNodeCode: undefined,
-        newNodeNumber: undefined
+        newNodeNumber: undefined,
+        selectedNewNode: undefined,
+        migrationListNew: []
       },
       moveNodeOptions: [
         {
@@ -185,9 +187,7 @@ export default {
       migrationNewPagination: {
         rowsPerPage: 0
       },
-      migrationListNew: [],
       showMigrationForm: false,
-      selectedNewNode: undefined,
       moveNode: undefined,
       migrationTab: 'newConfig'
     }
@@ -315,13 +315,13 @@ export default {
               icon: 'report_problem',
               message: `Hub ${this.equipmentToMigrate.newHubCode} does not have nodes. Please add one before proceeding.`
             })
-            this.selectedNewNode = undefined
+            this.equipmentToMigrate.selectedNewNode = undefined
             this.equipmentToMigrate.newNodeCode = undefined
 
             this.destinationNodeOptions = []
           } else {
-            this.selectedNewNode = this.fullNodeListByHub[0]
-            this.equipmentToMigrate.newNodeCode = this.selectedNewNode.value
+            this.equipmentToMigrate.selectedNewNode = this.fullNodeListByHub[0]
+            this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode.value
 
             this.destinationNodeOptions.push(this.fullNodeListByHub[0])
             this.destinationNodeOptions.unshift('New Node')
@@ -338,7 +338,7 @@ export default {
         })
     },
     doChangeTargetNode () {
-      if (this.selectedNewNode === 'New Node') {
+      if (this.equipmentToMigrate.selectedNewNode === 'New Node') {
         this.equipmentToMigrate.newNodeCode = undefined
         this.equipmentToMigrate.newNodeNumber = undefined
       }
@@ -351,7 +351,7 @@ export default {
       })
     },
     doValidateNewNode () {
-      if (this.selectedNewNode !== 'New Node') {
+      if (this.equipmentToMigrate.selectedNewNode !== 'New Node') {
         return
       }
 
@@ -410,7 +410,7 @@ export default {
         selectedElement.predecessor = selectedElement.originalPredecessor
         usedCounter = counter.stayAmpliCounter
 
-        if (this.migrationListNew.filter(item => item.newName === selectedElement.predecessor).length <= 0) {
+        if (this.equipmentToMigrate.migrationListNew.filter(item => item.newName === selectedElement.predecessor).length <= 0) {
           selectedElement.predecessor = this.equipmentToMigrate.nodeCode
           selectedElement.productTypeSubType = 'AMPLI 1'
         }
@@ -512,64 +512,65 @@ export default {
       let oldNewMap = []
       let oldNewStayMap = []
 
-      for (let i = 0; i < this.migrationListNew.length; i++) {
-        if (this.migrationListNew[i].productTypeSubType === 'FIBERNODE') {
+      for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
+        if (this.equipmentToMigrate.migrationListNew[i].productTypeSubType === 'FIBERNODE') {
           continue
         }
-        if (this.migrationListNew[i].migrate) {
-          if (this.migrationListNew[i].productTypeSubType === 'PS') {
-            this.migrationListNew[i].newName = psCodePrefix
+        if (this.equipmentToMigrate.migrationListNew[i].migrate) {
+          if (this.equipmentToMigrate.migrationListNew[i].productTypeSubType === 'PS') {
+            this.equipmentToMigrate.migrationListNew[i].newName = psCodePrefix
 
             if (counter.psCounter < 64) {
               counter.psCounter += 1
             } else {
-              this.migrationListNew[i].newName = this.migrationListNew[i].newName + String.fromCharCode(++counter.psCounter)
+              this.equipmentToMigrate.migrationListNew[i].newName = this.equipmentToMigrate.migrationListNew[i].newName +
+                String.fromCharCode(++counter.psCounter)
             }
 
-            this.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode + '00'
+            this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode + '00'
 
             oldNewMap.push({
-              oldCode: this.migrationListNew[i].equipmentName,
-              newCode: this.migrationListNew[i].newName
+              oldCode: this.equipmentToMigrate.migrationListNew[i].equipmentName,
+              newCode: this.equipmentToMigrate.migrationListNew[i].newName
             })
           } else {
-            this.migrationListNew[i] = this.doConstructNewAmpliCode(ampliCodePrefix, counter,
-              this.migrationListNew[i], oldNewMap, true)
+            this.equipmentToMigrate.migrationListNew[i] = this.doConstructNewAmpliCode(ampliCodePrefix, counter,
+              this.equipmentToMigrate.migrationListNew[i], oldNewMap, true)
           }
         } else {
-          if (this.migrationListNew[i].productTypeSubType === 'PS') {
+          if (this.equipmentToMigrate.migrationListNew[i].productTypeSubType === 'PS') {
             counter.stayPsCounter += 1
             let strPsCounter = ''
 
             if (counter.stayPsCounter >= 65) {
               strPsCounter = String.fromCharCode(counter.stayPsCounter)
             }
-            this.migrationListNew[i].newName = this.equipmentToMigrate.nodeCode.substring(0, 6) + strPsCounter
-            this.migrationListNew[i].predecessor = this.equipmentToMigrate.nodeCode + '00'
+            this.equipmentToMigrate.migrationListNew[i].newName = this.equipmentToMigrate.nodeCode.substring(0, 6) + strPsCounter
+            this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrate.nodeCode + '00'
 
             oldNewStayMap.push({
-              oldCode: this.migrationListNew[i].equipmentName,
-              newCode: this.migrationListNew[i].newName
+              oldCode: this.equipmentToMigrate.migrationListNew[i].equipmentName,
+              newCode: this.equipmentToMigrate.migrationListNew[i].newName
             })
           } else {
-            this.migrationListNew[i] = this.doConstructNewAmpliCode(this.equipmentToMigrate.nodeCode.substring(0, 3), counter,
-              this.migrationListNew[i], oldNewStayMap, false)
+            this.equipmentToMigrate.migrationListNew[i] = this.doConstructNewAmpliCode(this.equipmentToMigrate.nodeCode.substring(0, 3), counter,
+              this.equipmentToMigrate.migrationListNew[i], oldNewStayMap, false)
           }
         }
-        this.migrationListNew[i].newNumber = this.migrationListNew[i].newName.substring(6)
-        this.migrationListNew[i].newPredecessorNumber = this.migrationListNew[i].predecessor.substring(6)
+        this.equipmentToMigrate.migrationListNew[i].newNumber = this.equipmentToMigrate.migrationListNew[i].newName.substring(6)
+        this.equipmentToMigrate.migrationListNew[i].newPredecessorNumber = this.equipmentToMigrate.migrationListNew[i].predecessor.substring(6)
       }
     },
     doInitializeMigrationList (removeNode) {
-      for (let i = 0; i < this.migrationListNew.length; i++) {
-        if ((this.migrationListNew[i].productTypeSubType === 'FIBERNODE')) {
+      for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
+        if ((this.equipmentToMigrate.migrationListNew[i].productTypeSubType === 'FIBERNODE')) {
           if (removeNode) {
-            this.migrationListNew.splice(i--, 1)
+            this.equipmentToMigrate.migrationListNew.splice(i--, 1)
           } else {
-            this.migrationListNew[i].predecessor = ''
+            this.equipmentToMigrate.migrationListNew[i].predecessor = ''
           }
         } else {
-          let selectedElement = this.migrationListNew[i]
+          let selectedElement = this.equipmentToMigrate.migrationListNew[i]
 
           this.$set(selectedElement, 'varbaru', 'x')
 
@@ -580,7 +581,7 @@ export default {
 
           selectedElement.originalPredecessor = selectedElement.predecessor
 
-          this.$set(this.migrationListNew, i, selectedElement)
+          this.$set(this.equipmentToMigrate.migrationListNew, i, selectedElement)
         }
       }
       this.doAssignNewName()
@@ -588,16 +589,16 @@ export default {
     showChangeService () {
     },
     doSetupNewHierarchy () {
-      if (this.selectedNewNode !== 'New Node') {
-        this.equipmentToMigrate.newNodeCode = this.selectedNewNode
+      if (this.equipmentToMigrate.selectedNewNode !== 'New Node') {
+        this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode
       }
 
       if (this.equipmentToMigrate.newNodeCode === undefined) {
         this.$refs.stepper.previous()
       } else {
-        this.migrationListNew = JSON.parse(JSON.stringify(this.migrationListOriginal))
-        this.$set(this.migrationListNew, 'newName', '')
-        this.$set(this.migrationListNew, 'migrate', true)
+        this.equipmentToMigrate.migrationListNew = JSON.parse(JSON.stringify(this.migrationListOriginal))
+        this.$set(this.equipmentToMigrate.migrationListNew, 'newName', '')
+        this.$set(this.equipmentToMigrate.migrationListNew, 'migrate', true)
 
         let targetUrl = 'getLastNode'
         let parameter = {
@@ -677,7 +678,7 @@ export default {
         cellRow.predecessor = cellRow.newName.substring(0, 9) + '0'
       }
 
-      if (this.migrationListNew.filter(item => item.newName === cellRow.newName).length > 1) {
+      if (this.equipmentToMigrate.migrationListNew.filter(item => item.newName === cellRow.newName).length > 1) {
         this.$q.notify({
           color: 'negative',
           icon: 'report_problem',
@@ -690,7 +691,7 @@ export default {
     },
     checkPromoteVisibility (row) {
       return (row.productTypeSubType !== 'PS' && row.productTypeSubType !== 'FIBERNODE' &&
-        this.selectedNewNode === 'New Node' && row.migrate)
+        this.equipmentToMigrate.selectedNewNode === 'New Node' && row.migrate)
     },
     checkStayOrMoveVisibility (row) {
       return row.productTypeSubType !== 'FIBERNODE'
@@ -703,7 +704,7 @@ export default {
     },
     doAddPowerSupply () {
       const newPowerSupply = {
-        id: 'X' + this.migrationListNew.length,
+        id: 'X' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
         productTypeSubType: 'PS',
         hubCode: this.equipmentToMigrate.newHubCode,
@@ -712,12 +713,12 @@ export default {
         migrate: true
       }
 
-      this.migrationListNew.unshift(newPowerSupply)
+      this.equipmentToMigrate.migrationListNew.unshift(newPowerSupply)
       this.doAssignNewName()
     },
     doAddAmplifier () {
       const newAmplifier = {
-        id: 'Y' + this.migrationListNew.length,
+        id: 'Y' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
         productTypeSubType: 'AMPLI 1',
         hubCode: this.equipmentToMigrate.newHubCode,
@@ -726,11 +727,11 @@ export default {
         migrate: true
       }
 
-      this.migrationListNew.push(newAmplifier)
+      this.equipmentToMigrate.migrationListNew.push(newAmplifier)
       this.doAssignNewName()
     },
     cascadeUpgrade (row) {
-      const listOfChild = this.migrationListNew.filter(item => item.predecessor === row.newName)
+      const listOfChild = this.equipmentToMigrate.migrationListNew.filter(item => item.predecessor === row.newName)
       for (let i = 0; i < listOfChild.length; i++) {
         if (row.productTypeSubType === 'FIBERNODE') {
           listOfChild[i].productTypeSubType = 'AMPLI 1'
@@ -741,12 +742,12 @@ export default {
       }
     },
     doPromoteToFibernode (row) {
-      for (let i = 0; i < this.migrationListNew.length; i++) {
-        if (this.migrationListNew[i].productTypeSubType === 'FIBERNODE') {
-          this.migrationListNew[i].productTypeSubType = 'AMPLI 1'
-          this.migrationListNew[i].predecessor = row.newName
+      for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
+        if (this.equipmentToMigrate.migrationListNew[i].productTypeSubType === 'FIBERNODE') {
+          this.equipmentToMigrate.migrationListNew[i].productTypeSubType = 'AMPLI 1'
+          this.equipmentToMigrate.migrationListNew[i].predecessor = row.newName
 
-          this.cascadeUpgrade(this.migrationListNew[i])
+          this.cascadeUpgrade(this.equipmentToMigrate.migrationListNew[i])
         }
       }
       row.predecessor = ''
@@ -763,13 +764,13 @@ export default {
       }
     },
     doValidateMigration () {
-      for (let i = 0; i < this.migrationListNew.length; i++) {
-        this.migrationListNew[i].amplifierCode = (this.migrationListNew[i].newName + '0000').substring(0, 10)
+      for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
+        this.equipmentToMigrate.migrationListNew[i].amplifierCode = (this.equipmentToMigrate.migrationListNew[i].newName +
+          '0000').substring(0, 10)
       }
 
-      this.$axios.post(`${process.env.urlPrefix}doValidate/`, this.migrationListNew)
+      this.$axios.post(`${process.env.urlPrefix}doValidate/`, this.equipmentToMigrate)
         .then((response) => {
-          console.log(response.data.length)
         })
         .catch((error) => {
           this.$q.notify({

@@ -153,7 +153,7 @@
                       hide-selected
                       fill-input
                       input-debounce="500"
-                      v-model="selectedNewNode"
+                      v-model="equipmentToMigrate.selectedNewNode"
                       @input="doChangeTargetNode"
                       @filter="doFilterMigrationNode"
                       label="Destination Node"
@@ -175,7 +175,7 @@
                       @input="doValidateNewNode()"
                       @keydown.enter="$refs.stepper.next()"
                       v-model="equipmentToMigrate.newNodeNumber" float-label="New Node"
-                      v-show="selectedNewNode === 'New Node'"
+                      v-show="equipmentToMigrate.selectedNewNode === 'New Node'"
                     />
                     <q-option-group
                         style="margin: 10px 0px 0px 0px"
@@ -236,7 +236,7 @@
                   </q-bar>
                   <br/>
                   <q-table
-                    :data="migrationListNew"
+                    :data="equipmentToMigrate.migrationListNew"
                     :columns="migrationNewColumns"
                     :pagination.sync="migrationNewPagination"
                     dense
