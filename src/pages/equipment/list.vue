@@ -73,7 +73,7 @@
       dense>
 
       <q-td slot="body-cell-action" slot-scope="cell">
-        <q-btn color="primary" round size="sm" @click="openMigrationForm(cell)"
+        <q-btn color="primary" round size="sm" @click="doOpenMigrationForm(cell)"
             v-show="cell.row.productTypeSubType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10">
           <q-icon name="fas fa-exchange-alt" />
           <q-tooltip>Migrate</q-tooltip>
@@ -144,7 +144,7 @@
                     @input="doChageMigrationHub()"
                     label="Destination Hub"
                     :options="hubCodeList"
-                    v-show="moveNode !== 'C'"
+                    v-show="selectedMoveNodeOption !== 'C'"
                   />
                   <div class="row">
                     <q-select
@@ -158,7 +158,7 @@
                       @filter="doFilterMigrationNode"
                       label="Destination Node"
                       :options="destinationNodeOptions"
-                      v-show="moveNode !== 'N' && moveNode !== 'C'"
+                      v-show="selectedMoveNodeOption !== 'N' && selectedMoveNodeOption !== 'C'"
                     >
                       <template v-slot:no-option>
                         <q-item>
@@ -179,7 +179,7 @@
                     />
                     <q-option-group
                         style="margin: 10px 0px 0px 0px"
-                        v-model="moveNode"
+                        v-model="selectedMoveNodeOption"
                         :options="moveNodeOptions"
                         inline />
                   </div>
@@ -212,23 +212,23 @@
 
                 <q-tab-panel name="newConfig">
                   <q-bar class="bg-white">
-                    <strong v-show="this.moveNode === 'X'">Target Node:
+                    <strong v-show="this.selectedMoveNodeOption === 'X'">Target Node:
                       <font style="color: green">{{ equipmentToMigrate.newNodeCode }}</font>
                     </strong>
-                    <strong v-show="this.moveNode === 'N'">Target Hub:
+                    <strong v-show="this.selectedMoveNodeOption === 'N'">Target Hub:
                       <font style="color: red">
                         {{ equipmentToMigrate.newHubCode }}
                       </font>
                     </strong>
                     <q-space />
                     <q-btn round color="primary" @click="doAddPowerSupply()" size="sm"
-                      v-show="checkAddPowerSupplyVisibility()"
+                      v-show="isAddPowerSupplyVisible()"
                       style="margin-right: 10px">
                       <q-icon name="fas fa-car-battery"/>
                       <q-tooltip>Add Power Supply</q-tooltip>
                     </q-btn>
                     <q-btn round color="primary" @click="doAddAmplifier()" size="sm"
-                      v-show="checkAddAmplifierVisibility()"
+                      v-show="isAddAmplifierVisible()"
                       style="margin-right: 10px">
                       <q-icon name="fab fa-creative-commons-sampling"/>
                       <q-tooltip>Add Amplifier</q-tooltip>
@@ -268,12 +268,12 @@
                     </q-td>
 
                     <q-td slot="body-cell-action" slot-scope="cell">
-                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm" v-show="checkStayOrMoveVisibility(cell.row)"
+                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm" v-show="isStayOrMoveVisible(cell.row)"
                         style="margin-right: 10px">
                         <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
                         <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
                       </q-btn>
-                      <q-btn round color="primary" @click="doPromoteToFibernode(cell.row)" size="sm" v-show="checkPromoteVisibility(cell.row)">
+                      <q-btn round color="primary" @click="doPromoteToFibernode(cell.row)" size="sm" v-show="isPromoteVisible(cell.row)">
                         <q-icon name="fas fa-medal"/>
                         <q-tooltip>Promote To Fibernode</q-tooltip>
                       </q-btn>
@@ -286,12 +286,32 @@
             </q-step>
 
             <q-step :name="3" title="Validation">
-              <p>An ad group contains one or more ads which target a shared set of keywords.</p>
+              <div :v-show="validationResults.length > 0">
+                <q-chip
+                  color="red"
+                  text-color="white"
+                  v-for="validationResult in validationResults"
+                  :key="validationResult">
+                  {{ validationResult }}
+                </q-chip>
+              </div>
+              <div :v-show="validationResults.length === 0">
+                <q-tree
+                  :nodes="sourcePreview"
+                  node-key="label"
+                  default-expand-all
+                />
+              </div>
             </q-step>
 
             <template v-slot:navigation>
               <q-stepper-navigation>
-                <q-btn @click="$refs.stepper.next()" color="primary" :label="migrationStep === 3 ? 'Finalize' : 'Continue'" />
+                <q-btn
+                  @click="$refs.stepper.next()"
+                  color="primary"
+                  :label="migrationStep === 3 ? 'Finalize' : 'Continue'"
+                  :disable="migrationStep === 3 && validationResults.length > 0"
+                 />
                 <q-btn v-if="migrationStep > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
               </q-stepper-navigation>
             </template>

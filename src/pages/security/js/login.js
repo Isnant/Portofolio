@@ -15,7 +15,6 @@ export default {
 
       this.$axios.post(`${process.env.urlPrefix}auth`, this.cred)
         .then((response) => {
-          console.log(response)
           localStorage.setItem('user-token', response.headers.authorization)
           this.$q.loading.hide()
           this.$router.push('/')

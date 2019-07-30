@@ -19,7 +19,6 @@ export default {
     }
 
     this.userInfo = JSON.parse(JSON.parse(atob(userToken.split('.')[1])).userInfo)
-    console.log(this.userInfo)
 
     this.$q.loading.hide()
   },

@@ -1,6 +1,19 @@
 export default {
   data () {
     return {
+      equipmentCategoryList: [],
+      productTypeList: [],
+      subTypeList: [],
+      hubCodeList: [],
+      bdfCodeList: [],
+      searchVal: {
+        equipmentCategory: 'All',
+        productType: 'All',
+        subType: 'All',
+        productSeries: '',
+        hubCode: 'All',
+        bdfCode: 'All'
+      },
       equipmentListColumns: [
         {
           name: 'id',
@@ -86,21 +99,12 @@ export default {
         rowsNumber: 0
       },
       listOfEquipment: [],
-      equipmentCategoryList: [],
-      productTypeList: [],
-      subTypeList: [],
-      hubCodeList: [],
-      bdfCodeList: [],
       modalUpload: false,
       uploadCategory: 'field',
-      searchVal: {
-        equipmentCategory: 'All',
-        productType: 'All',
-        subType: 'All',
-        productSeries: '',
-        hubCode: 'All',
-        bdfCode: 'All'
-      },
+      migrationStep: 1,
+      showMigrationForm: false,
+      migrationTab: 'newConfig',
+      reloadMigrationList: true,
       equipmentToMigrate: {
         hubCode: undefined,
         nodeCode: undefined,
@@ -110,6 +114,9 @@ export default {
         selectedNewNode: undefined,
         migrationListNew: []
       },
+      nodePrefixByHub: '',
+      fullNodeListByHub: [],
+      selectedMoveNodeOption: undefined,
       moveNodeOptions: [
         {
           label: 'Split Node',
@@ -125,10 +132,7 @@ export default {
         }
       ],
       destinationNodeOptions: [],
-      fullNodeListByHub: [],
-      nodePrefixByHub: '',
       lastCodes: {},
-      migrationStep: 1,
       migrationListOriginal: [],
       migrationOriginalColumns: [
         {
@@ -187,27 +191,23 @@ export default {
       migrationNewPagination: {
         rowsPerPage: 0
       },
-      showMigrationForm: false,
-      moveNode: undefined,
-      migrationTab: 'newConfig'
+      validationResults: [],
+      sourcePreview: [],
+      targetPreview: []
     }
   },
 
-  beforeMount () {
-    this.initPage()
-  },
-
   methods: {
-    fillTableResult (pagedEquipment) {
+    doFillTableResult (pagedEquipment) {
       this.listOfEquipment = pagedEquipment.content
       this.equipmentPagination.rowsNumber = pagedEquipment.totalElements
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
-    initPage () {
+    doInitPage () {
       this.$axios.post(`${process.env.urlPrefix}getInitPage/`, {
       })
         .then((response) => {
-          this.fillTableResult(response.data.listOfEquipment)
+          this.doFillTableResult(response.data.listOfEquipment)
 
           this.assetCategoryList = response.data.listOfAssetCategory
           this.productTypeList = response.data.listOfProductType
@@ -239,7 +239,7 @@ export default {
         }
       })
         .then((response) => {
-          this.fillTableResult(response.data)
+          this.doFillTableResult(response.data)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -274,7 +274,7 @@ export default {
           })
       })
     },
-    openMigrationForm (cell) {
+    doOpenMigrationForm (cell) {
       this.showMigrationForm = true
       this.migrationStep = 1
       this.destinationNodeOptions = []
@@ -283,7 +283,7 @@ export default {
       this.equipmentToMigrate.nodeCode = cell.row.nodeCode
       this.equipmentToMigrate.newHubCode = cell.row.hubCode
 
-      this.moveNode = this.moveNodeOptions[0].value
+      this.selectedMoveNodeOption = this.moveNodeOptions[0].value
 
       this.getEquipmentChild(this.equipmentToMigrate.nodeCode)
     },
@@ -586,8 +586,6 @@ export default {
       }
       this.doAssignNewName()
     },
-    showChangeService () {
-    },
     doSetupNewHierarchy () {
       if (this.equipmentToMigrate.selectedNewNode !== 'New Node') {
         this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode
@@ -606,7 +604,7 @@ export default {
           serviceType: this.equipmentToMigrate.nodeCode.substring(0, 1) === 'D' ? 'ANALOG' : 'DIGITAL'
         }
 
-        if ((this.moveNode === 'X') || (this.moveNode === 'A')) {
+        if ((this.selectedMoveNodeOption === 'X') || (this.selectedMoveNodeOption === 'A')) {
           targetUrl = 'getLastAmpliPs'
           parameter = { nodeCode: this.equipmentToMigrate.newNodeCode }
         }
@@ -616,12 +614,12 @@ export default {
           .then((response) => {
             this.lastCodes = response.data
 
-            if (this.moveNode === 'X') {
+            if (this.selectedMoveNodeOption === 'X') {
               this.doInitializeMigrationList(true)
-            } else if (this.moveNode === 'N') {
+            } else if (this.selectedMoveNodeOption === 'N') {
               this.doInitializeMigrationList(false)
-            } else if (this.moveNode === 'C') {
-              this.showChangeService()
+            } else if (this.selectedMoveNodeOption === 'C') {
+              this.doShowChangeService()
             }
 
             this.$q.loading.hide()
@@ -689,18 +687,18 @@ export default {
     doChangePredecessor (cellRow) {
       cellRow.predecessor = this.getEquipmentPrefix(cellRow) + cellRow.newPredecessorNumber
     },
-    checkPromoteVisibility (row) {
+    isPromoteVisible (row) {
       return (row.productTypeSubType !== 'PS' && row.productTypeSubType !== 'FIBERNODE' &&
         this.equipmentToMigrate.selectedNewNode === 'New Node' && row.migrate)
     },
-    checkStayOrMoveVisibility (row) {
+    isStayOrMoveVisible (row) {
       return row.productTypeSubType !== 'FIBERNODE'
     },
-    checkAddPowerSupplyVisibility () {
-      return this.moveNode !== 'C'
+    isAddPowerSupplyVisible () {
+      return this.selectedMoveNodeOption !== 'C'
     },
-    checkAddAmplifierVisibility () {
-      return this.moveNode !== 'C'
+    isAddAmplifierVisible () {
+      return this.selectedMoveNodeOption !== 'C'
     },
     doAddPowerSupply () {
       const newPowerSupply = {
@@ -730,7 +728,7 @@ export default {
       this.equipmentToMigrate.migrationListNew.push(newAmplifier)
       this.doAssignNewName()
     },
-    cascadeUpgrade (row) {
+    doCascadeUpgrade (row) {
       const listOfChild = this.equipmentToMigrate.migrationListNew.filter(item => item.predecessor === row.newName)
       for (let i = 0; i < listOfChild.length; i++) {
         if (row.productTypeSubType === 'FIBERNODE') {
@@ -738,7 +736,7 @@ export default {
         } else {
           listOfChild[i].productTypeSubType = 'AMPLI ' + (parseInt(row.productTypeSubType.substring(6), 10) + 1)
         }
-        this.cascadeUpgrade(listOfChild[i])
+        this.doCascadeUpgrade(listOfChild[i])
       }
     },
     doPromoteToFibernode (row) {
@@ -747,12 +745,12 @@ export default {
           this.equipmentToMigrate.migrationListNew[i].productTypeSubType = 'AMPLI 1'
           this.equipmentToMigrate.migrationListNew[i].predecessor = row.newName
 
-          this.cascadeUpgrade(this.equipmentToMigrate.migrationListNew[i])
+          this.doCascadeUpgrade(this.equipmentToMigrate.migrationListNew[i])
         }
       }
       row.predecessor = ''
       row.productTypeSubType = 'FIBERNODE'
-      this.cascadeUpgrade(row)
+      this.doCascadeUpgrade(row)
       row.newName = this.equipmentToMigrate.newNodeCode
       this.doAssignNewName()
     },
@@ -763,6 +761,53 @@ export default {
         return this.equipmentToMigrate.nodeCode.substring(0, 6)
       }
     },
+    getEquipmentChildPreview (parent, list) {
+      let rawChildren = list.filter(f => f.predecessor === parent.amplifierCode && f.productTypeSubType !== 'FIBERNODE')
+      let result = []
+
+      for (let i = 0; i < rawChildren.length; i++) {
+        let child = {
+          label: rawChildren[i].equipmentName,
+          children: []
+        }
+        const children = this.getEquipmentChildPreview(rawChildren[i], list)
+        if (children.length > 0) {
+          child.children = children
+        }
+
+        result.push(child)
+      }
+
+      return result
+    },
+    doPreview () {
+      const fiberNode = this.migrationListOriginal.filter(f => f.productTypeSubType === 'FIBERNODE')
+
+      if (fiberNode.length !== 1) {
+        this.validationResults.push('Source have invlaid node. Please check')
+      } else {
+        let source = this.equipmentToMigrate.hubCode + ' - ' + fiberNode[0].equipmentName
+        const nodeInNew = this.equipmentToMigrate.migrationListNew.filter(f => f.equipmentName === fiberNode[0].nodeCode)
+
+        if (nodeInNew.length > 0) {
+          source = source + ' [' + nodeInNew[0].newName + ']'
+        }
+
+        let originalTree = {
+          label: source,
+          header: 'root',
+          children: []
+        }
+
+        const child = this.getEquipmentChildPreview(fiberNode[0], this.migrationListOriginal)
+
+        if (child.length > 0) {
+          originalTree.children = child
+        }
+
+        this.sourcePreview.push(originalTree)
+      }
+    },
     doValidateMigration () {
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         this.equipmentToMigrate.migrationListNew[i].amplifierCode = (this.equipmentToMigrate.migrationListNew[i].newName +
@@ -771,6 +816,11 @@ export default {
 
       this.$axios.post(`${process.env.urlPrefix}doValidate/`, this.equipmentToMigrate)
         .then((response) => {
+          this.validationResults = response.data
+
+          if (this.validationResults.length === 0) {
+            this.doPreview()
+          }
         })
         .catch((error) => {
           this.$q.notify({
@@ -781,11 +831,22 @@ export default {
         })
     },
     doCheckStep () {
-      if (this.migrationStep === 2) {
-        this.doSetupNewHierarchy()
+      if (this.migrationStep === 1) {
+        this.reloadMigrationList = true
+      } else if (this.migrationStep === 2) {
+        if (this.reloadMigrationList) {
+          this.doSetupNewHierarchy()
+        }
+        this.reloadMigrationList = true
       } else if (this.migrationStep === 3) {
+        this.reloadMigrationList = false
         this.doValidateMigration()
       }
+    },
+    doShowChangeService () {
     }
+  },
+  beforeMount () {
+    this.doInitPage()
   }
 }
