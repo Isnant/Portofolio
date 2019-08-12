@@ -1,6 +1,12 @@
 <template>
   <q-page padding>
     <h4>Field Equipment</h4>
+    <!-- <GChart
+        :settings="{ packages: ['orgchart'] }"
+        type="OrgChart"
+        :data="chartDataX"
+        :options="chartOptionsX"
+    /> -->
     <fieldset style="width: 100%">
       <legend>Search</legend>
 
@@ -144,7 +150,7 @@
                     @input="doChageMigrationHub()"
                     label="Destination Hub"
                     :options="hubCodeList"
-                    v-show="selectedMoveNodeOption !== 'C'"
+                    v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'"
                   />
                   <div class="row">
                     <q-select
@@ -154,11 +160,11 @@
                       fill-input
                       input-debounce="500"
                       v-model="equipmentToMigrate.selectedNewNode"
-                      @input="doChangeTargetNode"
                       @filter="doFilterMigrationNode"
                       label="Destination Node"
                       :options="destinationNodeOptions"
-                      v-show="selectedMoveNodeOption !== 'N' && selectedMoveNodeOption !== 'C'"
+                      v-show="equipmentToMigrate.selectedMoveNodeOption === 'X' &&
+                        !equipmentToMigrate.isNewNode"
                     >
                       <template v-slot:no-option>
                         <q-item>
@@ -175,20 +181,35 @@
                       @input="doValidateNewNode()"
                       @keydown.enter="$refs.stepper.next()"
                       v-model="equipmentToMigrate.newNodeNumber" float-label="New Node"
-                      v-show="equipmentToMigrate.selectedNewNode === 'New Node'"
+                      v-show="equipmentToMigrate.isNewNode && equipmentToMigrate.selectedMoveNodeOption !== 'C'"
                     />
-                    <q-option-group
-                        style="margin: 10px 0px 0px 0px"
-                        v-model="selectedMoveNodeOption"
-                        :options="moveNodeOptions"
-                        inline />
+                    <q-input mask="AAA###"
+                      fill-mask="#" suffix="00"
+                      debounce="500"
+                      style="margin-right: 20px"
+                      @input="doValidateNewNode()"
+                      @keydown.enter="$refs.stepper.next()"
+                      v-model="equipmentToMigrate.newServiceNodeNumber" float-label="New Node"
+                      v-show="equipmentToMigrate.selectedMoveNodeOption === 'C'"
+                    />
+                    <q-checkbox @input="doIsNewNodeChange()"
+                      v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'"
+                      v-model="equipmentToMigrate.isNewNode"
+                      label="New Node" />
                   </div>
                 </div>
-
+              </div>
+              <div class="row">
+                <q-option-group
+                    style="margin: 10px 0px 0px 0px"
+                    v-model="equipmentToMigrate.selectedMoveNodeOption"
+                    @input="doChangeMoveNodeOption()"
+                    :options="moveNodeOptions"
+                    inline />
               </div>
             </q-step>
 
-            <q-step :name="2" title="Setup New Hierarchy">
+            <q-step :name="2" title="Setup New Hierarchy" :disable="isHierarchyDisabled">
               <q-tabs class="shadow-1" v-model="migrationTab"
                   dense
                   active-color="primary"
@@ -212,12 +233,9 @@
 
                 <q-tab-panel name="newConfig">
                   <q-bar class="bg-white">
-                    <strong v-show="this.selectedMoveNodeOption === 'X'">Target Node:
-                      <font style="color: green">{{ equipmentToMigrate.newNodeCode }}</font>
-                    </strong>
-                    <strong v-show="this.selectedMoveNodeOption === 'N'">Target Hub:
-                      <font style="color: red">
-                        {{ equipmentToMigrate.newHubCode }}
+                    <strong>Target Node:
+                      <font style="color: green">
+                        {{ equipmentToMigrate.newNodeCode }}
                       </font>
                     </strong>
                     <q-space />
@@ -286,21 +304,58 @@
             </q-step>
 
             <q-step :name="3" title="Validation">
-              <div :v-show="validationResults.length > 0">
+              <div v-show="validationResults.length > 0">
                 <q-chip
                   color="red"
                   text-color="white"
                   v-for="validationResult in validationResults"
-                  :key="validationResult">
-                  {{ validationResult }}
+                  :key="validationResult.id">
+                  {{ validationResult.message }}
                 </q-chip>
               </div>
-              <div :v-show="validationResults.length === 0">
-                <q-tree
-                  :nodes="sourcePreview"
-                  node-key="label"
-                  default-expand-all
-                />
+              <div v-show="validationResults.length === 0" class="q-pa-md row items-start q-gutter-md">
+                <q-card class="preview-tree-card" v-show="equipmentToMigrate.selectedMoveNodeOption !== 'N'">
+                  <q-card-section>
+                    <q-tree
+                      :nodes="sourcePreview"
+                      node-key="label"
+                      ref="sourcePreview"
+                      default-expand-all
+                    >
+                      <template v-slot:default-header="prop">
+                        <span class="row items-center">
+                          <span class="text-weight-bold text-red">{{ prop.node.label }}</span>
+                          <span
+                            class="text-weight-bold text-black"
+                            v-if="prop.node.label !== prop.node.original && prop.node.original !== undefined">
+                              &nbsp;&nbsp;[{{ prop.node.original }}]
+                          </span>
+                        </span>
+                      </template>
+                    </q-tree>
+                  </q-card-section>
+                </q-card>
+                <q-card class="preview-tree-card" v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'">
+                  <q-card-section>
+                    <q-tree
+                      :nodes="targetPreview"
+                      node-key="label"
+                      ref="targetPreview"
+                      default-expand-all
+                    >
+                      <template v-slot:default-header="prop">
+                        <span class="row items-center">
+                          <span class="text-weight-bold text-green">{{ prop.node.label }}</span>
+                          <span
+                            class="text-weight-bold text-black"
+                            v-if="prop.node.label !== prop.node.original && prop.node.original !== undefined">
+                              &nbsp;&nbsp;[{{ prop.node.original }}]
+                          </span>
+                        </span>
+                      </template>
+                    </q-tree>
+                  </q-card-section>
+                </q-card>
               </div>
             </q-step>
 
@@ -309,8 +364,15 @@
                 <q-btn
                   @click="$refs.stepper.next()"
                   color="primary"
-                  :label="migrationStep === 3 ? 'Finalize' : 'Continue'"
-                  :disable="migrationStep === 3 && validationResults.length > 0"
+                  label="Continue"
+                  v-show="migrationStep !== 3"
+                 />
+                <q-btn
+                  @click="doExecuteMigration()"
+                  color="primary"
+                  label="Finalize"
+                  v-show="migrationStep === 3"
+                  :disable="validationResults.length > 0"
                  />
                 <q-btn v-if="migrationStep > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
               </q-stepper-navigation>
@@ -326,6 +388,11 @@
 </template>
 
 <style>
+
+.preview-tree-card {
+  width: 100%;
+  max-width: 500px;
+}
 
 fieldset {
   max-width: 98%;

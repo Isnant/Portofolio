@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// import VueGoogleCharts from 'vue-google-charts'
 
 import routes from './routes'
 
 Vue.use(VueRouter)
+// Vue.use(VueGoogleCharts)
 
 /*
  * If not building with SSR mode, you can
