@@ -74,12 +74,12 @@
       :columns="equipmentListColumns"
       :pagination.sync="equipmentPagination"
       :rows-per-page-options="[10, 20, 50]"
-      @request="doListOfEquipmentRefresh"
+      @request="doMainEquipmentListRefresh"
       row-key="id"
       dense>
 
       <q-td slot="body-cell-action" slot-scope="cell">
-        <q-btn color="primary" round size="sm" @click="doOpenMigrationForm(cell)"
+        <q-btn color="primary" round size="sm" @click="doMainOpenMigrationForm(cell)"
             v-show="cell.row.productTypeSubType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10">
           <q-icon name="fas fa-exchange-alt" />
           <q-tooltip>Migrate</q-tooltip>
@@ -131,7 +131,7 @@
 
         <q-card-section>
           <q-stepper ref="stepper" v-model="migrationStep" color="primary"
-              style="max-width: 90%" animated @before-transition="doCheckStep()">
+              style="max-width: 90%" animated @before-transition="doMigrationCheckStep()">
             <q-step :name="1"
                 title="Setup Destination"
                 :error="fullNodeListByHub.length < 1">
@@ -147,7 +147,7 @@
                 <div>
                   <q-select
                     v-model="equipmentToMigrate.newHubCode"
-                    @input="doChageMigrationHub()"
+                    @input="doMigrationChangeHub()"
                     label="Destination Hub"
                     :options="hubCodeList"
                     v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'"
@@ -160,7 +160,7 @@
                       fill-input
                       input-debounce="500"
                       v-model="equipmentToMigrate.selectedNewNode"
-                      @filter="doFilterMigrationNode"
+                      @filter="doMigrationFilterNode"
                       label="Destination Node"
                       :options="destinationNodeOptions"
                       v-show="equipmentToMigrate.selectedMoveNodeOption === 'X' &&
@@ -178,7 +178,7 @@
                       fill-mask="#" suffix="00"
                       debounce="500"
                       style="margin-right: 20px"
-                      @input="doValidateNewNode()"
+                      @input="doMigrationValidateNewNode()"
                       @keydown.enter="$refs.stepper.next()"
                       v-model="equipmentToMigrate.newNodeNumber" float-label="New Node"
                       v-show="equipmentToMigrate.isNewNode && equipmentToMigrate.selectedMoveNodeOption !== 'C'"
@@ -187,12 +187,12 @@
                       fill-mask="#" suffix="00"
                       debounce="500"
                       style="margin-right: 20px"
-                      @input="doValidateNewNode()"
+                      @input="doMigrationValidateNewNode()"
                       @keydown.enter="$refs.stepper.next()"
                       v-model="equipmentToMigrate.newServiceNodeNumber" float-label="New Node"
                       v-show="equipmentToMigrate.selectedMoveNodeOption === 'C'"
                     />
-                    <q-checkbox @input="doIsNewNodeChange()"
+                    <q-checkbox @input="doMigrationChangeNewNode()"
                       v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'"
                       v-model="equipmentToMigrate.isNewNode"
                       label="New Node" />
@@ -203,7 +203,7 @@
                 <q-option-group
                     style="margin: 10px 0px 0px 0px"
                     v-model="equipmentToMigrate.selectedMoveNodeOption"
-                    @input="doChangeMoveNodeOption()"
+                    @input="doMigrationChangeMoveNodeOption()"
                     :options="moveNodeOptions"
                     inline />
               </div>
@@ -239,14 +239,14 @@
                       </font>
                     </strong>
                     <q-space />
-                    <q-btn round color="primary" @click="doAddPowerSupply()" size="sm"
-                      v-show="isAddPowerSupplyVisible()"
+                    <q-btn round color="primary" @click="doMigrationAddPowerSupply()" size="sm"
+                      v-show="isMigrationAddPowerSupplyVisible()"
                       style="margin-right: 10px">
                       <q-icon name="fas fa-car-battery"/>
                       <q-tooltip>Add Power Supply</q-tooltip>
                     </q-btn>
-                    <q-btn round color="primary" @click="doAddAmplifier()" size="sm"
-                      v-show="isAddAmplifierVisible()"
+                    <q-btn round color="primary" @click="doMigrationAddAmplifier()" size="sm"
+                      v-show="isMigrationAddAmplifierVisible()"
                       style="margin-right: 10px">
                       <q-icon name="fab fa-creative-commons-sampling"/>
                       <q-tooltip>Add Amplifier</q-tooltip>
@@ -263,10 +263,10 @@
                     <q-td slot="body-cell-newName" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.newName }}
                       <q-popup-edit v-model="cell.row.newName" :disable="cell.row.productTypeSubType === 'FIBERNODE'">
-                        <q-input v-model="cell.row.newNumber" dense :prefix="getEquipmentPrefix(cell.row)"
+                        <q-input v-model="cell.row.newNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
                           :mask="((cell.row.equipmentName !== undefined && cell.row.productTypeSubType === 'PS') ? 'A' : 'XXXX')"
                           fill-mask="#" unmasked-value
-                          @change="doChangeName(cell.row)"/>
+                          @change="doMigrationChangeEquipmentName(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
                     <q-td slot="body-cell-productTypeSubType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
@@ -275,23 +275,27 @@
                     <q-td slot="body-cell-predecessor" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.predecessor }}
                       <q-popup-edit v-model="cell.row.predecessor" :disable="cell.row.productTypeSubType !== 'PS'">
-                        <q-input v-model="cell.row.newPredecessorNumber" dense :prefix="getEquipmentPrefix(cell.row)"
+                        <q-input v-model="cell.row.newPredecessorNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
                           mask="XXXX"
                           fill-mask="#"
-                          @change="doChangePredecessor(cell.row)"/>
+                          @change="doMigrationChangePredecessor(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
                     <q-td slot="body-cell-psCode" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.psCode }}
+                      <q-popup-edit v-model="cell.row.psCode" :disable="cell.row.productTypeSubType === 'PS'">
+                        <q-input v-model="cell.row.psCode" dense
+                          mask="AAA###A"/>
+                      </q-popup-edit>
                     </q-td>
 
                     <q-td slot="body-cell-action" slot-scope="cell">
-                      <q-btn round color="primary" @click="doStayOrMoveElement(cell.row)" size="sm" v-show="isStayOrMoveVisible(cell.row)"
+                      <q-btn round color="primary" @click="doMigrationStayOrMove(cell.row)" size="sm" v-show="isMigrationStayOrMoveVisible(cell.row)"
                         style="margin-right: 10px">
                         <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
                         <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
                       </q-btn>
-                      <q-btn round color="primary" @click="doPromoteToFibernode(cell.row)" size="sm" v-show="isPromoteVisible(cell.row)">
+                      <q-btn round color="primary" @click="doMigrationPromoteToFibernode(cell.row)" size="sm" v-show="isMigrationPromoteVisible(cell.row)">
                         <q-icon name="fas fa-medal"/>
                         <q-tooltip>Promote To Fibernode</q-tooltip>
                       </q-btn>
@@ -368,7 +372,7 @@
                   v-show="migrationStep !== 3"
                  />
                 <q-btn
-                  @click="doExecuteMigration()"
+                  @click="doMigrationExecute()"
                   color="primary"
                   label="Finalize"
                   v-show="migrationStep === 3"
