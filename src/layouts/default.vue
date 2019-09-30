@@ -26,22 +26,76 @@
       :breakpoint="2000"
     >
       <q-list>
-        <q-item to="/">
+        <q-item to="/fieldEq">
           <q-item-section avatar>
-            <q-icon name="check_circle" />
+            <q-icon name="fas fa-road" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Active Asset</q-item-label>
+            <q-item-label>Field Equipment</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/Inactive">
+        <q-item to="/indoorEq">
           <q-item-section avatar>
-            <q-icon name="highlight_off" />
+            <q-icon name="fas fa-building" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Inactive Asset</q-item-label>
+            <q-item-label>Indoor Equipment</q-item-label>
           </q-item-section>
         </q-item>
+        <q-expansion-item
+          icon="fas fa-database"
+          label="Master Data"
+          default-opened
+        >
+          <q-item
+            to="/mArea"
+            :inset-level="1"
+          >
+            <q-item-section>
+              <q-item-label>Master Area</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mReg"
+            :inset-level="1"
+          >
+            <q-item-section>
+              <q-item-label>Master Region</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mBuild"
+            :inset-level="1"
+          >
+            <q-item-section>
+              <q-item-label>Master Building</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mPtst"
+            :inset-level="1"
+          >
+            <q-item-section>
+              <q-item-label>Product Type - Sub Type</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mManBran"
+            :inset-level="1"
+          >
+            <q-item-section>
+              <q-item-label>Manufacturer - Brand</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mPSeries"
+            :inset-level="1"
+          >
+            <q-item-section>
+              <q-item-label>Master Product Series</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
       </q-list>
     </q-drawer>
     <q-page-container>

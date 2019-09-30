@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h4>Field Equipment</h4>
+    <h4 style="margin-top: 0px; margin-bottom: 20px">Indoor Equipment</h4>
     <!-- <GChart
         :settings="{ packages: ['orgchart'] }"
         type="OrgChart"
@@ -11,14 +11,6 @@
       <legend>Search</legend>
 
       <div class="row">
-
-        <div class="col-2" style="margin-right: 10px">
-          <q-select
-          v-model="searchVal.equipmentCategory"
-          label="Equipment Category"
-          :options="equipmentCategoryList"
-          />
-        </div>
 
         <div class="col-2" style="margin-right: 10px">
           <q-select
@@ -59,8 +51,15 @@
           />
         </div>
 
+        <div class="col-1" style="margin-right: 10px">
+          <q-input
+          v-model="searchVal.nodeCode"
+          label="Node Code"
+          />
+        </div>
+
         <div class="col-1">
-          <q-btn round color="primary" @click="getContentByFilter(searchVal)">
+          <q-btn round color="primary" @click="doMainEquipmentRefreshList()">
             <q-icon name="search"/>
             <q-tooltip>Search</q-tooltip>
           </q-btn>
@@ -74,7 +73,7 @@
       :columns="equipmentListColumns"
       :pagination.sync="equipmentPagination"
       :rows-per-page-options="[10, 20, 50]"
-      @request="doMainEquipmentListRefresh"
+      @request="doMainEquipmentChangePage"
       row-key="id"
       dense>
 
@@ -103,18 +102,15 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <q-field style="padding: 0px 0px 20px 0px">
-            <q-option-group
-                type="radio"
-                v-model="uploadCategory"
-                :options="[
-                  { label: 'Field Equipment', value: 'field' },
-                  { label: 'Hub Equipment', value: 'hub' },
-                ]"
-            />
-          </q-field>
           <q-field style="padding-bottom: 20px;">
-            <q-uploader ref="uploader" :factory="doUploadFile" />
+            <input
+              id="excelFile"
+              type="file"
+              ref="excelFile"
+            />
+            <q-btn round color="primary" @click="doUploadFile()">
+              <q-icon name="fas fa-file-upload"/>
+            </q-btn>
           </q-field>
         </q-card-section>
       </q-card>
@@ -425,4 +421,4 @@ fieldset legend{
 }
 </style>
 
-<script src="./js/list.js"></script>
+<script src="./js/indoorList.js"></script>

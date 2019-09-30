@@ -1,18 +1,18 @@
 export default {
   data () {
     return {
-      equipmentCategoryList: [],
+      file: undefined,
       productTypeList: [],
       subTypeList: [],
       hubCodeList: [],
       bdfCodeList: [],
       searchVal: {
-        equipmentCategory: 'All',
         productType: 'All',
         subType: 'All',
         productSeries: '',
         hubCode: 'All',
-        bdfCode: 'All'
+        bdfCode: 'All',
+        nodeCode: ''
       },
       equipmentListColumns: [
         {
@@ -108,7 +108,7 @@ export default {
       equipmentToMigrate: {
         hubCode: undefined,
         nodeCode: undefined,
-        serviceType: undefined,
+        service: undefined,
         newHubCode: undefined,
         newNodeCode: undefined,
         newNodeNumber: undefined,
@@ -221,7 +221,7 @@ export default {
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
-      this.$axios.post(`${process.env.urlPrefix}getInitPage/`, {
+      this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {
       })
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
@@ -242,18 +242,11 @@ export default {
           })
         })
     },
-    doMainEquipmentListRefresh (props) {
+    doMainRefresh (params) {
       this.$q.loading.show()
 
-      let { page, rowsPerPage, sortBy } = props.equipmentPagination
-
-      this.$axios.get(`${process.env.urlPrefix}getPagedEquipment/`, {
-        params: {
-          pageIndex: page - 1,
-          pageSize: rowsPerPage,
-          sortBy: sortBy,
-          descending: false
-        }
+      this.$axios.get(`${process.env.urlPrefix}getFieldPagedEquipment/`, {
+        params: params
       })
         .then((response) => {
           this.doMainFillTableResult(response.data)
@@ -267,6 +260,29 @@ export default {
             message: error
           })
         })
+    },
+    doMainEquipmentRefreshList () {
+      const params = {
+        pageIndex: 0,
+        pageSize: this.equipmentPagination.rowsPerPage,
+        searchVal: this.searchVal,
+        sortBy: this.equipmentPagination.sortBy,
+        descending: this.equipmentPagination.descending
+      }
+
+      this.doMainRefresh(params)
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        searchVal: this.searchVal,
+        sortBy: sortBy,
+        descending: descending
+      }
+
+      this.doMainRefresh(params)
     },
     doUploadFile (file) {
       return new Promise((resolve, reject) => {
@@ -298,10 +314,11 @@ export default {
 
       this.equipmentToMigrate.hubCode = cell.row.hubCode
       this.equipmentToMigrate.nodeCode = cell.row.nodeCode
-      this.equipmentToMigrate.serviceType = cell.row.service
+      this.equipmentToMigrate.service = cell.row.service
       this.equipmentToMigrate.newHubCode = cell.row.hubCode
       this.equipmentToMigrate.migrationListNew = []
       this.equipmentToMigrate.isNewNode = false
+      this.equipmentToMigrate.newServiceNodeNumber = undefined
 
       this.equipmentToMigrate.selectedMoveNodeOption = this.moveNodeOptions[0].value
 
@@ -312,7 +329,7 @@ export default {
         {
           params: {
             hubCode: this.equipmentToMigrate.newHubCode,
-            serviceType: this.equipmentToMigrate.serviceType
+            service: this.equipmentToMigrate.service
           }
         })
         .then((response) => {
@@ -510,6 +527,11 @@ export default {
         stayPsCounter: 63
       }
 
+      let oldNewMap = []
+      let oldNewStayMap = []
+      let defaultOldPsCode
+      let defaultNewPsCode
+
       if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
         if (this.lastCodes.lastAmplifierCode !== null) {
           counter.ampliCounter = this.lastCodes.lastAmplifierCode.substring(6, 7)
@@ -519,6 +541,7 @@ export default {
         }
 
         if (this.lastCodes.lastPsCode !== null) {
+          defaultNewPsCode = this.lastCodes.lastPsCode
           psCodePrefix = this.lastCodes.lastPsCode.substring(0, 6)
 
           if (this.lastCodes.lastPsCode.length > 6) {
@@ -539,13 +562,8 @@ export default {
         psCodePrefix = this.equipmentToMigrate.newNodeCode.substring(0, 6)
       }
 
-      let oldNewMap = []
-      let oldNewStayMap = []
-      let defaultNewPsCode
-      let defaultOldPsCode
-
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
-        if (defaultNewPsCode !== undefined) {
+        if ((defaultNewPsCode !== undefined) && (this.equipmentToMigrate.migrationListNew[i].productTypeSubType !== 'PS')) {
           this.equipmentToMigrate.migrationListNew[i].psCode = defaultNewPsCode
         }
 
@@ -611,8 +629,14 @@ export default {
       }
     },
     doMigrationInitializeEquipmentList (removeNode) {
+      const oppositeService = this.equipmentToMigrate.service === 'DIGITAL' ? 'ANALOG' : 'DIGITAL'
+
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         let selectedElement = this.equipmentToMigrate.migrationListNew[i]
+
+        if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+          selectedElement.service = oppositeService
+        }
 
         if ((selectedElement.productTypeSubType === 'FIBERNODE')) {
           if (removeNode) {
@@ -900,6 +924,8 @@ export default {
       this.$refs.targetPreview.expandAll()
     },
     doMigrationValidate () {
+      this.$q.loading.show()
+
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         if (this.equipmentToMigrate.migrationListNew[i].productTypeSubType !== 'PS') {
           this.equipmentToMigrate.migrationListNew[i].amplifierCode = (this.equipmentToMigrate.migrationListNew[i].newName +
@@ -922,6 +948,8 @@ export default {
               this.validationResults.push({ id: this.validationResults.length, message: response.data[i] })
             }
           }
+
+          this.$q.loading.hide()
         })
         .catch((error) => {
           this.$q.notify({
@@ -929,6 +957,8 @@ export default {
             icon: 'report_problem',
             message: error
           })
+
+          this.$q.loading.hide()
         })
     },
     doMigrationChangeMoveNodeOption () {
@@ -969,7 +999,7 @@ export default {
             }
           }
 
-          this.doMainInitPage()
+          this.doMainEquipmentRefreshList()
           this.$q.loading.hide()
         })
         .catch((error) => {

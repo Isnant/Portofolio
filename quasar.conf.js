@@ -54,6 +54,7 @@ module.exports = function (ctx) {
         'QTable',
         'QTr',
         'QTd',
+        'QMarkupTable',
         'QPopupEdit',
         'QStepper',
         'QStep',
@@ -61,7 +62,8 @@ module.exports = function (ctx) {
         'QTabs',
         'QTab',
         'QTabPanel',
-        'QTabPanels'
+        'QTabPanels',
+        'QExpansionItem'
       ],
 
       directives: [
