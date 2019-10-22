@@ -50,12 +50,37 @@
           <br/>
           <fieldset>
             <legend>Region List</legend>
-            <q-markup-table>
-              <tr>
-                <td>Region Id</td>
-                <td>Region Name</td>
-              </tr>
-            </q-markup-table>
+
+            <q-table
+              :data="listOfRegion"
+              :columns="regionColumns"
+              :pagination.sync="regionPagination"
+              @request="doRefreshRegion"
+              row-key="id"
+              :hide-bottom="true"
+              dense>
+
+              <q-td slot="body-cell-id" slot-scope="cell">
+                {{ cell.row.id }}
+                <q-popup-edit v-model="cell.row.id" :disable="cell.row.createdDate !== undefined">
+                  <q-input v-model="cell.row.id" dense />
+                </q-popup-edit>
+              </q-td>
+              <q-td slot="body-cell-region" slot-scope="cell">
+                {{ cell.row.region }}
+                <q-popup-edit v-model="cell.row.region">
+                  <q-input v-model="cell.row.region" dense />
+                </q-popup-edit>
+              </q-td>
+              <q-td slot="body-cell-action" slot-scope="cell">
+                <q-btn color="primary" round size="sm" @click="doToggleRegionStatus(cell)">
+                  <q-icon :name="cell.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
+                  <q-tooltip>{{ cell.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+                </q-btn>
+              </q-td>
+
+            </q-table>
+
             <div style="text-align: right; margin-top: 10px">
               <q-btn flat round color="primary" @click.native="doAddNewRegion()" size="xs">
                 <q-icon name="fas fa-plus"/>
@@ -107,4 +132,4 @@ fieldset legend{
 }
 </style>
 
-<script src="./js/area.js"></script>
+<script src="./js/area-region.js"></script>

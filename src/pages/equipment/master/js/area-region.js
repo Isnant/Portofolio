@@ -2,6 +2,7 @@ export default {
   data () {
     return {
       list: [],
+      listOfRegion: [],
       tableColumns: [
         {
           name: 'id',
@@ -26,12 +27,41 @@ export default {
           style: 'width: 100px'
         }
       ],
+      regionColumns: [
+        {
+          name: 'id',
+          label: 'Region Id',
+          field: 'id',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
+          name: 'region',
+          label: 'Region Name',
+          field: 'region',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'action',
+          label: 'Action',
+          align: 'center',
+          style: 'width: 100px'
+        }
+      ],
       pagination: {
         sortBy: 'area',
         descending: false,
         page: 1,
         rowsPerPage: 20,
         rowsNumber: 0
+      },
+      regionPagination: {
+        sortBy: 'region',
+        descending: false,
+        rowsPerPage: 0
       },
       searchVal: {
         id: '',
@@ -79,12 +109,32 @@ export default {
     doOpenForm (cell) {
       if (cell !== undefined) {
         this.formData = JSON.parse(JSON.stringify(cell.row))
+
+        this.$q.loading.show()
+
+        this.$axios.get(`${process.env.urlPrefix}getRegionByArea/`, {
+          params: { areaId: cell.row.id }
+        })
+          .then((response) => {
+            this.listOfRegion = response.data
+
+            this.$q.loading.hide()
+          })
+          .catch((error) => {
+            this.$q.loading.hide()
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: error
+            })
+          })
       } else {
         this.formData = {
           id: '',
           area: ''
         }
       }
+
       this.showForm = true
     },
     doAddNewRegion () {
@@ -92,6 +142,7 @@ export default {
 
       this.$set(newRegion, 'id', '')
       this.$set(newRegion, 'region', '')
+      this.$set(newRegion, 'recordStatus', 'A')
 
       this.listOfRegion.push(newRegion)
     },

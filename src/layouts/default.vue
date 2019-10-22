@@ -48,19 +48,11 @@
           default-opened
         >
           <q-item
-            to="/mArea"
+            to="/mAreaRegion"
             :inset-level="1"
           >
             <q-item-section>
               <q-item-label>Master Area</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            to="/mReg"
-            :inset-level="1"
-          >
-            <q-item-section>
-              <q-item-label>Master Region</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
