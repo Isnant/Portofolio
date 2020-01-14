@@ -1,0 +1,240 @@
+export default {
+  data () {
+    return {
+      dataList: [],
+      listOfSubType: [],
+      tableColumns: [
+        {
+          name: 'pid',
+          label: 'Type Id',
+          field: 'pid',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
+          name: 'equipmentCategory',
+          label: 'Type Name',
+          field: 'equipmentCategory',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'recordStatus',
+          label: 'Status',
+          field: 'recordStatus',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'action',
+          label: 'Action',
+          align: 'center',
+          style: 'width: 100px'
+        }
+      ],
+      subTypeColumns: [
+        {
+          name: 'id',
+          label: 'Sub Type Id',
+          field: 'id',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
+          name: 'subtype',
+          label: 'Subtype Name',
+          field: 'subtype',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'recordStatus',
+          label: 'Status',
+          field: 'recordStatus',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'action',
+          label: 'Action',
+          align: 'center',
+          style: 'width: 100px'
+        }
+      ],
+      pagination: {
+        sortBy: 'id',
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 0,
+        descending: true
+      },
+      subTypePagination: {
+        sortBy: 'id',
+        descending: false,
+        rowsPerPage: 0
+      },
+      searchVal: {
+        id: '',
+        area: ''
+      },
+      showForm: false,
+      formData: {
+        pid: '',
+        equipmentCategory: '',
+        mode: 'create'
+      }
+    }
+  },
+
+  methods: {
+    doInitPage () {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeInitPage`, {
+        params: {
+          pageIndex: this.pagination.page - 1,
+          pageSize: this.pagination.rowsPerPage,
+          sortBy: this.pagination.sortBy,
+          descending: this.pagination.descending
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          this.dataList = response.data.content
+          this.pagination.rowsNumber = response.data.totalElements
+          this.pagination.page = response.data.number + 1
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    getProductTypeSubTypeList (props) {
+      this.$q.loading.show()
+      this.pagination.sortBy = props.pagination.sortBy
+      this.pagination.descending = props.pagination.descending
+
+      this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeList`, {
+        params: {
+          pageIndex: props.pagination.page - 1,
+          pageSize: props.pagination.rowsPerPage,
+          sortBy: props.pagination.sortBy,
+          descending: props.pagination.descending
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          this.dataList = response.data.content
+          this.pagination.rowsNumber = response.data.totalElements
+          this.pagination.page = response.data.number + 1
+          this.pagination.rowsPerPage = response.data.pageable.pageSize
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    doOpenForm (pid) {
+      if (pid === false) {
+        this.showForm = true
+      } else {
+        this.$q.loading.show()
+        this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeDetail`, {
+          params: {
+            pid: pid
+          }
+        })
+          .then((response) => {
+            this.formData = response.data
+            this.listOfSubType = JSON.parse(this.formData.subType)
+            console.log(this.listOfSubType)
+            this.showForm = true
+            this.$q.loading.hide()
+          })
+          .catch((error) => {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: error
+            })
+            this.$q.loading.hide()
+          })
+      }
+    },
+    doSave () {
+      this.$q.loading.show()
+      this.formData.subType = JSON.stringify(this.listOfSubType)
+      this.$axios.post(`${process.env.urlPrefix}saveProductTypeSubType`, this.formData)
+        .then((response) => {
+          this.$q.loading.hide()
+          if (response.data === 'Success') {
+            this.$q.notify({
+              color: 'positive',
+              icon: 'info',
+              message: 'Record successfully saved'
+            })
+          } else {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: response.data
+            })
+          }
+          this.showForm = false
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+      this.doRefresh()
+    },
+    doAddNewRegion () {
+      let newSubType = {}
+
+      this.$set(newSubType, 'id', '')
+      this.$set(newSubType, 'subtype', '')
+      this.$set(newSubType, 'recordStatus', 'A')
+
+      this.listOfSubType.push(newSubType)
+    },
+    doToggleStatus (cell) {
+      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
+      this.formData = cell.row
+
+      this.doSave()
+    },
+    doToggleSubTypeStatus (cell) {
+      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
+      this.listOfSubType[cell] = cell.row
+      console.log(this.listOfSubType)
+    },
+    doRefresh () {
+      this.formData = {
+        pid: '',
+        equipmentCategory: '',
+        mode: 'create'
+      }
+      this.doInitPage()
+    }
+  },
+  beforeMount () {
+    this.doInitPage()
+  }
+}
