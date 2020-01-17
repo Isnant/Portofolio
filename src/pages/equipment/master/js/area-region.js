@@ -107,7 +107,6 @@ export default {
         })
     },
     doOpenForm (cell) {
-      console.log(cell)
       if (cell !== undefined) {
         this.formData = JSON.parse(JSON.stringify(cell.row))
 
@@ -118,7 +117,6 @@ export default {
         })
           .then((response) => {
             this.listOfRegion = response.data
-            console.log(JSON.parse(JSON.stringify(this.listOfRegion)))
             this.$q.loading.hide()
           })
           .catch((error) => {

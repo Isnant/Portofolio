@@ -140,7 +140,6 @@ export default {
         .then((response) => {
           this.$q.loading.hide()
           this.dataList = response.data.content
-          console.log(this.dataList)
           this.pagination.rowsNumber = response.data.totalElements
           this.pagination.page = response.data.number + 1
           this.dataList.forEach((element, index) => {

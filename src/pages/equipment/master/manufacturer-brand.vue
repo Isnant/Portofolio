@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Product Type - Sub Type</h4>
+    <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Manufacturer - Brand</h4>
     <div style="max-width: 600px">
       <q-table
         :data="dataList"
@@ -11,7 +11,7 @@
         dense>
 
         <q-td slot="body-cell-action" slot-scope="cell">
-          <q-btn color="primary" round size="sm" @click="doOpenForm(cell.row.mid)" style="margin-right: 10px">
+          <q-btn color="primary" round size="sm" @click="doOpenForm(cell.row.pid)" style="margin-right: 10px">
             <q-icon name="fas fa-edit" />
             <q-tooltip>Edit</q-tooltip>
           </q-btn>
@@ -39,18 +39,18 @@
       </q-btn>
     </q-page-sticky>
 
-    <q-dialog v-model="showForm" persistent>
+    <q-dialog v-model="showForm" persistent @before-hide="clear()">
 
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
-          <strong>Product Type Form</strong>
+          <strong>Manufacturer Brand</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
 
         <q-card-section>
           <div>
-            <q-input :readonly="formData.createdBy !== undefined" v-model="formData.mid"
+            <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
               label="Id"/>
             <q-input v-model="formData.manufacturer"
               label="Manufacturer"/>

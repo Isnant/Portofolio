@@ -5,19 +5,11 @@ export default {
       listOfBrand: [],
       tableColumns: [
         {
-          name: 'mid',
+          name: 'pid',
           label: 'Id',
-          field: 'mid',
+          field: 'pid',
           align: 'left',
           style: 'width: 100px',
-          sortable: true
-        },
-        {
-          name: 'manufacturer',
-          label: 'Manufacturer',
-          field: 'manufacturer',
-          align: 'left',
-          style: 'width: 200px',
           sortable: true
         },
         {
@@ -100,8 +92,7 @@ export default {
       },
       showForm: false,
       formData: {
-        mid: '',
-        manufacturer: '',
+        pid: '',
         description: '',
         productTypeSubType: '',
         mode: 'create'
@@ -123,7 +114,6 @@ export default {
         .then((response) => {
           this.$q.loading.hide()
           this.dataList = response.data.content
-          console.log(this.dataList)
           this.pagination.rowsNumber = response.data.totalElements
           this.pagination.page = response.data.number + 1
         })
@@ -165,14 +155,14 @@ export default {
           })
         })
     },
-    doOpenForm (mid) {
-      if (mid === false) {
+    doOpenForm (pid) {
+      if (pid === false) {
         this.showForm = true
       } else {
         this.$q.loading.show()
         this.$axios.get(`${process.env.urlPrefix}getManufacturerBrandDetail`, {
           params: {
-            mid: mid
+            pid: pid
           }
         })
           .then((response) => {
@@ -225,7 +215,6 @@ export default {
     },
     doAddNewRegion () {
       let newBrand = {}
-
       this.$set(newBrand, 'id', '')
       this.$set(newBrand, 'brand', '')
       this.$set(newBrand, 'recordStatus', 'A')
@@ -235,21 +224,20 @@ export default {
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.formData = cell.row
-
       this.doSave()
     },
     doToggleSubTypeStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.listOfSubType[cell] = cell.row
-      console.log(this.listOfSubType)
+      this.listOfBrand[cell] = cell.row
     },
-    doRefresh () {
+    clear () {
       this.formData = {
         pid: '',
-        equipmentCategory: '',
+        description: '',
+        productTypeSubType: '',
         mode: 'create'
       }
-      this.doInitPage()
+      this.listOfBrand = []
     }
   },
   beforeMount () {

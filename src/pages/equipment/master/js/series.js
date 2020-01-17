@@ -2,20 +2,44 @@ export default {
   data () {
     return {
       dataList: [],
-      listOfSubType: [],
+      listOfBrand: [],
       tableColumns: [
         {
           name: 'pid',
-          label: 'Type Id',
+          label: 'Id',
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
           sortable: true
         },
         {
-          name: 'equipmentCategory',
-          label: 'Type Name',
-          field: 'equipmentCategory',
+          name: 'description',
+          label: 'Description',
+          field: 'description',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'manufacturerId',
+          label: 'Manufacturer',
+          field: 'manufacturerId',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'brand',
+          label: 'Brand',
+          field: 'brand',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'productTypeSubType',
+          label: 'Product Type',
+          field: 'productTypeSubType',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -34,19 +58,19 @@ export default {
           style: 'width: 100px'
         }
       ],
-      subTypeColumns: [
+      brandColumns: [
         {
           name: 'id',
-          label: 'Sub Type Id',
+          label: 'Brand Id',
           field: 'id',
           align: 'left',
           style: 'width: 100px',
           sortable: true
         },
         {
-          name: 'subtype',
-          label: 'Subtype Name',
-          field: 'subtype',
+          name: 'brand',
+          label: 'Brand Name',
+          field: 'brand',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -85,16 +109,21 @@ export default {
       showForm: false,
       formData: {
         pid: '',
-        equipmentCategory: '',
+        description: '',
+        manufacturerId: '',
+        brand: '',
+        productTypeSubType: '',
         mode: 'create'
       }
     }
   },
-
+  beforeMount () {
+    this.doInitPage()
+  },
   methods: {
     doInitPage () {
       this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeInitPage`, {
+      this.$axios.get(`${process.env.urlPrefix}getProductSeriesInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
@@ -117,12 +146,12 @@ export default {
           })
         })
     },
-    getProductTypeSubTypeList (props) {
+    getManufacturerBrandList (props) {
       this.$q.loading.show()
       this.pagination.sortBy = props.pagination.sortBy
       this.pagination.descending = props.pagination.descending
 
-      this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeList`, {
+      this.$axios.get(`${process.env.urlPrefix}getProductSeriesList`, {
         params: {
           pageIndex: props.pagination.page - 1,
           pageSize: props.pagination.rowsPerPage,
@@ -151,14 +180,14 @@ export default {
         this.showForm = true
       } else {
         this.$q.loading.show()
-        this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeDetail`, {
+        this.$axios.get(`${process.env.urlPrefix}getProductSeriesDetail`, {
           params: {
             pid: pid
           }
         })
           .then((response) => {
             this.formData = response.data
-            this.listOfSubType = JSON.parse(this.formData.subType)
+            this.formData.mode = 'update'
             this.showForm = true
             this.$q.loading.hide()
           })
@@ -174,8 +203,7 @@ export default {
     },
     doSave () {
       this.$q.loading.show()
-      this.formData.subType = JSON.stringify(this.listOfSubType)
-      this.$axios.post(`${process.env.urlPrefix}saveProductTypeSubType`, this.formData)
+      this.$axios.post(`${process.env.urlPrefix}saveProductSeries`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
           if (response.data === 'Success') {
@@ -192,6 +220,7 @@ export default {
             })
           }
           this.showForm = false
+          this.doRefresh()
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -202,37 +231,26 @@ export default {
             message: error
           })
         })
-      this.doRefresh()
-    },
-    doAddNewRegion () {
-      let newSubType = {}
-
-      this.$set(newSubType, 'id', '')
-      this.$set(newSubType, 'subtype', '')
-      this.$set(newSubType, 'recordStatus', 'A')
-
-      this.listOfSubType.push(newSubType)
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.formData = cell.row
-
+      this.formData.mode = 'update'
       this.doSave()
     },
-    doToggleSubTypeStatus (cell) {
-      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.listOfSubType[cell] = cell.row
-    },
-    doRefresh () {
+    clear () {
       this.formData = {
         pid: '',
-        equipmentCategory: '',
+        description: '',
+        manufacturerId: '',
+        brand: '',
+        productTypeSubType: '',
         mode: 'create'
       }
+    },
+    doRefresh () {
+      this.clear()
       this.doInitPage()
     }
-  },
-  beforeMount () {
-    this.doInitPage()
   }
 }
