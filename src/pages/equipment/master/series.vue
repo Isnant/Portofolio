@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Series</h4>
+    <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Product Series</h4>
     <div style="max-width: 800px">
       <q-table
         :data="dataList"

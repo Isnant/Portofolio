@@ -71,7 +71,7 @@ export default {
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
-        descending: true
+        descending: false
       },
       subTypePagination: {
         sortBy: 'id',
@@ -159,6 +159,7 @@ export default {
           .then((response) => {
             this.formData = response.data
             this.listOfSubType = JSON.parse(this.formData.subType)
+            this.formData.mode = 'update'
             this.showForm = true
             this.$q.loading.hide()
           })
@@ -172,9 +173,11 @@ export default {
           })
       }
     },
-    doSave () {
+    doSave (deactivate) {
       this.$q.loading.show()
-      this.formData.subType = JSON.stringify(this.listOfSubType)
+      if (!deactivate) {
+        this.formData.subType = JSON.stringify(this.listOfSubType)
+      }
       this.$axios.post(`${process.env.urlPrefix}saveProductTypeSubType`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -192,17 +195,18 @@ export default {
             })
           }
           this.showForm = false
+          this.doRefresh()
         })
         .catch((error) => {
           this.$q.loading.hide()
-
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error
           })
+          this.showForm = false
+          this.doRefresh()
         })
-      this.doRefresh()
     },
     doAddNewRegion () {
       let newSubType = {}
@@ -213,23 +217,27 @@ export default {
 
       this.listOfSubType.push(newSubType)
     },
-    doToggleStatus (cell) {
-      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.formData = cell.row
-
-      this.doSave()
+    doToggleStatus (props) {
+      props.row.recordStatus = props.row.recordStatus === 'I' ? 'A' : 'I'
+      this.formData = props.row
+      this.formData.mode = 'update'
+      this.doSave(true)
     },
     doToggleSubTypeStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.listOfSubType[cell] = cell.row
     },
     doRefresh () {
+      this.clear()
+      this.doInitPage()
+    },
+    clear () {
       this.formData = {
         pid: '',
         equipmentCategory: '',
         mode: 'create'
       }
-      this.doInitPage()
+      this.listOfSubType = []
     }
   },
   beforeMount () {
