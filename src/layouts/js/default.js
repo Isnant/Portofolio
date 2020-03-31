@@ -4,7 +4,7 @@ export default {
   name: 'default',
   data () {
     return {
-      leftDrawerOpen: this.$q.platform.is.desktop,
+      leftDrawerOpen: false,
       userInfo: {}
     }
   },

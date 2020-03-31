@@ -100,7 +100,7 @@ module.exports = function (ctx) {
       },
       env: ctx.dev
         ? {
-          urlPrefix: JSON.stringify('http://localhost:9877/')
+          urlPrefix: JSON.stringify('https://localhost:9877/')
         }
         : {
           urlPrefix: JSON.stringify('/')

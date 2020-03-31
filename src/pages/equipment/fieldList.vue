@@ -21,40 +21,34 @@
         </div>
 
         <div class="col-2" style="margin-right: 10px">
-          <q-select
-          v-model="searchVal.subType"
-          label="Product Sub Type"
-          :options="subTypeList"
-          />
-        </div>
-
-        <div class="col-2" style="margin-right: 10px">
           <q-input
-          v-model="searchVal.productSeries"
-          label="Product Series"
+            v-model="searchVal.productSeries"
+            label="Product Series"
+            stack-label
           />
         </div>
 
         <div class="col-1" style="margin-right: 10px">
           <q-select
-          v-model="searchVal.hubCode"
-          label="Hub Code"
-          :options="hubCodeList"
+            v-model="searchVal.hubCode"
+            label="Hub Code"
+            :options="hubCodeList"
           />
         </div>
 
         <div class="col-1" style="margin-right: 10px">
           <q-select
-          v-model="searchVal.bdfCode"
-          label="BDF Code"
-          :options="bdfCodeList"
+            v-model="searchVal.bdfCode"
+            label="BDF Code"
+            :options="bdfCodeList"
           />
         </div>
 
         <div class="col-1" style="margin-right: 10px">
           <q-input
-          v-model="searchVal.nodeCode"
-          label="Node Code"
+            v-model="searchVal.nodeCode"
+            label="Node Code"
+            stack-label
           />
         </div>
 
@@ -79,7 +73,7 @@
 
       <q-td slot="body-cell-action" slot-scope="cell">
         <q-btn color="primary" round size="sm" @click="doMainOpenMigrationForm(cell)"
-            v-show="cell.row.productTypeSubType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10">
+            v-show="cell.row.productType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10">
           <q-icon name="fas fa-exchange-alt" />
           <q-tooltip>Migrate</q-tooltip>
         </q-btn>
@@ -102,18 +96,18 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <q-field style="padding: 0px 0px 20px 0px">
-            <q-option-group
-                type="radio"
-                v-model="uploadCategory"
-                :options="[
-                  { label: 'Field Equipment', value: 'field' },
-                  { label: 'Hub Equipment', value: 'hub' },
-                ]"
-            />
-          </q-field>
+          <a href="/statics/template/FieldTemplate.xlsx">Download Template</a>
+        </q-card-section>
+        <q-card-section>
           <q-field style="padding-bottom: 20px;">
-            <q-uploader ref="uploader" :factory="doUploadFile" />
+            <input
+              id="excelFile"
+              type="file"
+              ref="fieldExcelFile"
+            />
+            <q-btn round color="primary" @click="doUploadFile()">
+              <q-icon name="fas fa-file-upload"/>
+            </q-btn>
           </q-field>
         </q-card-section>
       </q-card>
@@ -261,19 +255,19 @@
 
                     <q-td slot="body-cell-newName" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.newName }}
-                      <q-popup-edit v-model="cell.row.newName" :disable="cell.row.productTypeSubType === 'FIBERNODE'">
+                      <q-popup-edit v-model="cell.row.newName" :disable="cell.row.productType === 'FIBERNODE'">
                         <q-input v-model="cell.row.newNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
-                          :mask="((cell.row.equipmentName !== undefined && cell.row.productTypeSubType === 'PS') ? 'A' : 'XXXX')"
+                          :mask="((cell.row.equipmentName !== undefined && cell.row.productType === 'PS') ? 'A' : 'XXXX')"
                           fill-mask="#" unmasked-value
                           @change="doMigrationChangeEquipmentName(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-productTypeSubType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
-                      {{ cell.row.productTypeSubType }}
+                    <q-td slot="body-cell-productType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
+                      {{ cell.row.productType }}
                     </q-td>
                     <q-td slot="body-cell-predecessor" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.predecessor }}
-                      <q-popup-edit v-model="cell.row.predecessor" :disable="cell.row.productTypeSubType !== 'PS'">
+                      <q-popup-edit v-model="cell.row.predecessor" :disable="cell.row.productType !== 'PS'">
                         <q-input v-model="cell.row.newPredecessorNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
                           mask="XXXX"
                           fill-mask="#"
@@ -282,7 +276,7 @@
                     </q-td>
                     <q-td slot="body-cell-psCode" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                       {{ cell.row.psCode }}
-                      <q-popup-edit v-model="cell.row.psCode" :disable="cell.row.productTypeSubType === 'PS'">
+                      <q-popup-edit v-model="cell.row.psCode" :disable="cell.row.productType === 'PS'">
                         <q-input v-model="cell.row.psCode" dense
                           mask="AAA###A"/>
                       </q-popup-edit>
