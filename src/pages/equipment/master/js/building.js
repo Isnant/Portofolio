@@ -5,9 +5,9 @@ export default {
       listOfRegion: [],
       tableColumns: [
         {
-          name: 'bid',
+          name: 'pid',
           label: 'Building Id',
-          field: 'bid',
+          field: 'pid',
           align: 'left',
           style: 'width: 100px',
           sortable: true
@@ -107,7 +107,7 @@ export default {
       },
       showForm: false,
       formData: {
-        bid: '',
+        pid: '',
         fidRegion: '',
         buildingType: '',
         buildingName: '',
@@ -142,15 +142,6 @@ export default {
           this.dataList = response.data.content
           this.pagination.rowsNumber = response.data.totalElements
           this.pagination.page = response.data.number + 1
-          this.dataList.forEach((element, index) => {
-            if (element.statusEvent === 1) {
-              this.dataList[index].activeStatus = true
-              this.dataList[index].nonActiveStatus = false
-            } else {
-              this.dataList[index].activeStatus = false
-              this.dataList[index].nonActiveStatus = true
-            }
-          })
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -161,7 +152,7 @@ export default {
           })
         })
     },
-    doRefresh (props) {
+    getBuildingList (props) {
       this.$q.loading.show()
       this.pagination.sortBy = props.pagination.sortBy
       this.pagination.descending = props.pagination.descending
@@ -180,16 +171,6 @@ export default {
           this.pagination.rowsNumber = response.data.totalElements
           this.pagination.page = response.data.number + 1
           this.pagination.rowsPerPage = response.data.pageable.pageSize
-
-          this.dataList.forEach((element, index) => {
-            if (element.statusEvent === 1) {
-              this.dataList[index].activeStatus = true
-              this.dataList[index].nonActiveStatus = false
-            } else {
-              this.dataList[index].activeStatus = false
-              this.dataList[index].nonActiveStatus = true
-            }
-          })
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -200,30 +181,31 @@ export default {
           })
         })
     },
-    doOpenForm (cell) {
-      if (cell !== undefined) {
-        this.formData = JSON.parse(JSON.stringify(cell.row))
+    doOpenForm (pid) {
+      if (pid === false) {
+        this.showForm = true
       } else {
-        this.formData = {
-          bid: '',
-          fidRegion: '',
-          buildingType: '',
-          buildingName: '',
-          itCode: '',
-          area: '',
-          region: '',
-          city: '',
-          locationName: '',
-          complexName: '',
-          streetName: '',
-          streetNumber: '',
-          postalCode: '',
-          phone: '',
-          fax: ''
-        }
+        this.$q.loading.show()
+        this.$axios.get(`${process.env.urlPrefix}getBuildingDetail`, {
+          params: {
+            pid: pid
+          }
+        })
+          .then((response) => {
+            this.formData = response.data
+            this.formData.mode = 'update'
+            this.showForm = true
+            this.$q.loading.hide()
+          })
+          .catch((error) => {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: error
+            })
+            this.$q.loading.hide()
+          })
       }
-
-      this.showForm = true
     },
     doSave () {
       this.$q.loading.show()
@@ -231,7 +213,6 @@ export default {
       this.$axios.post(`${process.env.urlPrefix}saveBuilding`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
-
           this.$q.notify({
             color: 'positive',
             icon: 'info',
@@ -243,19 +224,43 @@ export default {
         })
         .catch((error) => {
           this.$q.loading.hide()
-
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error
           })
+          this.showForm = false
+          this.doRefresh()
         })
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.formData = cell.row
-
       this.doSave()
+    },
+    doRefresh () {
+      this.clear()
+      this.doInitPage()
+    },
+    clear () {
+      this.formData = {
+        pid: '',
+        fidRegion: '',
+        buildingType: '',
+        buildingName: '',
+        itCode: '',
+        area: '',
+        region: '',
+        city: '',
+        locationName: '',
+        complexName: '',
+        streetName: '',
+        streetNumber: '',
+        postalCode: '',
+        phone: '',
+        fax: '',
+        mode: 'create'
+      }
     }
   },
   beforeMount () {

@@ -75,11 +75,11 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'id',
+        sortBy: 'pid',
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
-        descending: true
+        descending: false
       },
       subTypePagination: {
         sortBy: 'id',
@@ -99,7 +99,9 @@ export default {
       }
     }
   },
-
+  beforeMount () {
+    this.doInitPage()
+  },
   methods: {
     doInitPage () {
       this.$q.loading.show()
@@ -167,6 +169,7 @@ export default {
         })
           .then((response) => {
             this.formData = response.data
+            this.formData.mode = 'update'
             this.listOfBrand = JSON.parse(this.formData.brand)
             this.showForm = true
             this.$q.loading.hide()
@@ -181,9 +184,11 @@ export default {
           })
       }
     },
-    doSave () {
+    doSave (dactivate) {
       this.$q.loading.show()
-      this.formData.brand = JSON.stringify(this.listOfBrand)
+      if (!dactivate) {
+        this.formData.brand = JSON.stringify(this.listOfBrand)
+      }
       this.$axios.post(`${process.env.urlPrefix}saveManufacturerBrand`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -201,17 +206,18 @@ export default {
             })
           }
           this.showForm = false
+          this.doRefresh()
         })
         .catch((error) => {
           this.$q.loading.hide()
-
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error
           })
+          this.showForm = false
+          this.doRefresh()
         })
-      this.doRefresh()
     },
     doAddNewRegion () {
       let newBrand = {}
@@ -221,14 +227,19 @@ export default {
 
       this.listOfBrand.push(newBrand)
     },
-    doToggleStatus (cell) {
-      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.formData = cell.row
-      this.doSave()
+    doToggleStatus (props) {
+      props.row.recordStatus = props.row.recordStatus === 'I' ? 'A' : 'I'
+      this.formData = props.row
+      this.formData.mode = 'update'
+      this.doSave(true)
     },
     doToggleSubTypeStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.listOfBrand[cell] = cell.row
+    },
+    doRefresh () {
+      this.clear()
+      this.doInitPage()
     },
     clear () {
       this.formData = {
@@ -239,8 +250,5 @@ export default {
       }
       this.listOfBrand = []
     }
-  },
-  beforeMount () {
-    this.doInitPage()
   }
 }

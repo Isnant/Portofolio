@@ -10,14 +10,14 @@
         row-key="id"
         dense>
 
-        <q-td slot="body-cell-action" slot-scope="cell">
-          <q-btn color="primary" round size="sm" @click="doOpenForm(cell.row.pid)" style="margin-right: 10px">
+        <q-td slot="body-cell-action" slot-scope="props">
+          <q-btn color="primary" round size="sm" @click="doOpenForm(props.row.pid)" style="margin-right: 10px">
             <q-icon name="fas fa-edit" />
             <q-tooltip>Edit</q-tooltip>
           </q-btn>
-          <q-btn color="primary" round size="sm" @click="doToggleStatus(cell)">
-            <q-icon :name="cell.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-            <q-tooltip>{{ cell.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+          <q-btn color="primary" round size="sm" @click="doToggleStatus(props)">
+            <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
+            <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
           </q-btn>
         </q-td>
         <q-td slot="body-cell-recordStatus" slot-scope="props">
@@ -52,8 +52,6 @@
           <div>
             <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
               label="Id"/>
-            <q-input v-model="formData.manufacturer"
-              label="Manufacturer"/>
             <q-input v-model="formData.description"
               label="Description"/>
             <q-input v-model="formData.productTypeSubType"
@@ -77,10 +75,10 @@
                   <q-input v-model="cell.row.id" dense />
                 </q-popup-edit>
               </q-td>
-              <q-td slot="body-cell-subtype" slot-scope="cell">
+              <q-td slot="body-cell-brand" slot-scope="cell">
                 {{ cell.row.brand }}
                 <q-popup-edit v-model="cell.row.brand">
-                  <q-input v-model="cell.row.subtype" dense />
+                  <q-input v-model="cell.row.brand" dense />
                 </q-popup-edit>
               </q-td>
               <q-td slot="body-cell-recordStatus" slot-scope="props">
