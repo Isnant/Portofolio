@@ -63,7 +63,12 @@ module.exports = function (ctx) {
         'QTab',
         'QTabPanel',
         'QTabPanels',
-        'QExpansionItem'
+        'QExpansionItem',
+        'QFab',
+        'QFabAction',
+        'QRadio',
+        'QDate',
+        'QPopupProxy'
       ],
 
       directives: [

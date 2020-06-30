@@ -5,6 +5,72 @@ export default {
       productTypeList: [],
       hubCodeList: [],
       bdfCodeList: [],
+      input: {
+        id: '',
+        equipmentCategory: 'Hub',
+        equipmentName: '',
+        description: '',
+        productType: '',
+        productSubType: '',
+        productSeries: '',
+        manufacturer: '',
+        brand: '',
+        serialNumberDevice: '',
+        serialNumberInternal: '',
+        quantity: '',
+        rack: '',
+        chassis: '',
+        slot: '',
+        hubCode: '',
+        hubAddress: '',
+        bdfCode: '',
+        nodeCode: '',
+        psCode: '',
+        amplifierCode: '',
+        service: '',
+        technology: '',
+        ipAddress: '',
+        macAddress: '',
+        capacity: '',
+        capacityUnits: '',
+        usedCapacity: '',
+        capacity1: '',
+        capacity2: '',
+        capacity3: '',
+        noOfPortFront: '',
+        noOfPortRear: '',
+        productionYear: '',
+        assetLifetime: '',
+        purchasedDate: '',
+        installationDate: '',
+        installedBy: '',
+        pic: '',
+        division: '',
+        department: '',
+        propertyOf: '',
+        equipmentStatus: '',
+        predecessor: '',
+        itCode: '',
+        buildingName: '',
+        tower: '',
+        floor: '',
+        complexName: '',
+        streetName: '',
+        streetNumber: '',
+        kelurahan: '',
+        postalCode: '',
+        direction: '',
+        normalDistance: '',
+        updateDistanceDate: '',
+        remarks: '',
+        cascades: '',
+        amplifierNotes: '',
+        memoActiveDate: '',
+        electricalStatus: '',
+        lastModifiedByExcel: '',
+        isComplete: ''
+      },
+      equipmentCategoryList: ['Hub', 'Field', 'Network'],
       searchVal: {
         equipmentCategory: 'Field',
         productType: 'All',
@@ -92,6 +158,10 @@ export default {
       },
       listOfEquipment: [],
       modalUpload: false,
+      modalAddNewAsset: false,
+      addHub: true,
+      modalAddField: false,
+      modalAddNetwork: false,
       uploadCategory: 'field',
       migrationStep: 1,
       showMigrationForm: false,
@@ -218,7 +288,7 @@ export default {
           this.doMainFillTableResult(response.data.listOfEquipment)
 
           this.assetCategoryList = response.data.listOfAssetCategory
-          this.productTypeList = response.data.listOfProductType
+          this.productTypeList = response.data.listOfProductSubType.map(productType => productType.value)
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
 
@@ -274,6 +344,160 @@ export default {
       }
 
       this.doMainRefresh(params)
+    },
+    saveEquipment () {
+      if (this.input.equipmentCategory === 'Hub') {
+        // hub
+        this.$refs.hEquipmentName.validate()
+        this.$refs.hProductType.validate()
+        this.$refs.hProductSubType.validate()
+        this.$refs.hProductSeries.validate()
+        this.$refs.hManufacturer.validate()
+        this.$refs.hBrand.validate()
+        this.$refs.hQuantity.validate()
+        this.$refs.hRack.validate()
+        this.$refs.hChassis.validate()
+        this.$refs.hSlot.validate()
+        this.$refs.hHubCode.validate()
+        this.$refs.hHubAddress.validate()
+        this.$refs.hDivision.validate()
+        this.$refs.hDepartment.validate()
+        this.$refs.hPropertyOf.validate()
+        this.$refs.hEquipmentStatus.validate()
+
+        var h1 = this.$refs.hEquipmentName.hasError
+        var h2 = this.$refs.hProductType.hasError
+        var h3 = this.$refs.hProductSubType.hasError
+        var h4 = this.$refs.hProductSeries.hasError
+        var h5 = this.$refs.hManufacturer.hasError
+        var h6 = this.$refs.hBrand.hasError
+        var h7 = this.$refs.hQuantity.hasError
+        var h8 = this.$refs.hRack.hasError
+        var h9 = this.$refs.hChassis.hasError
+        var h10 = this.$refs.hSlot.hasError
+        var h11 = this.$refs.hHubCode.hasError
+        var h12 = this.$refs.hHubAddress.hasError
+        var h13 = this.$refs.hDivision.hasError
+        var h14 = this.$refs.hDepartment.hasError
+        var h15 = this.$refs.hPropertyOf.hasError
+        var h16 = this.$refs.hEquipmentStatus.hasError
+
+        if (!h1 && !h2 && !h3 && !h4 && !h5 && !h6 && !h7 && !h8 && !h9 && !h10 && !h11 && !h12 && !h13 && !h14 && !h15 && !h16) {
+          this.doSaveEquipment()
+        }
+      } else if (this.input.equipmentCategory === 'Field') {
+        // field
+        this.$refs.fEquipmentName.validate()
+        this.$refs.fProductType.validate()
+        this.$refs.fProductSubType.validate()
+        this.$refs.fProductSeries.validate()
+        this.$refs.fManufacturer.validate()
+        this.$refs.fBrand.validate()
+        this.$refs.fQuantity.validate()
+        this.$refs.fHubCode.validate()
+        this.$refs.fDivision.validate()
+        this.$refs.fDepartment.validate()
+        this.$refs.fPropertyOf.validate()
+        this.$refs.fEquipmentStatus.validate()
+        this.$refs.fDescription.validate()
+        this.$refs.fNodeCode.validate()
+        this.$refs.fPowerSupplyCode.validate()
+        this.$refs.fAmplifierCode.validate()
+        this.$refs.fService.validate()
+        this.$refs.fTechnology.validate()
+        this.$refs.fCapacity.validate()
+        this.$refs.fCapacityUnits.validate()
+        this.$refs.fInstallationDate.validate()
+        this.$refs.fPredecessor.validate()
+        this.$refs.fItCode.validate()
+
+        var f1 = this.$refs.fEquipmentName.hasError
+        var f2 = this.$refs.fProductType.hasError
+        var f3 = this.$refs.fProductSubType.hasError
+        var f4 = this.$refs.fProductSeries.hasError
+        var f5 = this.$refs.fManufacturer.hasError
+        var f6 = this.$refs.fBrand.hasError
+        var f7 = this.$refs.fQuantity.hasError
+        var f8 = this.$refs.fHubCode.hasError
+        var f9 = this.$refs.fDivision.hasError
+        var f10 = this.$refs.fDepartment.hasError
+        var f11 = this.$refs.fPropertyOf.hasError
+        var f12 = this.$refs.fEquipmentStatus.hasError
+        var f13 = this.$refs.fDescription.hasError
+        var f14 = this.$refs.fNodeCode.hasError
+        var f15 = this.$refs.fPowerSupplyCode.hasError
+        var f16 = this.$refs.fAmplifierCode.hasError
+        var f17 = this.$refs.fService.hasError
+        var f18 = this.$refs.fTechnology.hasError
+        var f19 = this.$refs.fCapacity.hasError
+        var f20 = this.$refs.fCapacityUnits.hasError
+        var f21 = this.$refs.fInstallationDate.hasError
+        var f22 = this.$refs.fPredecessor.hasError
+        var f23 = this.$refs.fItCode.hasError
+
+        if (!f1 && !f2 && !f3 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f13 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22 && !f23) {
+          this.doSaveEquipment()
+        }
+      } else if (this.input.equipmentCategory === 'Network') {
+        alert('haha')
+        // Network
+        this.$refs.nEquipmentName.validate()
+        this.$refs.nProductType.validate()
+        this.$refs.nProductSubType.validate()
+        this.$refs.nProductSeries.validate()
+        this.$refs.nManufacturer.validate()
+        this.$refs.nBrand.validate()
+        this.$refs.nQuantity.validate()
+        this.$refs.nHubCode.validate()
+        this.$refs.nHubAddress.validate()
+        this.$refs.nBdfCode.validate()
+        this.$refs.nDivision.validate()
+        this.$refs.nDepartment.validate()
+        this.$refs.nPropertyOf.validate()
+        this.$refs.nEquipmentStatus.validate()
+        this.$refs.nDescription.validate()
+        this.$refs.nItCode.validate()
+
+        var n1 = this.$refs.nEquipmentName.hasError
+        var n2 = this.$refs.nProductType.hasError
+        var n3 = this.$refs.nProductSubType.hasError
+        var n4 = this.$refs.nProductSeries.hasError
+        var n5 = this.$refs.nManufacturer.hasError
+        var n6 = this.$refs.nBrand.hasError
+        var n7 = this.$refs.nQuantity.hasError
+        var n8 = this.$refs.nHubCode.hasError
+        var n9 = this.$refs.nHubAddress.hasError
+        var n10 = this.$refs.nBdfCode.hasError
+        var n11 = this.$refs.nDivision.hasError
+        var n12 = this.$refs.nDepartment.hasError
+        var n13 = this.$refs.nPropertyOf.hasError
+        var n14 = this.$refs.nEquipmentStatus.hasError
+        var n15 = this.$refs.nDescription.hasError
+        var n16 = this.$refs.nItCode.hasError
+        if (!n1 && !n2 && !n3 && !n4 && !n5 && !n6 && !n7 && !n8 && !n9 && !n10 && !n11 && !n12 && !n13 && !n14 && !n15 && !n16) {
+          this.doSaveEquipment()
+        }
+      }
+    },
+    doSaveEquipment () {
+      this.$q.loading.show()
+      this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
+        .then((response) => {
+          this.$q.notify({
+            color: 'positive',
+            icon: 'report_problem',
+            message: `successfully submitted`
+          })
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
     },
     doUploadFile (file) {
       this.$q.loading.show()
@@ -1006,6 +1230,108 @@ export default {
 
           this.$q.loading.hide()
         })
+    },
+    doChangeEquipmentCategory () {
+      if (this.input.equipmentCategory === 'Hub') {
+        this.addHub = true
+        this.addField = false
+        this.addNetwork = false
+        this.input.bdfCode = ''
+        this.input.nodeCode = ''
+        this.input.psCode = ''
+        this.input.amplifierCode = ''
+        this.input.predecessor = ''
+        this.input.itCode = ''
+        this.input.buildingName = ''
+        this.input.tower = ''
+        this.input.floor = ''
+        this.input.complexName = ''
+        this.input.streetName = ''
+        this.input.streetNumber = ''
+        this.input.kelurahan = ''
+        this.input.postalCode = ''
+        this.input.direction = ''
+        this.input.normalDistance = ''
+        this.input.updateDistanceDate = ''
+      } else if (this.input.equipmentCategory === 'Field') {
+        this.addHub = false
+        this.addField = true
+        this.addNetwork = false
+      } else if (this.input.equipmentCategory === 'Network') {
+        this.addHub = false
+        this.addField = false
+        this.addNetwork = true
+        this.input.nodeCode = ''
+        this.input.psCode = ''
+        this.input.amplifierCode = ''
+      }
+    },
+    doRefresh () {
+      this.input = {
+        id: '',
+        equipmentCategory: 'Hub',
+        equipmentName: '',
+        description: '',
+        productType: '',
+        productSubType: '',
+        productSeries: '',
+        manufacturer: '',
+        brand: '',
+        serialNumberDevice: '',
+        serialNumberInternal: '',
+        quantity: '',
+        rack: '',
+        chassis: '',
+        slot: '',
+        hubCode: '',
+        hubAddress: '',
+        bdfCode: '',
+        nodeCode: '',
+        psCode: '',
+        amplifierCode: '',
+        service: '',
+        technology: '',
+        ipAddress: '',
+        macAddress: '',
+        capacity: '',
+        capacityUnits: '',
+        usedCapacity: '',
+        capacity1: '',
+        capacity2: '',
+        capacity3: '',
+        noOfPortFront: '',
+        noOfPortRear: '',
+        productionYear: '',
+        assetLifetime: '',
+        purchasedDate: '',
+        installationDate: '',
+        installedBy: '',
+        pic: '',
+        division: '',
+        department: '',
+        propertyOf: '',
+        equipmentStatus: '',
+        predecessor: '',
+        itCode: '',
+        buildingName: '',
+        tower: '',
+        floor: '',
+        complexName: '',
+        streetName: '',
+        streetNumber: '',
+        kelurahan: '',
+        postalCode: '',
+        direction: '',
+        normalDistance: '',
+        updateDistanceDate: '',
+        remarks: '',
+        cascades: '',
+        amplifierNotes: '',
+        memoActiveDate: '',
+        electricalStatus: '',
+        lastModifiedByExcel: '',
+        isComplete: ''
+      }
     }
   },
   beforeMount () {

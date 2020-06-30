@@ -82,11 +82,872 @@
     </q-table>
 
     <q-page-sticky position="top-right" :offset="[15, 30]">
-      <q-btn round color="primary" @click.native="modalUpload=true">
+      <!-- <q-btn round color="primary" @click.native="modalUpload=true">
         <q-icon name="backup" />
         <q-tooltip>Upload</q-tooltip>
-      </q-btn>
+      </q-btn> -->
+      <q-fab color="primary" glossy icon="keyboard_arrow_down" direction="down">
+        <q-fab-action color="primary" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="primary" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
+      </q-fab>
     </q-page-sticky>
+
+    <q-dialog v-model="modalAddNewAsset" maximized persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-primary text-white">
+        <strong>Add New Equipment</strong>
+        <q-space/>
+        <q-btn dense flat icon="close" v-close-popup/>
+        </q-bar>
+        <div style="margin:20px">
+          <fieldset style="width: 50%">
+          <legend>Equipment Category</legend>
+          <q-radio v-model="input.equipmentCategory" val="Hub" @input="doChangeEquipmentCategory" label="Hub" style="margin-right:30px"/>
+          <q-radio v-model="input.equipmentCategory" val="Field" @input="doChangeEquipmentCategory" label="Field" style="margin-right:30px"/>
+          <q-radio v-model="input.equipmentCategory" val="Network" @input="doChangeEquipmentCategory" label="Network"/>
+          </fieldset>
+          <div v-show="addHub">
+            <div class="row">
+              <div class="col" style="margin-right:10px">
+                <q-input v-model="input.equipmentName" ref="hEquipmentName"
+                  :rules="[val => !! val || 'Equipment Name is required']"
+                  :stack-label="true"
+                  label="Equipment Name*"
+                  tabindex="2"/>
+                <q-input v-model="input.description"
+                  :stack-label="true"
+                  label="Description"
+                  tabindex="3"/>
+                <q-select v-model="input.productType" ref="hProductType"
+                  :rules="[val => !! val || 'Product Type is required']"
+                  :stack-label="true"
+                  label="Product Type*"
+                  tabindex="4"
+                  :options="productTypeList"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.productSubType" ref="hProductSubType"
+                  :rules="[val => !! val || 'Product Sub Type is required']"
+                  :stack-label="true"
+                  label="Product Sub Type*"
+                  tabindex="5"/>
+                <q-input v-model="input.productSeries" ref="hProductSeries"
+                  :rules="[val => !! val || 'Product Series is required']"
+                  :stack-label="true"
+                  label="Product Series*"
+                  tabindex="6"/>
+                <q-input v-model="input.manufacturer" ref="hManufacturer"
+                  :rules="[val => !! val || 'Manufacturer is required']"
+                  :stack-label="true"
+                  label="Manufacturer*"
+                  tabindex="7"/>
+                <q-input v-model="input.brand" ref="hBrand"
+                  :rules="[val => !! val || 'Brand is required']"
+                  :stack-label="true"
+                  label="Brand*"
+                  tabindex="8"/>
+                <q-input v-model="input.serialNumberDevice"
+                  :stack-label="true"
+                  label="Serial Number Device"
+                  tabindex="9"/>
+                <q-input v-model="input.serialNumberInternal"
+                  :stack-label="true"
+                  label="Serial Number Internal"
+                  tabindex="10"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.quantity" ref="hQuantity"
+                  :rules="[val => !! val || 'Quantity is required']"
+                  type="number"
+                  :stack-label="true"
+                  label="Quantity*"
+                  tabindex="11"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.rack" ref="hRack"
+                  :rules="[val => !! val || 'Rack is required']"
+                  :stack-label="true"
+                  label="Rack*"
+                  tabindex="12"/>
+                <q-input v-model="input.chassis" ref="hChassis"
+                  :rules="[val => !! val || 'Chassis is required']"
+                  :stack-label="true"
+                  label="Chassis*"
+                  tabindex="13"/>
+                <q-input v-model="input.slot" ref="hSlot"
+                  :rules="[val => !! val || 'Slot is required']"
+                  :stack-label="true"
+                  label="Slot*"
+                  tabindex="14"/>
+                <q-input v-model="input.hubCode" ref="hHubCode"
+                  :rules="[val => !! val || 'Hub Code is required']"
+                  :stack-label="true"
+                  label="Hub Code*"
+                  tabindex="15"/>
+                <q-input v-model="input.hubAddress" ref="hHubAddress"
+                  :rules="[val => !! val || 'Hub Address is required']"
+                  :stack-label="true"
+                  label="Hub Address*"
+                  tabindex="16"/>
+                <!-- <q-input v-model="input.bdfCode"
+                  :stack-label="true"
+                  label="BDF Code"
+                  tabindex="17"/>
+                <q-input v-model="input.nodeCode"
+                  :stack-label="true"
+                  label="Node Code"
+                  tabindex="18"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.psCode"
+                  :stack-label="true"
+                  label="Power Supply Code"
+                  tabindex="19"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.amplifierCode"
+                  :stack-label="true"
+                  label="Amplifier Code"
+                  tabindex="20"
+                  style="margin-top:20px"/> -->
+                <q-input v-model="input.service"
+                  :stack-label="true"
+                  label="Service"
+                  tabindex="21"/>
+                <q-input v-model="input.technology"
+                  :stack-label="true"
+                  label="Technology"
+                  tabindex="22"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.ipAddress"
+                  :stack-label="true"
+                  label="IP Address"
+                  tabindex="23"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.macAddress"
+                  :stack-label="true"
+                  label="MAC Address"
+                  tabindex="24"
+                  style="margin-top:20px"/>
+              </div>
+              <div class="col">
+                <q-input v-model="input.capacity"
+                  :stack-label="true"
+                  label="Capacity"
+                  tabindex="25"/>
+                <q-input v-model="input.capacityUnits"
+                  :stack-label="true"
+                  label="Capacity Units"
+                  tabindex="26"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.usedCapacity"
+                  :stack-label="true"
+                  label="Used Capacity"
+                  tabindex="27"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity1"
+                  :stack-label="true"
+                  label="Capacity 1"
+                  tabindex="28"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity2"
+                  :stack-label="true"
+                  label="Capacity 2"
+                  tabindex="29"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity3"
+                  :stack-label="true"
+                  label="Capacity 3"
+                  tabindex="30"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.noOfPortFront"
+                  :stack-label="true"
+                  label="No Of Port Front"
+                  tabindex="31"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.noOfPortRear"
+                  :stack-label="true"
+                  label="No Of Port Rear"
+                  tabindex="32"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.productionYear"
+                  :stack-label="true"
+                  label="Production Year"
+                  tabindex="33"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.assetLifetime"
+                  :stack-label="true"
+                  label="Asset Lifetime"
+                  tabindex="34"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.purchasedDate"
+                  :stack-label="true"
+                  label="Purchased Date"
+                  tabindex="35"
+                  style="margin-top:20px">
+                  <template v-slot:after>
+                    <q-icon name="event">
+                      <q-popup-proxy ref="qPurchasedDateHub" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="input.purchasedDate" mask="DD/MM/YYYY" @input="() => $refs.qPurchasedDateHub.hide()" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-input v-model="input.installationDate"
+                  :stack-label="true"
+                  label="Installation Date"
+                  tabindex="36"
+                  style="margin-top:20px">
+                  <template v-slot:after>
+                    <q-icon name="event">
+                      <q-popup-proxy ref="qInstallationDateHub" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="input.installationDate" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDateHub.hide()" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-input v-model="input.installedBy"
+                  :stack-label="true"
+                  label="Installed By"
+                  tabindex="37"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.pic"
+                  :stack-label="true"
+                  label="PIC"
+                  tabindex="38"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.division" ref="hDivision"
+                  :rules="[val => !! val || 'Division is required']"
+                  :stack-label="true"
+                  label="Division*"
+                  tabindex="39"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.department" ref="hDepartment"
+                  :rules="[val => !! val || 'Department is required']"
+                  :stack-label="true"
+                  label="Department*"
+                  tabindex="40"/>
+                <q-input v-model="input.propertyOf" ref="hPropertyOf"
+                  :rules="[val => !! val || 'Property Of is required']"
+                  :stack-label="true"
+                  label="Property Of*"
+                  tabindex="41"/>
+                <q-input v-model="input.equipmentStatus" ref="hEquipmentStatus"
+                  :rules="[val => !! val || 'Status Reason is required']"
+                  :stack-label="true"
+                  label="Status Reason*"
+                  tabindex="42"/>
+                <q-input v-model="input.remarks"
+                  :stack-label="true"
+                  label="Remarks"
+                  tabindex="43"/>
+              </div>
+            </div>
+          </div>
+          <div v-show="addField">
+            <div class="row">
+              <div class="col" style="margin-right:10px">
+                <q-input v-model="input.equipmentName" ref="fEquipmentName"
+                  :rules="[val => !! val || 'Equipment Name is required']"
+                  :stack-label="true"
+                  label="Equipment Name*"
+                  tabindex="2"/>
+                <q-input v-model="input.description" ref="fDescription"
+                  :rules="[val => !! val || 'Description Type is required']"
+                  :stack-label="true"
+                  label="Description*"
+                  tabindex="3"/>
+                <q-input v-model="input.productType" ref="fProductType"
+                  :rules="[val => !! val || 'Product Type is required']"
+                  :stack-label="true"
+                  label="Product Type*"
+                  tabindex="4"/>
+                <q-input v-model="input.productSubType" ref="fProductSubType"
+                  :rules="[val => !! val || 'Product Sub Type is required']"
+                  :stack-label="true"
+                  label="Product Sub Type*"
+                  tabindex="5"/>
+                <q-input v-model="input.productSeries" ref="fProductSeries"
+                  :rules="[val => !! val || 'Product Series is required']"
+                  :stack-label="true"
+                  label="Product Series*"
+                  tabindex="6"/>
+                <q-input v-model="input.manufacturer" ref="fManufacturer"
+                  :rules="[val => !! val || 'Manufacturer is required']"
+                  :stack-label="true"
+                  label="Manufacturer*"
+                  tabindex="7"/>
+                <q-input v-model="input.brand" ref="fBrand"
+                  :rules="[val => !! val || 'Brand is required']"
+                  :stack-label="true"
+                  label="Brand*"
+                  tabindex="8"/>
+                <q-input v-model="input.serialNumberDevice"
+                  :stack-label="true"
+                  label="Serial Number Device"
+                  tabindex="9"/>
+                <q-input v-model="input.serialNumberInternal"
+                  :stack-label="true"
+                  label="Serial Number Internal"
+                  tabindex="10"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.quantity" ref="fQuantity"
+                  :rules="[val => !! val || 'Quantity is required']"
+                  :stack-label="true"
+                  label="Quantity*"
+                  type="number"
+                  tabindex="11"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.rack"
+                  :stack-label="true"
+                  label="Rack"
+                  tabindex="12"/>
+                <q-input v-model="input.chassis"
+                  :stack-label="true"
+                  label="Chassis"
+                  tabindex="13"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.slot"
+                  :stack-label="true"
+                  label="Slot"
+                  tabindex="14"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.hubCode" ref="fHubCode"
+                  :rules="[val => !! val || 'Hub Code is required']"
+                  :stack-label="true"
+                  label="Hub Code*"
+                  tabindex="15"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.hubAddress"
+                  :stack-label="true"
+                  label="Hub Address"
+                  tabindex="16"/>
+                <q-input v-model="input.bdfCode"
+                  :stack-label="true"
+                  label="BDF Code"
+                  tabindex="17"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.nodeCode" ef="fNodeCode"
+                  :rules="[val => !! val || 'Node Code is required']"
+                  :stack-label="true"
+                  label="Node Code*"
+                  tabindex="18"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.psCode" ef="fPowerSupplyCode"
+                  :rules="[val => !! val || 'Power Supply Code is required']"
+                  :stack-label="true"
+                  label="Power Supply Code*"
+                  tabindex="19"/>
+                <q-input v-model="input.amplifierCode" ef="mAmplifierCode"
+                  :rules="[val => !! val || 'Amplifier Code is required']"
+                  :stack-label="true"
+                  label="Amplifier Code*"
+                  tabindex="20"/>
+                <q-input v-model="input.service" ef="fService"
+                  :rules="[val => !! val || 'Service is required']"
+                  :stack-label="true"
+                  label="Service*"
+                  tabindex="21"/>
+                <q-input v-model="input.technology" ef="fTechnology"
+                  :rules="[val => !! val || 'Technology is required']"
+                  :stack-label="true"
+                  label="Technology*"
+                  tabindex="22"/>
+                <q-input v-model="input.ipAddress"
+                  :stack-label="true"
+                  label="IP Address"
+                  tabindex="23"/>
+                <q-input v-model="input.macAddress"
+                  :stack-label="true"
+                  label="MAC Address"
+                  tabindex="24"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity" ef="fCapacity"
+                  :rules="[val => !! val || 'Capacity is required']"
+                  :stack-label="true"
+                  label="Capacity*"
+                  tabindex="25"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacityUnits" ef="fCapacityUnits"
+                  :rules="[val => !! val || 'Capacity Units is required']"
+                  :stack-label="true"
+                  label="Capacity Units*"
+                  tabindex="26"/>
+                <q-input v-model="input.usedCapacity"
+                  :stack-label="true"
+                  label="Used Capacity"
+                  tabindex="27"/>
+                <q-input v-model="input.capacity1"
+                  :stack-label="true"
+                  label="Capacity 1"
+                  tabindex="28"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity2"
+                  :stack-label="true"
+                  label="Capacity 2"
+                  tabindex="29"
+                  style="margin-top:20px"/>
+              </div>
+              <div class="col">
+                <q-input v-model="input.capacity3"
+                  :stack-label="true"
+                  label="Capacity 3"
+                  tabindex="30"/>
+                <q-input v-model="input.noOfPortFront"
+                  :stack-label="true"
+                  label="No Of Port Front"
+                  tabindex="31"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.noOfPortRear"
+                  :stack-label="true"
+                  label="No Of Port Rear"
+                  tabindex="32"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.productionYear"
+                  :stack-label="true"
+                  label="Production Year"
+                  tabindex="33"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.assetLifetime"
+                  :stack-label="true"
+                  label="Asset Lifetime"
+                  tabindex="34"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.purchasedDate"
+                  :stack-label="true"
+                  label="Purchased Date"
+                  tabindex="35"
+                  style="margin-top:20px">
+                  <template v-slot:after>
+                    <q-icon name="event">
+                      <q-popup-proxy ref="qPurchasedDate" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="input.purchasedDate" mask="DD/MM/YYYY" @input="() => $refs.qPurchasedDate.hide()" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-input v-model="input.installationDate" ef="mInstallationDate"
+                  :rules="[val => !! val || 'Installation Date is required']"
+                  :stack-label="true"
+                  label="Installation Date*"
+                  tabindex="36"
+                  style="margin-top:20px">
+                  <template v-slot:after>
+                    <q-icon name="event">
+                      <q-popup-proxy ref="qInstallationDate" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="input.installationDate" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDate.hide()" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-input v-model="input.installedBy"
+                  :stack-label="true"
+                  label="Installed By"
+                  tabindex="37"/>
+                <q-input v-model="input.pic"
+                  :stack-label="true"
+                  label="PIC"
+                  tabindex="38"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.division" ref="fDivision"
+                  :rules="[val => !! val || 'Division is required']"
+                  :stack-label="true"
+                  label="Division*"
+                  tabindex="39"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.department" ref="fDepartment"
+                  :rules="[val => !! val || 'Department is required']"
+                  :stack-label="true"
+                  label="Department*"
+                  tabindex="40"/>
+                <q-input v-model="input.propertyOf" ref="fPropertyOf"
+                  :rules="[val => !! val || 'Property Of is required']"
+                  :stack-label="true"
+                  label="Property Of*"
+                  tabindex="41"/>
+                <q-input v-model="input.equipmentStatus" ref="fEquipmentStatus"
+                  :rules="[val => !! val || 'Status Reason is required']"
+                  :stack-label="true"
+                  label="Status Reason*"
+                  tabindex="42"/>
+                <q-input v-model="input.predecessor" ref="fPredecessor"
+                  :rules="[val => !! val || 'Predecessor is required']"
+                  :stack-label="true"
+                  label="Predecessor*"
+                  tabindex="43"/>
+                <q-input v-model="input.itCode" ref="fItCode"
+                  :rules="[val => !! val || 'IT Code is required']"
+                  :stack-label="true"
+                  label="IT Code*"
+                  tabindex="44"/>
+                <q-input v-model="input.buildingName"
+                  :stack-label="true"
+                  label="Building Name"
+                  tabindex="45"/>
+                <q-input v-model="input.tower"
+                  :stack-label="true"
+                  label="Tower"
+                  tabindex="46"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.floor"
+                  :stack-label="true"
+                  label="Floor"
+                  tabindex="47"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.complexName"
+                  :stack-label="true"
+                  label="Complex Name"
+                  tabindex="48"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.streetName"
+                  :stack-label="true"
+                  label="Street Name"
+                  tabindex="49"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.streetNumber"
+                  :stack-label="true"
+                  label="Street Number"
+                  tabindex="50"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.kelurahan"
+                  :stack-label="true"
+                  label="District"
+                  tabindex="51"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.postalCode"
+                  :stack-label="true"
+                  label="Postal Code"
+                  tabindex="52"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.direction"
+                  :stack-label="true"
+                  label="Direction"
+                  tabindex="53"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.normalDistance"
+                  :stack-label="true"
+                  label="Normal Distance"
+                  tabindex="54"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.updateDistanceDate"
+                  :stack-label="true"
+                  label="Update Distance Date"
+                  tabindex="55"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.remarks"
+                  :stack-label="true"
+                  label="Remarks"
+                  tabindex="56"
+                  style="margin-top:20px"/>
+              </div>
+            </div>
+          </div>
+          <div v-show="addNetwork">
+            <div class="row">
+              <div class="col" style="margin-right:10px">
+                <q-input v-model="input.equipmentName" ref="nEquipmentName"
+                  :rules="[val => !! val || 'Equipment Name is required']"
+                  :stack-label="true"
+                  label="Equipment Name*"
+                  tabindex="2"/>
+                <q-input v-model="input.description" ref="nDescription"
+                  :rules="[val => !! val || 'Description Type is required']"
+                  :stack-label="true"
+                  label="Description*"
+                  tabindex="3"/>
+                <q-input v-model="input.productType" ref="nProductType"
+                  :rules="[val => !! val || 'Product Type is required']"
+                  :stack-label="true"
+                  label="Product Type*"
+                  tabindex="4"/>
+                <q-input v-model="input.productSubType" ref="nProductSubType"
+                  :rules="[val => !! val || 'Product Sub Type is required']"
+                  :stack-label="true"
+                  label="Product Sub Type*"
+                  tabindex="5"/>
+                <q-input v-model="input.productSeries" ref="nProductSeries"
+                  :rules="[val => !! val || 'Product Series is required']"
+                  :stack-label="true"
+                  label="Product Series*"
+                  tabindex="6"/>
+                <q-input v-model="input.manufacturer" ref="nManufacturer"
+                  :rules="[val => !! val || 'Manufacturer is required']"
+                  :stack-label="true"
+                  label="Manufacturer*"
+                  tabindex="7"/>
+                <q-input v-model="input.brand" ref="nBrand"
+                  :rules="[val => !! val || 'Brand is required']"
+                  :stack-label="true"
+                  label="Brand*"
+                  tabindex="8"/>
+                <q-input v-model="input.serialNumberDevice"
+                  :stack-label="true"
+                  label="Serial Number Device"
+                  tabindex="9"/>
+                <q-input v-model="input.serialNumberInternal"
+                  :stack-label="true"
+                  label="Serial Number Internal"
+                  tabindex="10"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.quantity" ref="nQuantity"
+                  :rules="[val => !! val || 'Quantity is required']"
+                  :stack-label="true"
+                  label="Quantity*"
+                  type="number"
+                  tabindex="11"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.rack"
+                  :stack-label="true"
+                  label="Rack"
+                  tabindex="12"/>
+                <q-input v-model="input.chassis"
+                  :stack-label="true"
+                  label="Chassis"
+                  tabindex="13"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.slot"
+                  :stack-label="true"
+                  label="Slot"
+                  tabindex="14"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.hubCode" ref="nHubCode"
+                  :rules="[val => !! val || 'Hub Code is required']"
+                  :stack-label="true"
+                  label="Hub Code*"
+                  tabindex="15"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.hubAddress" ref="nHubAddress"
+                  :rules="[val => !! val || 'Hub Address is required']"
+                  :stack-label="true"
+                  label="Hub Address*"
+                  tabindex="16"/>
+                <q-input v-model="input.bdfCode" ref="nBdfCode"
+                  :rules="[val => !! val || 'BDF Code is required']"
+                  :stack-label="true"
+                  label="BDF Code*"
+                  tabindex="17"/>
+                <!-- <q-input v-model="input.nodeCode"
+                  :stack-label="true"
+                  label="Node Code"
+                  tabindex="18"/>
+                <q-input v-model="input.psCode"
+                  :stack-label="true"
+                  label="Power Supply Code"
+                  tabindex="19"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.amplifierCode"
+                  :stack-label="true"
+                  label="Amplifier Code"
+                  tabindex="20"
+                  style="margin-top:20px"/> -->
+                <q-input v-model="input.service"
+                  :stack-label="true"
+                  label="Service*"
+                  tabindex="21"/>
+                <q-input v-model="input.technology"
+                  :stack-label="true"
+                  label="Technology*"
+                  tabindex="22"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.ipAddress"
+                  :stack-label="true"
+                  label="IP Address"
+                  tabindex="23"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.macAddress"
+                  :stack-label="true"
+                  label="MAC Address"
+                  tabindex="24"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity"
+                  :stack-label="true"
+                  label="Capacity*"
+                  tabindex="25"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacityUnits"
+                  :stack-label="true"
+                  label="Capacity Units*"
+                  tabindex="26"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.usedCapacity"
+                  :stack-label="true"
+                  label="Used Capacity"
+                  tabindex="27"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity1"
+                  :stack-label="true"
+                  label="Capacity 1"
+                  tabindex="28"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity2"
+                  :stack-label="true"
+                  label="Capacity 2"
+                  tabindex="29"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.capacity3"
+                  :stack-label="true"
+                  label="Capacity 3"
+                  tabindex="30"
+                  style="margin-top:20px"/>
+              </div>
+              <div class="col">
+                <q-input v-model="input.noOfPortFront"
+                  :stack-label="true"
+                  label="No Of Port Front"
+                  tabindex="31"/>
+                <q-input v-model="input.noOfPortRear"
+                  :stack-label="true"
+                  label="No Of Port Rear"
+                  tabindex="32"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.productionYear"
+                  :stack-label="true"
+                  label="Production Year"
+                  tabindex="33"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.assetLifetime"
+                  :stack-label="true"
+                  label="Asset Lifetime"
+                  tabindex="34"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.purchasedDate"
+                  :stack-label="true"
+                  label="Purchased Date"
+                  tabindex="35"
+                  style="margin-top:20px">
+                  <template v-slot:after>
+                    <q-icon name="event">
+                      <q-popup-proxy ref="qPurchasedDate" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="input.purchasedDate" mask="DD/MM/YYYY" @input="() => $refs.qPurchasedDate.hide()" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-input v-model="input.installationDate"
+                  :stack-label="true"
+                  label="Installation Date"
+                  tabindex="36"
+                  style="margin-top:20px">
+                  <template v-slot:after>
+                    <q-icon name="event">
+                      <q-popup-proxy ref="qInstallationDate" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="input.installationDate" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDate.hide()" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-input v-model="input.installedBy"
+                  :stack-label="true"
+                  label="Installed By"
+                  tabindex="37"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.pic"
+                  :stack-label="true"
+                  label="PIC"
+                  tabindex="38"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.division" ref="nDivision"
+                  :rules="[val => !! val || 'Division is required']"
+                  :stack-label="true"
+                  label="Division*"
+                  tabindex="39"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.department" ref="nDepartment"
+                  :rules="[val => !! val || 'Department is required']"
+                  :stack-label="true"
+                  label="Department*"
+                  tabindex="40"/>
+                <q-input v-model="input.propertyOf" ref="nPropertyOf"
+                  :rules="[val => !! val || 'Property Of is required']"
+                  :stack-label="true"
+                  label="Property Of*"
+                  tabindex="41"/>
+                <q-input v-model="input.equipmentStatus" ref="nEquipmentStatus"
+                  :rules="[val => !! val || 'Status Reason is required']"
+                  :stack-label="true"
+                  label="Status Reason*"
+                  tabindex="42"/>
+                <q-input v-model="input.predecessor"
+                  :stack-label="true"
+                  label="Predecessor"
+                  tabindex="43"/>
+                <q-input v-model="input.itCode" ref="nItCode"
+                  :rules="[val => !! val || 'IT Code is required']"
+                  :stack-label="true"
+                  label="'IT Code*"
+                  tabindex="44"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.buildingName"
+                  :stack-label="true"
+                  label="Building Name"
+                  tabindex="45"/>
+                <q-input v-model="input.tower"
+                  :stack-label="true"
+                  label="Tower"
+                  tabindex="46"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.floor"
+                  :stack-label="true"
+                  label="Floor"
+                  tabindex="47"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.complexName"
+                  :stack-label="true"
+                  label="Complex Name"
+                  tabindex="48"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.streetName"
+                  :stack-label="true"
+                  label="Street Name"
+                  tabindex="49"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.streetNumber"
+                  :stack-label="true"
+                  label="Street Number"
+                  tabindex="50"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.kelurahan"
+                  :stack-label="true"
+                  label="District"
+                  tabindex="51"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.postalCode"
+                  :stack-label="true"
+                  label="Postal Code"
+                  tabindex="52"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.direction"
+                  :stack-label="true"
+                  label="Direction"
+                  tabindex="53"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.normalDistance"
+                  :stack-label="true"
+                  label="Normal Distance"
+                  tabindex="54"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.updateDistanceDate"
+                  :stack-label="true"
+                  label="Update Distance Date"
+                  tabindex="55"
+                  style="margin-top:20px">
+                  <template v-slot:after>
+                    <q-icon name="event">
+                      <q-popup-proxy ref="qUpdateDistanceDate" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="input.updateDistanceDate" mask="DD/MM/YYYY" @input="() => $refs.qUpdateDistanceDate.hide()" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-input v-model="input.remarks"
+                  :stack-label="true"
+                  label="Remarks"
+                  tabindex="56"
+                  style="margin-top:20px"/>
+              </div>
+            </div>
+          </div>
+          <div align="right">
+            <q-btn @click.native="saveEquipment" color="warning" icon="save"/>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
 
     <q-dialog v-model="modalUpload" persistent>
       <q-card class="bg-white">
