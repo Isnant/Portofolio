@@ -5,6 +5,9 @@ export default {
       productTypeList: [],
       hubCodeList: [],
       bdfCodeList: [],
+      subTypeList: [],
+      manufacturerList: [],
+      brandList: [],
       input: {
         id: '',
         equipmentCategory: 'Hub',
@@ -291,6 +294,8 @@ export default {
           this.productTypeList = response.data.listOfProductSubType.map(productType => productType.value)
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
+          this.manufacturerList = response.data.listOfManufacturer
+          console.log(this.manufacturerList)
 
           this.$q.loading.hide()
         })
@@ -1265,6 +1270,48 @@ export default {
         this.input.psCode = ''
         this.input.amplifierCode = ''
       }
+    },
+    getSubType () {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getSubType`, {
+        params: {
+          pid: this.input.productType
+        }
+      })
+        .then((response) => {
+          console.log(response.data)
+          this.subTypeList = response.data.map(subType => subType.id)
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
+    getBrand () {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getBrand`, {
+        params: {
+          pid: this.input.manufacturer.value
+        }
+      })
+        .then((response) => {
+          console.log(response.data)
+          this.brandList = response.data.map(brand => brand.brand)
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
     },
     doRefresh () {
       this.input = {
