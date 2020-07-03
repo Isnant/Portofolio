@@ -357,14 +357,17 @@
                   :stack-label="true"
                   label="Description*"
                   tabindex="3"/>
-                <q-input v-model="input.productType" ref="fProductType"
+                <q-select v-model="input.productType" ref="fProductType"
                   :rules="[val => !! val || 'Product Type is required']"
                   :stack-label="true"
                   label="Product Type*"
+                  :options="productTypeList"
+                  @input="getSubType()"
                   tabindex="4"/>
-                <q-input v-model="input.productSubType" ref="fProductSubType"
+                <q-select v-model="input.productSubType" ref="fProductSubType"
                   :rules="[val => !! val || 'Product Sub Type is required']"
                   :stack-label="true"
+                  :options="subTypeList"
                   label="Product Sub Type*"
                   tabindex="5"/>
                 <q-input v-model="input.productSeries" ref="fProductSeries"
@@ -372,15 +375,18 @@
                   :stack-label="true"
                   label="Product Series*"
                   tabindex="6"/>
-                <q-input v-model="input.manufacturer" ref="fManufacturer"
+                <q-select v-model="input.manufacturer" ref="fManufacturer"
                   :rules="[val => !! val || 'Manufacturer is required']"
                   :stack-label="true"
                   label="Manufacturer*"
+                  :options="manufacturerList"
+                  @input="getBrand"
                   tabindex="7"/>
-                <q-input v-model="input.brand" ref="fBrand"
+                <q-select v-model="input.brand" ref="fBrand"
                   :rules="[val => !! val || 'Brand is required']"
                   :stack-label="true"
                   label="Brand*"
+                  :options="brandList"
                   tabindex="8"/>
                 <q-input v-model="input.serialNumberDevice"
                   :stack-label="true"
@@ -655,14 +661,17 @@
                   :stack-label="true"
                   label="Description*"
                   tabindex="3"/>
-                <q-input v-model="input.productType" ref="nProductType"
+                <q-select v-model="input.productType" ref="nProductType"
                   :rules="[val => !! val || 'Product Type is required']"
+                  :options="productTypeList"
+                  @input="getSubType"
                   :stack-label="true"
                   label="Product Type*"
                   tabindex="4"/>
-                <q-input v-model="input.productSubType" ref="nProductSubType"
+                <q-select v-model="input.productSubType" ref="nProductSubType"
                   :rules="[val => !! val || 'Product Sub Type is required']"
                   :stack-label="true"
+                  :options="subTypeList"
                   label="Product Sub Type*"
                   tabindex="5"/>
                 <q-input v-model="input.productSeries" ref="nProductSeries"
@@ -670,14 +679,17 @@
                   :stack-label="true"
                   label="Product Series*"
                   tabindex="6"/>
-                <q-input v-model="input.manufacturer" ref="nManufacturer"
+                <q-select v-model="input.manufacturer" ref="nManufacturer"
                   :rules="[val => !! val || 'Manufacturer is required']"
                   :stack-label="true"
                   label="Manufacturer*"
+                  :options="manufacturerList"
+                  @input="getBrand()"
                   tabindex="7"/>
-                <q-input v-model="input.brand" ref="nBrand"
+                <q-select v-model="input.brand" ref="nBrand"
                   :rules="[val => !! val || 'Brand is required']"
                   :stack-label="true"
+                  :options="brandList"
                   label="Brand*"
                   tabindex="8"/>
                 <q-input v-model="input.serialNumberDevice"
