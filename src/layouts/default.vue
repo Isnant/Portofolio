@@ -42,6 +42,14 @@
             <q-item-label>Indoor Equipment</q-item-label>
           </q-item-section>
         </q-item>
+         <q-item to="/networkEq">
+          <q-item-section avatar>
+            <q-icon name="fas fa-building" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Network Equipment</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-expansion-item
           icon="fas fa-database"
           label="Master Data"

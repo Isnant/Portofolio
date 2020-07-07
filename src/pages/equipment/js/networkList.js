@@ -10,7 +10,7 @@ export default {
       brandList: [],
       input: {
         id: '',
-        equipmentCategory: 'Field',
+        equipmentCategory: 'Network',
         equipmentName: '',
         description: '',
         productType: '',
@@ -75,7 +75,7 @@ export default {
       },
       equipmentCategoryList: ['Hub', 'Field', 'Network'],
       searchVal: {
-        equipmentCategory: 'Field',
+        equipmentCategory: 'Network',
         productType: 'All',
         productSeries: '',
         hubCode: 'All',
@@ -286,7 +286,7 @@ export default {
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
-      this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {})
+      this.$axios.post(`${process.env.urlPrefix}getNetworkInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
 
@@ -309,6 +309,7 @@ export default {
     },
     doMainRefresh (params) {
       this.$q.loading.show()
+      console.log(params)
 
       this.$axios.get(`${process.env.urlPrefix}getFieldPagedEquipment/`, {
         params: params
@@ -338,69 +339,42 @@ export default {
 
       this.doMainRefresh(params)
     },
-    doMainEquipmentChangePage (props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination
-      const params = {
-        pageIndex: page - 1,
-        pageSize: rowsPerPage,
-        searchVal: this.searchVal,
-        sortBy: sortBy,
-        descending: descending
-      }
-
-      this.doMainRefresh(params)
-    },
     saveEquipment () {
-      // field
-      this.$refs.fEquipmentName.validate()
-      this.$refs.fProductType.validate()
-      this.$refs.fProductSubType.validate()
-      this.$refs.fProductSeries.validate()
-      this.$refs.fManufacturer.validate()
-      this.$refs.fBrand.validate()
-      this.$refs.fQuantity.validate()
-      this.$refs.fHubCode.validate()
-      this.$refs.fDivision.validate()
-      this.$refs.fDepartment.validate()
-      this.$refs.fPropertyOf.validate()
-      this.$refs.fEquipmentStatus.validate()
-      this.$refs.fDescription.validate()
-      this.$refs.fNodeCode.validate()
-      this.$refs.fPowerSupplyCode.validate()
-      this.$refs.fAmplifierCode.validate()
-      this.$refs.fService.validate()
-      this.$refs.fTechnology.validate()
-      this.$refs.fCapacity.validate()
-      this.$refs.fCapacityUnits.validate()
-      this.$refs.fInstallationDate.validate()
-      this.$refs.fPredecessor.validate()
-      this.$refs.fItCode.validate()
+      // Network
+      this.$refs.nEquipmentName.validate()
+      this.$refs.nProductType.validate()
+      this.$refs.nProductSubType.validate()
+      this.$refs.nProductSeries.validate()
+      this.$refs.nManufacturer.validate()
+      this.$refs.nBrand.validate()
+      this.$refs.nQuantity.validate()
+      this.$refs.nHubCode.validate()
+      this.$refs.nHubAddress.validate()
+      this.$refs.nBdfCode.validate()
+      this.$refs.nDivision.validate()
+      this.$refs.nDepartment.validate()
+      this.$refs.nPropertyOf.validate()
+      this.$refs.nEquipmentStatus.validate()
+      this.$refs.nDescription.validate()
+      this.$refs.nItCode.validate()
 
-      var f1 = this.$refs.fEquipmentName.hasError
-      var f2 = this.$refs.fProductType.hasError
-      var f3 = this.$refs.fProductSubType.hasError
-      var f4 = this.$refs.fProductSeries.hasError
-      var f5 = this.$refs.fManufacturer.hasError
-      var f6 = this.$refs.fBrand.hasError
-      var f7 = this.$refs.fQuantity.hasError
-      var f8 = this.$refs.fHubCode.hasError
-      var f9 = this.$refs.fDivision.hasError
-      var f10 = this.$refs.fDepartment.hasError
-      var f11 = this.$refs.fPropertyOf.hasError
-      var f12 = this.$refs.fEquipmentStatus.hasError
-      var f13 = this.$refs.fDescription.hasError
-      var f14 = this.$refs.fNodeCode.hasError
-      var f15 = this.$refs.fPowerSupplyCode.hasError
-      var f16 = this.$refs.fAmplifierCode.hasError
-      var f17 = this.$refs.fService.hasError
-      var f18 = this.$refs.fTechnology.hasError
-      var f19 = this.$refs.fCapacity.hasError
-      var f20 = this.$refs.fCapacityUnits.hasError
-      var f21 = this.$refs.fInstallationDate.hasError
-      var f22 = this.$refs.fPredecessor.hasError
-      var f23 = this.$refs.fItCode.hasError
-
-      if (!f1 && !f2 && !f3 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f13 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22 && !f23) {
+      var n1 = this.$refs.nEquipmentName.hasError
+      var n2 = this.$refs.nProductType.hasError
+      var n3 = this.$refs.nProductSubType.hasError
+      var n4 = this.$refs.nProductSeries.hasError
+      var n5 = this.$refs.nManufacturer.hasError
+      var n6 = this.$refs.nBrand.hasError
+      var n7 = this.$refs.nQuantity.hasError
+      var n8 = this.$refs.nHubCode.hasError
+      var n9 = this.$refs.nHubAddress.hasError
+      var n10 = this.$refs.nBdfCode.hasError
+      var n11 = this.$refs.nDivision.hasError
+      var n12 = this.$refs.nDepartment.hasError
+      var n13 = this.$refs.nPropertyOf.hasError
+      var n14 = this.$refs.nEquipmentStatus.hasError
+      var n15 = this.$refs.nDescription.hasError
+      var n16 = this.$refs.nItCode.hasError
+      if (!n1 && !n2 && !n3 && !n4 && !n5 && !n6 && !n7 && !n8 && !n9 && !n10 && !n11 && !n12 && !n13 && !n14 && !n15 && !n16) {
         this.doSaveEquipment()
       }
     },
@@ -423,6 +397,18 @@ export default {
           })
           this.$q.loading.hide()
         })
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        searchVal: this.searchVal,
+        sortBy: sortBy,
+        descending: descending
+      }
+
+      this.doMainRefresh(params)
     },
     doUploadFile (file) {
       this.$q.loading.show()
@@ -1236,7 +1222,7 @@ export default {
     doRefresh () {
       this.input = {
         id: '',
-        equipmentCategory: 'Field',
+        equipmentCategory: 'Network',
         equipmentName: '',
         description: '',
         productType: '',

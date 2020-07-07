@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h4 style="margin-top: 0px; margin-bottom: 20px">Field Equipment</h4>
+    <h4 style="margin-top: 0px; margin-bottom: 20px">Network Equipment</h4>
     <!-- <GChart
         :settings="{ packages: ['orgchart'] }"
         type="OrgChart"
@@ -95,7 +95,7 @@
     <q-dialog v-model="modalAddNewAsset" maximized persistent>
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
-        <strong>Add New Field Equipment</strong>
+        <strong>Add New Network Equipment</strong>
         <q-space/>
         <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
@@ -107,47 +107,47 @@
                 label="Equipment Category"
                 disable
                 tabindex="1"/>
-              <q-input v-model="input.equipmentName" ref="fEquipmentName"
+              <q-input v-model="input.equipmentName" ref="nEquipmentName"
                 :rules="[val => !! val || 'Equipment Name is required']"
                 :stack-label="true"
                 label="Equipment Name*"
                 tabindex="2"
                 style="margin-top:20px"/>
-              <q-input v-model="input.description" ref="fDescription"
+              <q-input v-model="input.description" ref="nDescription"
                 :rules="[val => !! val || 'Description Type is required']"
                 :stack-label="true"
                 label="Description*"
                 tabindex="3"/>
-              <q-select v-model="input.productType" ref="fProductType"
+              <q-select v-model="input.productType" ref="nProductType"
                 :rules="[val => !! val || 'Product Type is required']"
+                :options="productTypeList"
+                @input="getSubType"
                 :stack-label="true"
                 label="Product Type*"
-                :options="productTypeList"
-                @input="getSubType()"
                 tabindex="4"/>
-              <q-select v-model="input.productSubType" ref="fProductSubType"
+              <q-select v-model="input.productSubType" ref="nProductSubType"
                 :rules="[val => !! val || 'Product Sub Type is required']"
                 :stack-label="true"
                 :options="subTypeList"
                 label="Product Sub Type*"
                 tabindex="5"/>
-              <q-input v-model="input.productSeries" ref="fProductSeries"
+              <q-input v-model="input.productSeries" ref="nProductSeries"
                 :rules="[val => !! val || 'Product Series is required']"
                 :stack-label="true"
                 label="Product Series*"
                 tabindex="6"/>
-              <q-select v-model="input.manufacturer" ref="fManufacturer"
+              <q-select v-model="input.manufacturer" ref="nManufacturer"
                 :rules="[val => !! val || 'Manufacturer is required']"
                 :stack-label="true"
                 label="Manufacturer*"
                 :options="manufacturerList"
-                @input="getBrand"
+                @input="getBrand()"
                 tabindex="7"/>
-              <q-select v-model="input.brand" ref="fBrand"
+              <q-select v-model="input.brand" ref="nBrand"
                 :rules="[val => !! val || 'Brand is required']"
                 :stack-label="true"
-                label="Brand*"
                 :options="brandList"
+                label="Brand*"
                 tabindex="8"/>
               <q-input v-model="input.serialNumberDevice"
                 :stack-label="true"
@@ -158,7 +158,7 @@
                 label="Serial Number Internal"
                 tabindex="10"
                 style="margin-top:20px"/>
-              <q-input v-model="input.quantity" ref="fQuantity"
+              <q-input v-model="input.quantity" ref="nQuantity"
                 :rules="[val => !! val || 'Quantity is required']"
                 :stack-label="true"
                 label="Quantity*"
@@ -179,92 +179,91 @@
                 label="Slot"
                 tabindex="14"
                 style="margin-top:20px"/>
-              <q-input v-model="input.hubCode" ref="fHubCode"
+              <q-input v-model="input.hubCode" ref="nHubCode"
                 :rules="[val => !! val || 'Hub Code is required']"
                 :stack-label="true"
                 label="Hub Code*"
                 tabindex="15"
                 style="margin-top:20px"/>
-              <q-input v-model="input.hubAddress"
+              <q-input v-model="input.hubAddress" ref="nHubAddress"
+                :rules="[val => !! val || 'Hub Address is required']"
                 :stack-label="true"
-                label="Hub Address"
+                label="Hub Address*"
                 tabindex="16"/>
-              <q-input v-model="input.bdfCode"
+              <q-input v-model="input.bdfCode" ref="nBdfCode"
+                :rules="[val => !! val || 'BDF Code is required']"
                 :stack-label="true"
-                label="BDF Code"
-                tabindex="17"
+                label="BDF Code*"
+                tabindex="17"/>
+              <!-- <q-input v-model="input.nodeCode"
+                :stack-label="true"
+                label="Node Code"
+                tabindex="18"/>
+              <q-input v-model="input.psCode"
+                :stack-label="true"
+                label="Power Supply Code"
+                tabindex="19"
                 style="margin-top:20px"/>
-              <q-input v-model="input.nodeCode" ef="fNodeCode"
-                :rules="[val => !! val || 'Node Code is required']"
+              <q-input v-model="input.amplifierCode"
                 :stack-label="true"
-                label="Node Code*"
-                tabindex="18"
-                style="margin-top:20px"/>
-              <q-input v-model="input.psCode" ef="fPowerSupplyCode"
-                :rules="[val => !! val || 'Power Supply Code is required']"
-                :stack-label="true"
-                label="Power Supply Code*"
-                tabindex="19"/>
-              <q-input v-model="input.amplifierCode" ef="mAmplifierCode"
-                :rules="[val => !! val || 'Amplifier Code is required']"
-                :stack-label="true"
-                label="Amplifier Code*"
-                tabindex="20"/>
-              <q-input v-model="input.service" ef="fService"
-                :rules="[val => !! val || 'Service is required']"
+                label="Amplifier Code"
+                tabindex="20"
+                style="margin-top:20px"/> -->
+              <q-input v-model="input.service"
                 :stack-label="true"
                 label="Service*"
                 tabindex="21"/>
-              <q-input v-model="input.technology" ef="fTechnology"
-                :rules="[val => !! val || 'Technology is required']"
+              <q-input v-model="input.technology"
                 :stack-label="true"
                 label="Technology*"
-                tabindex="22"/>
+                tabindex="22"
+                style="margin-top:20px"/>
               <q-input v-model="input.ipAddress"
                 :stack-label="true"
                 label="IP Address"
-                tabindex="23"/>
+                tabindex="23"
+                style="margin-top:20px"/>
               <q-input v-model="input.macAddress"
                 :stack-label="true"
                 label="MAC Address"
                 tabindex="24"
                 style="margin-top:20px"/>
-              <q-input v-model="input.capacity" ef="fCapacity"
-                :rules="[val => !! val || 'Capacity is required']"
+              <q-input v-model="input.capacity"
                 :stack-label="true"
                 label="Capacity*"
                 tabindex="25"
                 style="margin-top:20px"/>
-              <q-input v-model="input.capacityUnits" ef="fCapacityUnits"
-                :rules="[val => !! val || 'Capacity Units is required']"
+              <q-input v-model="input.capacityUnits"
                 :stack-label="true"
                 label="Capacity Units*"
-                tabindex="26"/>
+                tabindex="26"
+                style="margin-top:20px"/>
               <q-input v-model="input.usedCapacity"
                 :stack-label="true"
                 label="Used Capacity"
-                tabindex="27"/>
+                tabindex="27"
+                style="margin-top:20px"/>
               <q-input v-model="input.capacity1"
                 :stack-label="true"
                 label="Capacity 1"
                 tabindex="28"
                 style="margin-top:20px"/>
-            </div>
-            <div class="col">
               <q-input v-model="input.capacity2"
                 :stack-label="true"
                 label="Capacity 2"
-                tabindex="29"/>
+                tabindex="29"
+                style="margin-top:20px"/>
               <q-input v-model="input.capacity3"
                 :stack-label="true"
                 label="Capacity 3"
                 tabindex="30"
                 style="margin-top:20px"/>
+            </div>
+            <div class="col">
               <q-input v-model="input.noOfPortFront"
                 :stack-label="true"
                 label="No Of Port Front"
-                tabindex="31"
-                style="margin-top:20px"/>
+                tabindex="31"/>
               <q-input v-model="input.noOfPortRear"
                 :stack-label="true"
                 label="No Of Port Rear"
@@ -293,10 +292,9 @@
                   </q-icon>
                 </template>
               </q-input>
-              <q-input v-model="input.installationDate" ef="mInstallationDate"
-                :rules="[val => !! val || 'Installation Date is required']"
+              <q-input v-model="input.installationDate"
                 :stack-label="true"
-                label="Installation Date*"
+                label="Installation Date"
                 tabindex="36"
                 style="margin-top:20px">
                 <template v-slot:after>
@@ -310,43 +308,44 @@
               <q-input v-model="input.installedBy"
                 :stack-label="true"
                 label="Installed By"
-                tabindex="37"/>
+                tabindex="37"
+                style="margin-top:20px"/>
               <q-input v-model="input.pic"
                 :stack-label="true"
                 label="PIC"
                 tabindex="38"
                 style="margin-top:20px"/>
-              <q-input v-model="input.division" ref="fDivision"
+              <q-input v-model="input.division" ref="nDivision"
                 :rules="[val => !! val || 'Division is required']"
                 :stack-label="true"
                 label="Division*"
                 tabindex="39"
                 style="margin-top:20px"/>
-              <q-input v-model="input.department" ref="fDepartment"
+              <q-input v-model="input.department" ref="nDepartment"
                 :rules="[val => !! val || 'Department is required']"
                 :stack-label="true"
                 label="Department*"
                 tabindex="40"/>
-              <q-input v-model="input.propertyOf" ref="fPropertyOf"
+              <q-input v-model="input.propertyOf" ref="nPropertyOf"
                 :rules="[val => !! val || 'Property Of is required']"
                 :stack-label="true"
                 label="Property Of*"
                 tabindex="41"/>
-              <q-input v-model="input.equipmentStatus" ref="fEquipmentStatus"
+              <q-input v-model="input.equipmentStatus" ref="nEquipmentStatus"
                 :rules="[val => !! val || 'Status Reason is required']"
                 :stack-label="true"
                 label="Status Reason*"
                 tabindex="42"/>
-              <q-input v-model="input.predecessor" ref="fPredecessor"
-                :rules="[val => !! val || 'Predecessor is required']"
+              <q-input v-model="input.predecessor"
                 :stack-label="true"
-                label="Predecessor*"
+                label="Predecessor"
                 tabindex="43"/>
-              <q-input v-model="input.itCode" ref="fItCode"
+              <q-input v-model="input.itCode" ref="nItCode"
                 :rules="[val => !! val || 'IT Code is required']"
                 :stack-label="true"
-                label="IT Code*"
-                tabindex="44"/>
+                label="'IT Code*"
+                tabindex="44"
+                style="margin-top:20px"/>
               <q-input v-model="input.buildingName"
                 :stack-label="true"
                 label="Building Name"
@@ -400,7 +399,15 @@
                 :stack-label="true"
                 label="Update Distance Date"
                 tabindex="55"
-                style="margin-top:20px"/>
+                style="margin-top:20px">
+                <template v-slot:after>
+                  <q-icon name="event">
+                    <q-popup-proxy ref="qUpdateDistanceDate" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="input.updateDistanceDate" mask="DD/MM/YYYY" @input="() => $refs.qUpdateDistanceDate.hide()" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
               <q-input v-model="input.remarks"
                 :stack-label="true"
                 label="Remarks"
@@ -745,4 +752,4 @@ fieldset legend{
 }
 </style>
 
-<script src="./js/fieldList.js"></script>
+<script src="./js/networkList.js"></script>

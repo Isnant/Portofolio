@@ -7,6 +7,7 @@ const routes = [
       { path: '', component: () => import('pages/equipment/fieldList.vue') },
       { path: '/fieldEq', component: () => import('pages/equipment/fieldList.vue') },
       { path: '/indoorEq', component: () => import('pages/equipment/indoorList.vue') },
+      { path: '/networkEq', component: () => import('pages/equipment/networkList.vue') },
       { path: '/login', component: () => import('pages/security/login.vue') },
       { path: '/mAreaRegion', component: () => import('pages/equipment/master/area-region.vue') },
       { path: '/mReg', component: () => import('pages/equipment/master/region.vue') },
