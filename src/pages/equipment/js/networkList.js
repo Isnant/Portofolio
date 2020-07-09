@@ -380,6 +380,7 @@ export default {
     },
     doSaveEquipment () {
       this.$q.loading.show()
+      console.log(this.input)
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
           this.$q.notify({
@@ -388,6 +389,9 @@ export default {
             message: `successfully submitted`
           })
           this.$q.loading.hide()
+          this.modalAddNewAsset = false
+          this.doRefresh()
+          this.doMainInitPage()
         })
         .catch((error) => {
           this.$q.notify({
@@ -1200,9 +1204,10 @@ export default {
     },
     getBrand () {
       this.$q.loading.show()
+      this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
-          pid: this.input.manufacturer.value
+          pid: this.input.manufacturer
         }
       })
         .then((response) => {
@@ -1218,6 +1223,10 @@ export default {
           })
           this.$q.loading.hide()
         })
+    },
+    doEdit (cell) {
+      this.input = JSON.parse(JSON.stringify(cell.row))
+      this.modalAddNewAsset = true
     },
     doRefresh () {
       this.input = {

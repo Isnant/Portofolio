@@ -72,10 +72,9 @@
       dense>
 
       <q-td slot="body-cell-action" slot-scope="cell">
-        <q-btn color="primary" round size="sm" @click="doMainOpenMigrationForm(cell)"
-            v-show="cell.row.productType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10">
-          <q-icon name="fas fa-exchange-alt" />
-          <q-tooltip>Migrate</q-tooltip>
+        <q-btn color="primary" round size="sm" @click="doEdit(cell)">
+          <q-icon name="fas fa-edit" />
+          <q-tooltip>Edit</q-tooltip>
         </q-btn>
       </q-td>
 
@@ -92,7 +91,7 @@
       </q-fab>
     </q-page-sticky>
 
-    <q-dialog v-model="modalAddNewAsset" maximized persistent>
+    <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
         <strong>Add New Network Equipment</strong>
@@ -211,11 +210,11 @@
                 style="margin-top:20px"/> -->
               <q-input v-model="input.service"
                 :stack-label="true"
-                label="Service*"
+                label="Service"
                 tabindex="21"/>
               <q-input v-model="input.technology"
                 :stack-label="true"
-                label="Technology*"
+                label="Technology"
                 tabindex="22"
                 style="margin-top:20px"/>
               <q-input v-model="input.ipAddress"
@@ -230,12 +229,12 @@
                 style="margin-top:20px"/>
               <q-input v-model="input.capacity"
                 :stack-label="true"
-                label="Capacity*"
+                label="Capacity"
                 tabindex="25"
                 style="margin-top:20px"/>
               <q-input v-model="input.capacityUnits"
                 :stack-label="true"
-                label="Capacity Units*"
+                label="Capacity Units"
                 tabindex="26"
                 style="margin-top:20px"/>
               <q-input v-model="input.usedCapacity"
@@ -343,7 +342,7 @@
               <q-input v-model="input.itCode" ref="nItCode"
                 :rules="[val => !! val || 'IT Code is required']"
                 :stack-label="true"
-                label="'IT Code*"
+                label="IT Code*"
                 tabindex="44"
                 style="margin-top:20px"/>
               <q-input v-model="input.buildingName"

@@ -68,7 +68,8 @@ module.exports = function (ctx) {
         'QFabAction',
         'QRadio',
         'QDate',
-        'QPopupProxy'
+        'QPopupProxy',
+        'QBtnDropdown'
       ],
 
       directives: [

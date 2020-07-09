@@ -44,7 +44,7 @@
         </q-item>
          <q-item to="/networkEq">
           <q-item-section avatar>
-            <q-icon name="fas fa-building" />
+            <q-icon name="fas fa-network-wired" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Network Equipment</q-item-label>

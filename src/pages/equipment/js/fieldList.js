@@ -1,3 +1,7 @@
+import { colors } from 'quasar'
+
+const { getBrand, setBrand } = colors
+const infoColor = getBrand('info')
 export default {
   data () {
     return {
@@ -295,7 +299,7 @@ export default {
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
-          console.log(this.manufacturerList)
+          console.log(this.productTypeList)
 
           this.$q.loading.hide()
         })
@@ -367,12 +371,10 @@ export default {
       this.$refs.fDescription.validate()
       this.$refs.fNodeCode.validate()
       this.$refs.fPowerSupplyCode.validate()
-      this.$refs.fAmplifierCode.validate()
       this.$refs.fService.validate()
       this.$refs.fTechnology.validate()
       this.$refs.fCapacity.validate()
       this.$refs.fCapacityUnits.validate()
-      this.$refs.fInstallationDate.validate()
       this.$refs.fPredecessor.validate()
       this.$refs.fItCode.validate()
 
@@ -391,16 +393,20 @@ export default {
       var f13 = this.$refs.fDescription.hasError
       var f14 = this.$refs.fNodeCode.hasError
       var f15 = this.$refs.fPowerSupplyCode.hasError
-      var f16 = this.$refs.fAmplifierCode.hasError
+      var f16 = false
       var f17 = this.$refs.fService.hasError
       var f18 = this.$refs.fTechnology.hasError
       var f19 = this.$refs.fCapacity.hasError
       var f20 = this.$refs.fCapacityUnits.hasError
-      var f21 = this.$refs.fInstallationDate.hasError
-      var f22 = this.$refs.fPredecessor.hasError
-      var f23 = this.$refs.fItCode.hasError
+      var f21 = this.$refs.fPredecessor.hasError
+      var f22 = this.$refs.fItCode.hasError
 
-      if (!f1 && !f2 && !f3 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f13 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22 && !f23) {
+      if (this.input.productType === 'AMPLIFIER' || this.input.productType === 'AMPLIFIER INDOOR') {
+        this.$refs.fAmplifierCode.validate()
+        f16 = this.$refs.fAmplifierCode.hasError
+      }
+
+      if (!f1 && !f2 && !f3 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f13 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22) {
         this.doSaveEquipment()
       }
     },
@@ -414,6 +420,9 @@ export default {
             message: `successfully submitted`
           })
           this.$q.loading.hide()
+          this.modalAddNewAsset = false
+          this.doRefresh()
+          this.doMainInitPage()
         })
         .catch((error) => {
           this.$q.notify({
@@ -1199,7 +1208,6 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response.data)
           this.subTypeList = response.data.map(subType => subType.id)
           this.$q.loading.hide()
         })
@@ -1212,11 +1220,15 @@ export default {
           this.$q.loading.hide()
         })
     },
+    convertManufacturer () {
+      this.input.manufacturer = this.input.manufacturer.value
+    },
     getBrand () {
       this.$q.loading.show()
+      this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
-          pid: this.input.manufacturer.value
+          pid: this.input.manufacturer
         }
       })
         .then((response) => {
@@ -1232,6 +1244,10 @@ export default {
           })
           this.$q.loading.hide()
         })
+    },
+    doEdit (cell) {
+      this.input = JSON.parse(JSON.stringify(cell.row))
+      this.modalAddNewAsset = true
     },
     doRefresh () {
       this.input = {
@@ -1303,5 +1319,13 @@ export default {
   },
   beforeMount () {
     this.doMainInitPage()
+  },
+  computed: {
+    warningNodeCode () {
+      return this.input.nodeCode.length === 8
+    }
+  },
+  mounted () {
+    setBrand('negative', infoColor, document.getElementById('inputNodeCode'))
   }
 }

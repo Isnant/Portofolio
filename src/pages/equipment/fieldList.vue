@@ -72,11 +72,44 @@
       dense>
 
       <q-td slot="body-cell-action" slot-scope="cell">
-        <q-btn color="primary" round size="sm" @click="doMainOpenMigrationForm(cell)"
-            v-show="cell.row.productType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10">
-          <q-icon name="fas fa-exchange-alt" />
-          <q-tooltip>Migrate</q-tooltip>
-        </q-btn>
+        <q-btn-dropdown color="primary">
+          <q-list>
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-btn color="primary" round size="sm" @click="doEdit(cell)">
+                  <q-icon name="fas fa-edit" />
+                  <q-tooltip>Edit</q-tooltip>
+                </q-btn>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-show="cell.row.productType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10" v-close-popup>
+              <q-item-section>
+                <q-btn color="primary" round size="sm" @click="doMainOpenMigrationForm(cell)">
+                  <q-icon name="fas fa-exchange-alt" />
+                  <q-tooltip>Migrate</q-tooltip>
+                </q-btn>
+              </q-item-section>
+            </q-item>
+            <!-- <div v-if="props.row.reqType === 'Update Address'">
+              <q-item clickable v-close-popup @click.native="getDetail(props.row.reqNo, false)">
+                <q-item-section avatar>
+                  <div align="left">
+                    <q-icon name="line_weight" color="primary"/><font class="text-blue"> Detail</font>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </div>
+            <div v-else>
+              <q-item clickable v-close-popup @click.native="getDetail(props.row.reqNo, true)">
+                <q-item-section avatar>
+                  <div align="left">
+                    <q-icon name="line_weight" color="primary"/><font class="text-blue"> Detail</font>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </div> -->
+          </q-list>
+        </q-btn-dropdown>
       </q-td>
 
     </q-table>
@@ -92,7 +125,7 @@
       </q-fab>
     </q-page-sticky>
 
-    <q-dialog v-model="modalAddNewAsset" maximized persistent>
+    <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
         <strong>Add New Field Equipment</strong>
@@ -147,6 +180,7 @@
                 :rules="[val => !! val || 'Brand is required']"
                 :stack-label="true"
                 label="Brand*"
+                @input="convertBrand"
                 :options="brandList"
                 tabindex="8"/>
               <q-input v-model="input.serialNumberDevice"
@@ -194,28 +228,48 @@
                 label="BDF Code"
                 tabindex="17"
                 style="margin-top:20px"/>
-              <q-input v-model="input.nodeCode" ef="fNodeCode"
+              <q-input id="inputNodeCode" v-model="input.nodeCode" ref="fNodeCode"
                 :rules="[val => !! val || 'Node Code is required']"
                 :stack-label="true"
                 label="Node Code*"
                 tabindex="18"
-                style="margin-top:20px"/>
-              <q-input v-model="input.psCode" ef="fPowerSupplyCode"
+                :error="!warningNodeCode"
+                hint="in 8 characters"
+                style="margin-top:20px">
+                <template v-slot:error>
+                  <font class="text-orange">Input Node Code in 8 characters.</font>
+                </template>
+              </q-input>
+              <q-input v-model="input.psCode" ref="fPowerSupplyCode"
                 :rules="[val => !! val || 'Power Supply Code is required']"
                 :stack-label="true"
                 label="Power Supply Code*"
                 tabindex="19"/>
-              <q-input v-model="input.amplifierCode" ef="mAmplifierCode"
-                :rules="[val => !! val || 'Amplifier Code is required']"
-                :stack-label="true"
-                label="Amplifier Code*"
-                tabindex="20"/>
-              <q-input v-model="input.service" ef="fService"
-                :rules="[val => !! val || 'Service is required']"
-                :stack-label="true"
-                label="Service*"
-                tabindex="21"/>
-              <q-input v-model="input.technology" ef="fTechnology"
+              <div v-if="input.productType === 'AMPLIFIER' || input.productType === 'AMPLIFIER INDOOR'">
+                <q-input v-model="input.amplifierCode" ref="fAmplifierCode"
+                  :rules="[val => !! val || 'Amplifier Code is required']"
+                  :stack-label="true"
+                  label="Amplifier Code*"
+                  tabindex="20"/>
+                <q-input v-model="input.service" ref="fService"
+                  :rules="[val => !! val || 'Service is required']"
+                  :stack-label="true"
+                  label="Service*"
+                  tabindex="21"/>
+              </div>
+              <div v-else>
+                <q-input v-model="input.amplifierCode"
+                  :stack-label="true"
+                  label="Amplifier Code"
+                  tabindex="20"/>
+                <q-input v-model="input.service" ref="fService"
+                  :rules="[val => !! val || 'Service is required']"
+                  :stack-label="true"
+                  label="Service*"
+                  tabindex="21"
+                  style="margin-top:20px"/>
+              </div>
+              <q-input v-model="input.technology" ref="fTechnology"
                 :rules="[val => !! val || 'Technology is required']"
                 :stack-label="true"
                 label="Technology*"
@@ -229,13 +283,13 @@
                 label="MAC Address"
                 tabindex="24"
                 style="margin-top:20px"/>
-              <q-input v-model="input.capacity" ef="fCapacity"
+              <q-input v-model="input.capacity" ref="fCapacity"
                 :rules="[val => !! val || 'Capacity is required']"
                 :stack-label="true"
                 label="Capacity*"
                 tabindex="25"
                 style="margin-top:20px"/>
-              <q-input v-model="input.capacityUnits" ef="fCapacityUnits"
+              <q-input v-model="input.capacityUnits" ref="fCapacityUnits"
                 :rules="[val => !! val || 'Capacity Units is required']"
                 :stack-label="true"
                 label="Capacity Units*"

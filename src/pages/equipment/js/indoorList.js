@@ -266,6 +266,9 @@ export default {
             message: `successfully submitted`
           })
           this.$q.loading.hide()
+          this.modalAddNewAsset = false
+          this.doRefresh()
+          this.doMainInitPage()
         })
         .catch((error) => {
           this.$q.notify({
@@ -351,9 +354,10 @@ export default {
     },
     getBrand () {
       this.$q.loading.show()
+      this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
-          pid: this.input.manufacturer.value
+          pid: this.input.manufacturer
         }
       })
         .then((response) => {
@@ -369,6 +373,10 @@ export default {
           })
           this.$q.loading.hide()
         })
+    },
+    doEdit (cell) {
+      this.input = JSON.parse(JSON.stringify(cell.row))
+      this.modalAddNewAsset = true
     },
     doRefresh () {
       this.input = {

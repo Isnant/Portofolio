@@ -72,7 +72,7 @@
       dense>
 
       <q-td slot="body-cell-action" slot-scope="cell">
-        <q-btn color="primary" round size="sm" @click="doMainOpenEquipmentForm(cell)">
+        <q-btn color="primary" round size="sm" @click="doEdit(cell)">
           <q-icon name="fas fa-edit" />
           <q-tooltip>Edit</q-tooltip>
         </q-btn>
@@ -92,7 +92,7 @@
       </q-fab>
     </q-page-sticky>
 
-    <q-dialog v-model="modalAddNewAsset" maximized persistent>
+    <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
         <strong>Add New Indoor Equipment</strong>
