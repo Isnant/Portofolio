@@ -1,10 +1,12 @@
-import { colors } from 'quasar'
-
-const { getBrand, setBrand } = colors
-const infoColor = getBrand('info')
 export default {
   data () {
     return {
+      bluePsCode: false,
+      orangePsCode: true,
+      blueNodeCode: false,
+      orangeNodeCode: true,
+      blueAmplifierCode: false,
+      orangeAmplifierCode: true,
       file: undefined,
       productTypeList: [],
       hubCodeList: [],
@@ -1249,6 +1251,33 @@ export default {
       this.input = JSON.parse(JSON.stringify(cell.row))
       this.modalAddNewAsset = true
     },
+    changeColorNodeCode () {
+      if (this.input.nodeCode.length === 8) {
+        this.blueNodeCode = true
+        this.orangeNodeCode = false
+      } else {
+        this.blueNodeCode = false
+        this.orangeNodeCode = true
+      }
+    },
+    changeColorPsCode () {
+      if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
+        this.bluePsCode = true
+        this.orangePsCode = false
+      } else {
+        this.bluePsCode = false
+        this.orangePsCode = true
+      }
+    },
+    changeColorAmplifierCode () {
+      if (this.input.amplifierCode.length === 10) {
+        this.blueAmplifierCode = true
+        this.orangeAmplifierCode = false
+      } else {
+        this.blueAmplifierCode = false
+        this.orangeAmplifierCode = true
+      }
+    },
     doRefresh () {
       this.input = {
         id: '',
@@ -1319,13 +1348,5 @@ export default {
   },
   beforeMount () {
     this.doMainInitPage()
-  },
-  computed: {
-    warningNodeCode () {
-      return this.input.nodeCode.length === 8
-    }
-  },
-  mounted () {
-    setBrand('negative', infoColor, document.getElementById('inputNodeCode'))
   }
 }

@@ -228,29 +228,81 @@
                 label="BDF Code"
                 tabindex="17"
                 style="margin-top:20px"/>
-              <q-input id="inputNodeCode" v-model="input.nodeCode" ref="fNodeCode"
-                :rules="[val => !! val || 'Node Code is required']"
-                :stack-label="true"
-                label="Node Code*"
-                tabindex="18"
-                :error="!warningNodeCode"
-                hint="in 8 characters"
-                style="margin-top:20px">
-                <template v-slot:error>
-                  <font class="text-orange">Input Node Code in 8 characters.</font>
-                </template>
-              </q-input>
-              <q-input v-model="input.psCode" ref="fPowerSupplyCode"
-                :rules="[val => !! val || 'Power Supply Code is required']"
-                :stack-label="true"
-                label="Power Supply Code*"
-                tabindex="19"/>
+              <div v-if="input.productType === 'FIBERNODE'">
+                <q-input v-show="blueNodeCode" v-model="input.nodeCode" ref="fNodeCode"
+                  :rules="[val => !! val || 'Node Code is required']"
+                  :stack-label="true"
+                  label="Node Code*"
+                  tabindex="18"
+                  @input="changeColorNodeCode"
+                  style="margin-top:20px">
+                </q-input>
+                <q-input v-show="orangeNodeCode" v-model="input.nodeCode" ref="fNodeCode"
+                  color="orange"
+                  :stack-label="true"
+                  label="Node Code*"
+                  :rules="[val => !! val || 'Node Code is required']"
+                  tabindex="18"
+                  @input="changeColorNodeCode"
+                  style="margin-top:20px">
+                  <template v-slot:hint>
+                    <font class="text-orange">Input Node Code in 8 characters.</font>
+                  </template>
+                </q-input>
+              </div>
+              <div v-else>
+                <q-input v-model="input.nodeCode" ref="fNodeCode"
+                  :rules="[val => !! val || 'Node Code is required']"
+                  :stack-label="true"
+                  label="Node Code*"
+                  tabindex="18"
+                  style="margin-top:20px">
+                </q-input>
+              </div>
+              <div v-if="input.productType === 'POWER SUPPLY' || input.productType === 'POWER SUPPLY INDOOR'">
+                <q-input v-show="bluePsCode" v-model="input.psCode" ref="fPowerSupplyCode"
+                  :rules="[val => !! val || 'Power Supply Code is required']"
+                  :stack-label="true"
+                  label="Power Supply Code*"
+                  @input="changeColorPsCode"
+                  tabindex="19"/>
+                <q-input v-show="orangePsCode" v-model="input.psCode" ref="fPowerSupplyCode"
+                  :rules="[val => !! val || 'Power Supply Code is required']"
+                  :stack-label="true"
+                  label="Power Supply Code*"
+                  color="orange"
+                  @input="changeColorPsCode"
+                  tabindex="19">
+                  <template v-slot:hint>
+                    <font class="text-orange">Input Power Suply Code in 6/7 characters.</font>
+                  </template>
+                </q-input>
+              </div>
+              <div v-else>
+                <q-input v-model="input.psCode" ref="fPowerSupplyCode"
+                  :rules="[val => !! val || 'Power Supply Code is required']"
+                  :stack-label="true"
+                  label="Power Supply Code*"
+                  tabindex="19"/>
+              </div>
               <div v-if="input.productType === 'AMPLIFIER' || input.productType === 'AMPLIFIER INDOOR'">
-                <q-input v-model="input.amplifierCode" ref="fAmplifierCode"
+                <q-input v-show="blueAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCode"
                   :rules="[val => !! val || 'Amplifier Code is required']"
                   :stack-label="true"
                   label="Amplifier Code*"
+                  @input="changeColorAmplifierCode"
                   tabindex="20"/>
+                <q-input v-show="orangeAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCode"
+                  :rules="[val => !! val || 'Amplifier Code is required']"
+                  :stack-label="true"
+                  label="Amplifier Code*"
+                  @input="changeColorAmplifierCode"
+                  color="orange"
+                  tabindex="20">
+                  <template v-slot:hint>
+                    <font class="text-orange">Input Amplifier Code in 10 characters.</font>
+                  </template>
+                </q-input>
                 <q-input v-model="input.service" ref="fService"
                   :rules="[val => !! val || 'Service is required']"
                   :stack-label="true"
