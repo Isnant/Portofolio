@@ -255,6 +255,7 @@
                   :rules="[val => !! val || 'Node Code is required']"
                   :stack-label="true"
                   label="Node Code*"
+                  @input="nodeInput"
                   tabindex="18"
                   style="margin-top:20px">
                 </q-input>
@@ -274,7 +275,7 @@
                   @input="changeColorPsCode"
                   tabindex="19">
                   <template v-slot:hint>
-                    <font class="text-orange">Input Power Suply Code in 6/7 characters.</font>
+                    <font class="text-orange">{{psCodeWarningText}}</font>
                   </template>
                 </q-input>
               </div>
@@ -300,7 +301,7 @@
                   color="orange"
                   tabindex="20">
                   <template v-slot:hint>
-                    <font class="text-orange">Input Amplifier Code in 10 characters.</font>
+                    <font class="text-orange">{{amplifierCodeWarningText}}</font>
                   </template>
                 </q-input>
                 <q-input v-model="input.service" ref="fService"
@@ -818,6 +819,10 @@
 </template>
 
 <style>
+
+  .red{
+    color:red;
+  }
 
 .preview-tree-card {
   width: 100%;

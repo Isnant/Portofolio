@@ -1,12 +1,16 @@
 export default {
   data () {
     return {
+      isActive: false,
+      colorLabel: 'orange',
       bluePsCode: false,
       orangePsCode: true,
+      psCodeWarningText: '',
       blueNodeCode: false,
       orangeNodeCode: true,
       blueAmplifierCode: false,
       orangeAmplifierCode: true,
+      amplifierCodeWarningText: '',
       file: undefined,
       productTypeList: [],
       hubCodeList: [],
@@ -1252,6 +1256,10 @@ export default {
       this.modalAddNewAsset = true
     },
     changeColorNodeCode () {
+      if (this.input.nodeCode.length === 6) {
+        this.psCodeValidation()
+        this.amplifierCodeValidation()
+      }
       if (this.input.nodeCode.length === 8) {
         this.blueNodeCode = true
         this.orangeNodeCode = false
@@ -1260,20 +1268,66 @@ export default {
         this.orangeNodeCode = true
       }
     },
+    nodeInput () {
+      this.psCodeValidation()
+      this.amplifierCodeValidation()
+    },
     changeColorPsCode () {
       if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
-        this.bluePsCode = true
-        this.orangePsCode = false
+        this.psCodeValidation()
       } else {
+        this.psCodeWarningText = 'Input Power Suply Code in 6/7 characters'
+        this.bluePsCode = false
+        this.orangePsCode = true
+      }
+    },
+    psCodeValidation () {
+      if (this.input.nodeCode.length >= 6) {
+        this.psCodeWarningText = ''
+        var node = this.input.nodeCode.substring(0, 6)
+        if (this.input.psCode.length >= 6) {
+          var ps = this.input.psCode.substring(0, 6)
+          if (node !== ps) {
+            this.psCodeWarningText = '6 digit pertama harus sama dengan Node Code'
+            this.bluePsCode = false
+            this.orangePsCode = true
+          } else {
+            this.bluePsCode = true
+            this.orangePsCode = false
+          }
+        }
+      } else {
+        this.psCodeWarningText = 'Node Code Belum lengkap'
         this.bluePsCode = false
         this.orangePsCode = true
       }
     },
     changeColorAmplifierCode () {
       if (this.input.amplifierCode.length === 10) {
-        this.blueAmplifierCode = true
-        this.orangeAmplifierCode = false
+        this.amplifierCodeValidation()
       } else {
+        this.amplifierCodeWarningText = 'Input Amplifier Code in 10 characters'
+        this.blueAmplifierCode = false
+        this.orangeAmplifierCode = true
+      }
+    },
+    amplifierCodeValidation () {
+      if (this.input.nodeCode.length >= 6) {
+        this.amplifierCodeWarningText = ''
+        var node = this.input.nodeCode.substring(0, 6)
+        if (this.input.amplifierCode.length >= 6) {
+          var ps = this.input.amplifierCode.substring(0, 6)
+          if (node !== ps) {
+            this.amplifierCodeWarningText = '6 digit pertama harus sama dengan Node Code'
+            this.blueAmplifierCode = false
+            this.orangeAmplifierCode = true
+          } else {
+            this.blueAmplifierCode = true
+            this.orangeAmplifierCode = false
+          }
+        }
+      } else {
+        this.amplifierCodeWarningText = 'Node Code Belum lengkap'
         this.blueAmplifierCode = false
         this.orangeAmplifierCode = true
       }
