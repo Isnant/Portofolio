@@ -178,22 +178,48 @@
                 label="Slot"
                 tabindex="14"
                 style="margin-top:20px"/>
-              <q-input v-model="input.hubCode" ref="nHubCode"
-                :rules="[val => !! val || 'Hub Code is required']"
+              <q-input v-model="input.hubCode"
                 :stack-label="true"
-                label="Hub Code*"
+                label="Hub Code"
+                @input="hubChange"
                 tabindex="15"
                 style="margin-top:20px"/>
-              <q-input v-model="input.hubAddress" ref="nHubAddress"
-                :rules="[val => !! val || 'Hub Address is required']"
-                :stack-label="true"
-                label="Hub Address*"
-                tabindex="16"/>
-              <q-input v-model="input.bdfCode" ref="nBdfCode"
-                :rules="[val => !! val || 'BDF Code is required']"
-                :stack-label="true"
-                label="BDF Code*"
-                tabindex="17"/>
+              <div v-show="hubTrue">
+                <q-input v-model="input.hubAddress" ref="nHubAddress"
+                  :rules="[val => !! val || 'Hub Address is required']"
+                  :stack-label="true"
+                  label="Hub Address*"
+                  tabindex="16"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.bdfCode"
+                  disable
+                  :stack-label="true"
+                  label="BDF Code"
+                  tabindex="17"/>
+                <q-input v-model="input.service"
+                  :stack-label="true"
+                  label="Service"
+                  tabindex="21"
+                  style="margin-top:20px"/>
+              </div>
+              <div v-show="hubFalse">
+                <q-input v-model="input.hubAddress"
+                  :stack-label="true"
+                  disable
+                  label="Hub Address"
+                  tabindex="16"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.bdfCode" ref="nBdfCode"
+                  :rules="[val => !! val || 'BDF Code is required']"
+                  :stack-label="true"
+                  label="BDF Code*"
+                  tabindex="17"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.service"
+                  :stack-label="true"
+                  label="Service"
+                  tabindex="21"/>
+              </div>
               <!-- <q-input v-model="input.nodeCode"
                 :stack-label="true"
                 label="Node Code"
@@ -208,10 +234,7 @@
                 label="Amplifier Code"
                 tabindex="20"
                 style="margin-top:20px"/> -->
-              <q-input v-model="input.service"
-                :stack-label="true"
-                label="Service"
-                tabindex="21"/>
+
               <q-input v-model="input.technology"
                 :stack-label="true"
                 label="Technology"

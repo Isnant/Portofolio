@@ -431,6 +431,7 @@ export default {
           this.doMainInitPage()
         })
         .catch((error) => {
+          alert(error)
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',

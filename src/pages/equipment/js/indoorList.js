@@ -257,20 +257,41 @@ export default {
       }
     },
     doSaveEquipment () {
+      // this.$axios.get(`${process.env.urlPrefix}checkrack`)
+      //   .then((response) => {
+      //     this.$q.notify({
+      //       color: 'positive',
+      //       icon: 'report_problem',
+      //       message: `successfully submitted`
+      //     })
+      //     console.log(response)
+      //   })
+
+      this.$q.loading.hide()
       this.$q.loading.show()
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
-          this.$q.notify({
-            color: 'positive',
-            icon: 'report_problem',
-            message: `successfully submitted`
-          })
+          if (response.data === 'success') {
+            this.$q.notify({
+              color: 'positive',
+              icon: 'report_problem',
+              message: `successfully submitted`
+            })
+            this.modalAddNewAsset = false
+            this.doRefresh()
+            this.doMainInitPage()
+          } else {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: response.data
+            })
+          }
           this.$q.loading.hide()
-          this.modalAddNewAsset = false
-          this.doRefresh()
-          this.doMainInitPage()
         })
         .catch((error) => {
+          alert('error')
+          console.log(error)
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',

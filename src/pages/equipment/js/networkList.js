@@ -8,6 +8,8 @@ export default {
       subTypeList: [],
       manufacturerList: [],
       brandList: [],
+      hubTrue: false,
+      hubFalse: true,
       input: {
         id: '',
         equipmentCategory: 'Network',
@@ -348,7 +350,6 @@ export default {
       this.$refs.nManufacturer.validate()
       this.$refs.nBrand.validate()
       this.$refs.nQuantity.validate()
-      this.$refs.nHubCode.validate()
       this.$refs.nHubAddress.validate()
       this.$refs.nBdfCode.validate()
       this.$refs.nDivision.validate()
@@ -365,7 +366,6 @@ export default {
       var n5 = this.$refs.nManufacturer.hasError
       var n6 = this.$refs.nBrand.hasError
       var n7 = this.$refs.nQuantity.hasError
-      var n8 = this.$refs.nHubCode.hasError
       var n9 = this.$refs.nHubAddress.hasError
       var n10 = this.$refs.nBdfCode.hasError
       var n11 = this.$refs.nDivision.hasError
@@ -374,7 +374,14 @@ export default {
       var n14 = this.$refs.nEquipmentStatus.hasError
       var n15 = this.$refs.nDescription.hasError
       var n16 = this.$refs.nItCode.hasError
-      if (!n1 && !n2 && !n3 && !n4 && !n5 && !n6 && !n7 && !n8 && !n9 && !n10 && !n11 && !n12 && !n13 && !n14 && !n15 && !n16) {
+
+      if (this.input.hubCode === '') {
+        n9 = false
+      } else {
+        n10 = false
+      }
+
+      if (!n1 && !n2 && !n3 && !n4 && !n5 && !n6 && !n7 && !n9 && !n10 && !n11 && !n12 && !n13 && !n14 && !n15 && !n16) {
         this.doSaveEquipment()
       }
     },
@@ -1223,6 +1230,17 @@ export default {
           })
           this.$q.loading.hide()
         })
+    },
+    hubChange () {
+      if (this.input.hubCode === '') {
+        this.input.hubAddress = ''
+        this.hubFalse = true
+        this.hubTrue = false
+      } else {
+        this.input.bdfCode = ''
+        this.hubTrue = true
+        this.hubFalse = false
+      }
     },
     doEdit (cell) {
       this.input = JSON.parse(JSON.stringify(cell.row))
