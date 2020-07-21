@@ -8,13 +8,19 @@ const routes = [
       { path: '/fieldEq', component: () => import('pages/equipment/fieldList.vue') },
       { path: '/indoorEq', component: () => import('pages/equipment/indoorList.vue') },
       { path: '/networkEq', component: () => import('pages/equipment/networkList.vue') },
-      { path: '/login', component: () => import('pages/security/login.vue') },
       { path: '/mAreaRegion', component: () => import('pages/equipment/master/area-region.vue') },
       { path: '/mReg', component: () => import('pages/equipment/master/region.vue') },
       { path: '/mBuild', component: () => import('pages/equipment/master/building.vue') },
       { path: '/mPtst', component: () => import('pages/equipment/master/type-subtype.vue') },
       { path: '/mManBran', component: () => import('pages/equipment/master/manufacturer-brand.vue') },
       { path: '/mPSeries', component: () => import('pages/equipment/master/series.vue') }
+    ]
+  },
+  {
+    path: '/',
+    component: () => import('layouts/LoginLayout.vue'),
+    children: [
+      { path: 'login', component: () => import('pages/security/login.vue') }
     ]
   }
 ]

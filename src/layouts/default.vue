@@ -14,7 +14,27 @@
           ENGINEERING ASSET MANAGEMENT SYSTEM
         </q-toolbar-title>
         <q-toolbar-title shrink>
-          {{userInfo.fullName}} [{{userInfo.department}}]
+          {{userInfo.fullName}}
+           <q-btn-dropdown color="primary">
+            <q-list>
+              <q-item clickable v-close-popup >
+                <q-item-section>
+                  <q-btn color="primary" round size="sm">
+                    <q-icon name="account_box" />
+                    <q-tooltip>Profil</q-tooltip>
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup to="/login">
+                <q-item-section>
+                  <q-btn color="primary" round size="sm">
+                    <q-icon name="exit_to_app" />
+                    <q-tooltip>Logout</q-tooltip>
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

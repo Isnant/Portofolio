@@ -305,7 +305,6 @@ export default {
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
-          console.log(this.productTypeList)
 
           this.$q.loading.hide()
         })
@@ -324,7 +323,6 @@ export default {
         params: params
       })
         .then((response) => {
-          console.log(response.data)
           this.doMainFillTableResult(response.data)
           this.$q.loading.hide()
         })
@@ -431,7 +429,6 @@ export default {
           this.doMainInitPage()
         })
         .catch((error) => {
-          alert(error)
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
@@ -1239,7 +1236,6 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response.data)
           this.brandList = response.data.map(brand => brand.brand)
           this.$q.loading.hide()
         })

@@ -297,7 +297,6 @@ export default {
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
-          console.log(this.manufacturerList)
 
           this.$q.loading.hide()
         })
@@ -311,13 +310,11 @@ export default {
     },
     doMainRefresh (params) {
       this.$q.loading.show()
-      console.log(params)
 
       this.$axios.get(`${process.env.urlPrefix}getFieldPagedEquipment/`, {
         params: params
       })
         .then((response) => {
-          console.log(response.data)
           this.doMainFillTableResult(response.data)
           this.$q.loading.hide()
         })
@@ -387,7 +384,6 @@ export default {
     },
     doSaveEquipment () {
       this.$q.loading.show()
-      console.log(this.input)
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
           this.$q.notify({
@@ -1196,7 +1192,6 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response.data)
           this.subTypeList = response.data.map(subType => subType.id)
           this.$q.loading.hide()
         })
@@ -1218,7 +1213,6 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response.data)
           this.brandList = response.data.map(brand => brand.brand)
           this.$q.loading.hide()
         })

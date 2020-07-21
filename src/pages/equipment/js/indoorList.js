@@ -290,8 +290,6 @@ export default {
           this.$q.loading.hide()
         })
         .catch((error) => {
-          alert('error')
-          console.log(error)
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
@@ -360,7 +358,6 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response.data)
           this.subTypeList = response.data.map(subType => subType.id)
           this.$q.loading.hide()
         })
@@ -382,7 +379,6 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response.data)
           this.brandList = response.data.map(brand => brand.brand)
           this.$q.loading.hide()
         })

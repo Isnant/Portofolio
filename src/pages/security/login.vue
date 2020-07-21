@@ -2,13 +2,45 @@
  <q-page padding>
    <div class="row justify-center">
     <fieldset class="login-box">
-        <q-input v-model="cred.username" float-label="User Name"/>
-        <q-input v-model="cred.password" type="password" float-label="Password" @keydown.enter="login()" />
-        <div style="text-align: center; padding-top: 20px">
-          <q-btn round color="primary" @click="login()">
-            <q-icon name="fas fa-lock" size="1em" />
-          </q-btn>
-        </div>
+      <div align="center" class="text-bold" style="margin-bottom:20px">
+        <font size= 3> LOGIN YOUR ACCOUNT</font>
+      </div>
+      <q-input v-model="cred.username"
+      float-label
+      color="blue"
+      rounded
+      outlined
+      label-color="blue"
+      label="Username">
+        <template v-slot:prepend>
+          <q-icon name="account_box" color="blue" />
+        </template>
+      </q-input>
+      <q-input v-model="cred.password"
+      type="password"
+      color="blue"
+      rounded
+      outlined
+      label-color="blue"
+      float-label label ="Password"
+      @keydown.enter="login()"
+      style="margin-top:20px">
+        <template v-slot:prepend>
+          <q-icon name="lock" color="blue" />
+        </template>
+      </q-input>
+
+      <div style="text-align: center; padding-top: 20px">
+        <q-btn size="15px"
+        style="width: 240px"
+          rounded
+          class="q-px-xl q-py-xs"
+          label="LOGIN"
+          color="primary"
+          @click="login()">
+          <!-- <q-icon name="fas fa-lock" size="1em" /> -->
+        </q-btn>
+      </div>
     </fieldset>
    </div>
  </q-page>
