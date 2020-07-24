@@ -169,8 +169,18 @@ export default {
         rowsPerPage: 20,
         rowsNumber: 0
       },
+      errorListColumn: [
+        {
+          name: 'message',
+          label: 'Error Message',
+          field: 'message',
+          align: 'left'
+        }
+      ],
       listOfEquipment: [],
+      listOfError: [],
       modalUpload: false,
+      modalError: false,
       modalAddNewAsset: false,
       addHub: true,
       modalAddField: false,
@@ -445,12 +455,14 @@ export default {
         this.$axios.post(`${process.env.urlPrefix}uploadField`, { file64: e.target.result })
           .then((response) => {
             this.$q.loading.hide()
-
-            this.$q.notify({
-              color: 'positive',
-              icon: 'info',
-              message: 'File successfully uploaded'
-            })
+            console.log(response.data)
+            this.listOfError = response.data
+            this.modalError = true
+            // this.$q.notify({
+            //   color: 'positive',
+            //   icon: 'info',
+            //   message: 'File successfully uploaded'
+            // })
           })
           .catch((error) => {
             this.$q.loading.hide()

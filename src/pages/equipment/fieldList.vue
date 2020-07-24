@@ -547,6 +547,28 @@
       </q-card>
     </q-dialog>
 
+    <q-dialog v-model="modalError" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-negative text-white">
+          <strong>Error</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+         <q-table
+          :data="listOfError"
+          :columns="errorListColumn"
+          dense>
+          <q-td slot="body-cell-message" slot-scope="props">
+            <div class="text-red bg-white">
+              {{ props.row.message }}
+            </div>
+          </q-td>
+         </q-table>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="showMigrationForm" :maximized="true" persistent>
 
       <q-card class="bg-white">
