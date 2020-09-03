@@ -98,68 +98,78 @@ export default {
           label: 'Equipment Id',
           field: 'id',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'equipmentName',
           label: 'Equipment Name',
           field: 'equipmentName',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'description',
           label: 'Description',
           field: 'description',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'productType',
           label: 'Product Type',
           field: 'productType',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'productSeries',
           label: 'Product Series',
           field: 'productSeries',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'brand',
           label: 'Brand',
           field: 'brand',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'hubCode',
           label: 'Hub Code',
           field: 'hubCode',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'bdfCode',
           label: 'BDF Code',
           field: 'bdfCode',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'equipmentStatus',
           label: 'Equipment Status',
           field: 'equipmentStatus',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-cyan-8 text-white'
         },
         {
           name: 'action',
           label: 'Action',
-          align: 'center'
+          align: 'center',
+          headerClasses: 'bg-cyan-8 text-white'
         }
       ],
       equipmentPagination: {
@@ -306,6 +316,7 @@ export default {
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
+      this.$q.loading.show()
       this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
@@ -315,7 +326,6 @@ export default {
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
-
           this.$q.loading.hide()
         })
         .catch((error) => {

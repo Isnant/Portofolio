@@ -1,8 +1,9 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header :reveal="true" :reveal-offset="100" elevated>
+  <div class="q-pa-md">
+  <q-layout view="hHh Lpr lff">
+    <q-header class="bg-cyan" elevated>
       <q-toolbar
-        color="primary">
+        color="cyan">
         <q-btn
           flat
           round
@@ -15,11 +16,11 @@
         </q-toolbar-title>
         <q-toolbar-title shrink>
           {{userInfo.fullName}}
-           <q-btn-dropdown color="primary">
+           <q-btn-dropdown color="cyan">
             <q-list>
               <q-item clickable v-close-popup >
                 <q-item-section>
-                  <q-btn color="primary" round size="sm">
+                  <q-btn color="cyan" round size="sm">
                     <q-icon name="account_box" />
                     <q-tooltip>Profil</q-tooltip>
                   </q-btn>
@@ -27,7 +28,7 @@
               </q-item>
               <q-item clickable v-close-popup to="/login">
                 <q-item-section>
-                  <q-btn color="primary" round size="sm">
+                  <q-btn color="blue" round size="sm">
                     <q-icon name="exit_to_app" />
                     <q-tooltip>Logout</q-tooltip>
                   </q-btn>
@@ -40,13 +41,14 @@
     </q-header>
     <q-drawer
       v-model="leftDrawerOpen"
-      content-class="bg-grey-2"
-      overlay
+      show-if-above
+      content-class="bg-grey-10 text-white"
       bordered
-      :breakpoint="2000"
+      :breakpoint="500"
     >
-      <q-list>
-        <q-item to="/fieldEq">
+     <q-scroll-area class="fit">
+      <q-list padding class="menu-list" style="margin-top:10px">
+        <q-item to="/fieldEq" active-class="my-menu-link">
           <q-item-section avatar>
             <q-icon name="fas fa-road" />
           </q-item-section>
@@ -54,7 +56,7 @@
             <q-item-label>Field Equipment</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/indoorEq">
+        <q-item to="/indoorEq" active-class="my-menu-link">
           <q-item-section avatar>
             <q-icon name="fas fa-building" />
           </q-item-section>
@@ -62,7 +64,7 @@
             <q-item-label>Indoor Equipment</q-item-label>
           </q-item-section>
         </q-item>
-         <q-item to="/networkEq">
+         <q-item to="/networkEq" active-class="my-menu-link">
           <q-item-section avatar>
             <q-icon name="fas fa-network-wired" />
           </q-item-section>
@@ -78,7 +80,7 @@
           <q-item
             to="/mAreaRegion"
             :inset-level="1"
-          >
+            active-class="my-menu-link">
             <q-item-section>
               <q-item-label>Master Area</q-item-label>
             </q-item-section>
@@ -86,7 +88,7 @@
           <q-item
             to="/mBuild"
             :inset-level="1"
-          >
+            active-class="my-menu-link">
             <q-item-section>
               <q-item-label>Master Building</q-item-label>
             </q-item-section>
@@ -94,7 +96,7 @@
           <q-item
             to="/mPtst"
             :inset-level="1"
-          >
+            active-class="my-menu-link">
             <q-item-section>
               <q-item-label>Product Type - Sub Type</q-item-label>
             </q-item-section>
@@ -102,7 +104,7 @@
           <q-item
             to="/mManBran"
             :inset-level="1"
-          >
+            active-class="my-menu-link">
             <q-item-section>
               <q-item-label>Manufacturer - Brand</q-item-label>
             </q-item-section>
@@ -110,21 +112,25 @@
           <q-item
             to="/mPSeries"
             :inset-level="1"
-          >
+            active-class="my-menu-link">
             <q-item-section>
               <q-item-label>Master Product Series</q-item-label>
             </q-item-section>
           </q-item>
         </q-expansion-item>
       </q-list>
+      </q-scroll-area>
     </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>
+  </div>
 </template>
 
 <script src="./js/default.js"></script>
-
-<style>
+<style lang="sass">
+.my-menu-link
+  color: white
+  background: #34cfeb
 </style>

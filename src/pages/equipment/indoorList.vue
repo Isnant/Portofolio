@@ -1,64 +1,72 @@
 <template>
   <q-page padding>
-    <h4 style="margin-top: 0px; margin-bottom: 20px">Indoor Equipment</h4>
+    <div align="left" style="margin-bottom:30px; width:230px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">INDOOR EQUIPMENT</font>
+      <q-separator color="purple-10" />
+      <q-separator color="purple-10" />
+    </div>
+    <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Indoor Equipment</h4> -->
     <!-- <GChart
         :settings="{ packages: ['orgchart'] }"
         type="OrgChart"
         :data="chartDataX"
         :options="chartOptionsX"
     /> -->
-    <fieldset style="width: 100%">
-      <legend>Search</legend>
+   <fieldset class="fieldset_search" style="width: 100%; margin-bottom:20px">
+      <legend class="legedn_search">Search</legend>
 
-      <div class="row">
+      <div class="row" style="width: 100%">
 
-        <div class="col-2" style="margin-right: 10px">
+        <div class="col-20" style="margin-right: 10px; width: 25%">
           <q-select
           v-model="searchVal.productType"
           label="Product Type"
-          :options="productTypeList"
-          />
+          color="purple-6"
+          :options="productTypeList"/>
         </div>
 
-        <div class="col-2" style="margin-right: 10px">
-          <q-select
-          v-model="searchVal.subType"
-          label="Product Sub Type"
-          :options="subTypeList"
-          />
-        </div>
-
-        <div class="col-2" style="margin-right: 10px">
+        <div class="col-20" style="margin-right: 10px; width: 15%">
           <q-input
-          v-model="searchVal.productSeries"
-          label="Product Series"
-          stack-label
+            v-model="searchVal.productSeries"
+            label="Product Series"
+            color="purple-6"
+            stack-label
           />
         </div>
 
-        <div class="col-1" style="margin-right: 10px">
+        <div class="col-20" style="margin-right: 10px;width: 20%">
           <q-select
-          v-model="searchVal.hubCode"
-          label="Hub Code"
-          :options="hubCodeList"
+            v-model="searchVal.hubCode"
+            label="Hub Code"
+            color="purple-6"
+            :options="hubCodeList"
           />
         </div>
 
-        <div class="col-1" style="margin-right: 10px">
+        <div class="col-20" style="margin-right: 10px;width: 20%">
           <q-select
-          v-model="searchVal.bdfCode"
-          label="BDF Code"
-          :options="bdfCodeList"
+            v-model="searchVal.bdfCode"
+            label="BDF Code"
+            color="purple-6"
+            :options="bdfCodeList"
           />
         </div>
 
-        <div class="col-1">
-          <q-btn round color="primary" @click="doMainEquipmentRefreshList()">
+        <div class="col-20" style="margin-right: 10px; width: 10%">
+          <q-input
+            v-model="searchVal.nodeCode"
+            label="Node Code"
+            color="purple-6"
+            stack-label
+          />
+        </div>
+
+        <div class="col" style="width: 5%">
+          <q-btn round color="purple-10" @click="doMainEquipmentRefreshList()">
             <q-icon name="search"/>
             <q-tooltip>Search</q-tooltip>
           </q-btn>
         </div>
-
       </div>
     </fieldset>
 
@@ -86,9 +94,9 @@
         <q-tooltip>Upload</q-tooltip>
       </q-btn> -->
 
-      <q-fab color="primary" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="primary" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
-        <q-fab-action color="primary" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
+      <q-fab color="orange-10" glossy icon="keyboard_arrow_down" direction="down">
+        <q-fab-action color="orange-8" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-8" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
       </q-fab>
     </q-page-sticky>
 
@@ -408,6 +416,14 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.fieldset_search {
+  border-color:  #8f1869;
+  border-style: solid;
+}
+.legedn_search {
+  border-color:  #8f1869;
+  border-style: solid;
 }
 </style>
 

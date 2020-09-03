@@ -1,8 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header :reveal="true" :reveal-offset="100" elevated>
+    <q-header class="bg-cyan" :reveal="true" :reveal-offset="100" elevated>
       <q-toolbar
-        color="primary">
+        color="cyan">
         <q-toolbar-title align="center">
           ENGINEERING ASSET MANAGEMENT SYSTEM
         </q-toolbar-title>

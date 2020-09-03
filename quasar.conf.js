@@ -69,6 +69,7 @@ module.exports = function (ctx) {
         'QRadio',
         'QDate',
         'QPopupProxy',
+        'QSeparator',
         'QBtnDropdown'
       ],
 
