@@ -129,8 +129,9 @@
 </template>
 
 <script src="./js/default.js"></script>
-<style lang="sass">
-.my-menu-link
-  color: white
-  background: #34cfeb
+<style>
+.my-menu-link {
+  color: white;
+  background: #34cfeb;
+}
 </style>
