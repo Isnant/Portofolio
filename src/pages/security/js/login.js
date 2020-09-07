@@ -17,7 +17,7 @@ export default {
         .then((response) => {
           localStorage.setItem('user-token', response.headers.authorization)
           this.$q.loading.hide()
-          this.$router.push('/')
+          this.$router.push('/fieldEq')
         })
         .catch((error) => {
           this.$q.loading.hide()

@@ -91,7 +91,7 @@ export default {
           field: 'id',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'equipmentName',
@@ -99,7 +99,7 @@ export default {
           field: 'equipmentName',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'description',
@@ -107,7 +107,7 @@ export default {
           field: 'description',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'productType',
@@ -115,7 +115,7 @@ export default {
           field: 'productType',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'productSeries',
@@ -123,7 +123,7 @@ export default {
           field: 'productSeries',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'brand',
@@ -131,7 +131,7 @@ export default {
           field: 'brand',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'hubCode',
@@ -139,7 +139,7 @@ export default {
           field: 'hubCode',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'bdfCode',
@@ -147,7 +147,7 @@ export default {
           field: 'bdfCode',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'equipmentStatus',
@@ -155,13 +155,13 @@ export default {
           field: 'equipmentStatus',
           align: 'left',
           sortable: true,
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          headerClasses: 'bg-cyan-8 text-white'
+          headerClasses: 'bg-indigo-8 text-white'
         }
       ],
       equipmentPagination: {

@@ -10,7 +10,8 @@ export default {
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'equipmentCategory',
@@ -18,20 +19,23 @@ export default {
           field: 'equipmentCategory',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'recordStatus',
           label: 'Status',
           field: 'recordStatus',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          style: 'width: 100px'
+          style: 'width: 100px',
+          headerClasses: 'bg-indigo-8 text-white'
         }
       ],
       subTypeColumns: [

@@ -7,26 +7,26 @@
       </div>
       <q-input v-model="cred.username"
       float-label
-      color="cyan-4"
+      color="indigo-3"
       rounded
       outlined
-      label-color="cyan"
+      label-color="indigo-6"
       label="Username">
         <template v-slot:prepend>
-          <q-icon name="account_box" color="cyan" />
+          <q-icon name="account_box" color="indigo-10" />
         </template>
       </q-input>
       <q-input v-model="cred.password"
       type="password"
-      color="cyan-4"
+      color="indigo-3"
       rounded
       outlined
-      label-color="cyan"
+      label-color="indigo-6"
       float-label label ="Password"
       @keydown.enter="login()"
       style="margin-top:20px">
         <template v-slot:prepend>
-          <q-icon name="lock" color="cyan" />
+          <q-icon name="lock" color="indigo-10" />
         </template>
       </q-input>
 
@@ -36,7 +36,7 @@
           rounded
           class="q-px-xl q-py-xs"
           label="LOGIN"
-          color="cyan-10"
+          color="indigo-6"
           @click="login()">
           <!-- <q-icon name="fas fa-lock" size="1em" /> -->
         </q-btn>

@@ -80,11 +80,11 @@
       dense>
 
       <q-td slot="body-cell-action" slot-scope="cell">
-        <q-btn-dropdown color="cyan-10">
+        <q-btn-dropdown rounded size="sm" color="indigo-10">
           <q-list>
             <q-item clickable v-close-popup>
               <q-item-section>
-                <q-btn color="cyan-8" round size="sm" @click="doEdit(cell)">
+                <q-btn color="indigo-6" round size="sm" @click="doEdit(cell)">
                   <q-icon name="fas fa-edit" />
                   <q-tooltip>Edit</q-tooltip>
                 </q-btn>
@@ -92,7 +92,7 @@
             </q-item>
             <q-item clickable v-show="cell.row.productType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10" v-close-popup>
               <q-item-section>
-                <q-btn color="cyan-8" round size="sm" @click="doMainOpenMigrationForm(cell)">
+                <q-btn color="indigo-6" round size="sm" @click="doMainOpenMigrationForm(cell)">
                   <q-icon name="fas fa-exchange-alt" />
                   <q-tooltip>Migrate</q-tooltip>
                 </q-btn>
@@ -127,16 +127,16 @@
         <q-icon name="backup" />
         <q-tooltip>Upload</q-tooltip>
       </q-btn> -->
-      <q-fab color="orange-10" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="orange-8" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
-        <q-fab-action color="orange-8" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
+      <q-fab color="orange-4" glossy icon="keyboard_arrow_down" direction="down">
+        <q-fab-action color="orange-3" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-3" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
       </q-fab>
     </q-page-sticky>
 
     <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
       <q-card class="bg-white">
-        <q-bar class="bg-primary text-white">
-        <strong>Add New Field Equipment</strong>
+        <q-bar class="bg-blue-7 text-white">
+        <strong>Field Equipment Form</strong>
         <q-space/>
         <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>

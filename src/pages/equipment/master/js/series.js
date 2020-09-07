@@ -10,7 +10,8 @@ export default {
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'description',
@@ -18,7 +19,8 @@ export default {
           field: 'description',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'manufacturerId',
@@ -26,7 +28,8 @@ export default {
           field: 'manufacturerId',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'brand',
@@ -34,7 +37,8 @@ export default {
           field: 'brand',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'productTypeSubType',
@@ -42,20 +46,23 @@ export default {
           field: 'productTypeSubType',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'recordStatus',
           label: 'Status',
           field: 'recordStatus',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          style: 'width: 100px'
+          style: 'width: 100px',
+          headerClasses: 'bg-indigo-8 text-white'
         }
       ],
       brandColumns: [

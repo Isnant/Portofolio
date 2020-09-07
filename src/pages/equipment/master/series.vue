@@ -1,6 +1,12 @@
 <template>
-  <q-page padding>
-    <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Product Series</h4>
+  <q-page>
+    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER PRODUCT SERIES</font>
+     <div align="left" style="margin-bottom:30px; margin-top:20px;width:300px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER PRODUCT SERIES</font>
+      <q-separator color="purple-10" />
+      <q-separator color="purple-10" />
+    </div>
+    <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Product Series</h4> -->
     <div style="max-width: 800px">
       <q-table
         :data="dataList"
@@ -10,7 +16,7 @@
         row-key="id"
         dense>
 
-        <q-td slot="body-cell-action" slot-scope="cell">
+        <!-- <q-td slot="body-cell-action" slot-scope="cell">
           <q-btn color="primary" round size="sm" @click="doOpenForm(cell.row.pid)" style="margin-right: 10px">
             <q-icon name="fas fa-edit" />
             <q-tooltip>Edit</q-tooltip>
@@ -19,6 +25,28 @@
             <q-icon :name="cell.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
             <q-tooltip>{{ cell.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
           </q-btn>
+        </q-td> -->
+        <q-td slot="body-cell-action" slot-scope="cell">
+          <q-btn-dropdown rounded size="sm" color="indigo-10">
+            <q-list>
+              <q-item clickable v-close-popup>
+                <q-item-section>
+                  <q-btn color="indigo-6" round size="sm" @click="doOpenForm(cell.row.pid)">
+                    <q-icon name="fas fa-edit" />
+                    <q-tooltip>Edit</q-tooltip>
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>
+                  <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(cell)">
+                    <q-icon :name="cell.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
+                    <q-tooltip>{{ cell.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-td>
         <q-td slot="body-cell-recordStatus" slot-scope="props">
           <div v-if="props.row.recordStatus === 'A'">
@@ -33,7 +61,7 @@
     </div>
 
     <q-page-sticky position="top-right" :offset="[15, 30]">
-      <q-btn round color="primary" @click.native="doOpenForm(false)">
+      <q-btn round color="orange-4" @click.native="doOpenForm(false)">
         <q-icon name="fas fa-plus" />
         <q-tooltip>Add New Record</q-tooltip>
       </q-btn>

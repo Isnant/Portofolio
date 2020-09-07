@@ -1,26 +1,27 @@
 <template>
   <div class="q-pa-md">
   <q-layout view="hHh Lpr lff">
-    <q-header class="bg-cyan" elevated>
+    <q-header class="bg-indigo-10" elevated>
       <q-toolbar
-        color="cyan">
+        color="indigo-10">
         <q-btn
           flat
           round
+          color="orange-4"
           @click="leftDrawerOpen = !leftDrawerOpen"
           aria-label="Menu">
           <q-icon name="menu" />
         </q-btn>
         <q-toolbar-title>
-          ENGINEERING ASSET MANAGEMENT SYSTEM
+          <font color="white" class="text-bold">ENGINEERING ASSET MANAGEMENT SYSTEM</font>
         </q-toolbar-title>
         <q-toolbar-title shrink>
-          {{userInfo.fullName}}
-           <q-btn-dropdown color="cyan">
+          <font size=2 style="margin-right:10px">{{userInfo.fullName}}</font>
+           <q-btn-dropdown rounded size="sm" color="indigo-10">
             <q-list>
               <q-item clickable v-close-popup >
                 <q-item-section>
-                  <q-btn color="cyan" round size="sm">
+                  <q-btn color="indigo-8" round size="sm">
                     <q-icon name="account_box" />
                     <q-tooltip>Profil</q-tooltip>
                   </q-btn>
@@ -28,7 +29,7 @@
               </q-item>
               <q-item clickable v-close-popup to="/login">
                 <q-item-section>
-                  <q-btn color="blue" round size="sm">
+                  <q-btn color="indigo-8" round size="sm">
                     <q-icon name="exit_to_app" />
                     <q-tooltip>Logout</q-tooltip>
                   </q-btn>
@@ -48,6 +49,17 @@
     >
      <q-scroll-area class="fit">
       <q-list padding class="menu-list" style="margin-top:10px">
+        <!-- <div align="right" style="margin-left:40px;margin-top:10px;margin-right:40px;margin-bottom:10px;width:220px">
+          <q-separator color="grey-2"/>
+        </div> -->
+        <div align="right" style="margin-left:20px;margin-bottom:20px;width:250px">
+          <q-separator color="orange-4"/>
+          <q-separator color="orange-4"/>
+          <q-separator color="orange-4"/>
+        </div>
+        <!-- <div align="right" style="margin-left:40px;margin-top:10px;margin-right:40px;margin-bottom:20px;width:220px">
+          <q-separator color="purple-4"/>
+        </div> -->
         <q-item to="/fieldEq" active-class="my-menu-link">
           <q-item-section avatar>
             <q-icon name="fas fa-road" />
@@ -132,6 +144,6 @@
 <style>
 .my-menu-link {
   color: white;
-  background: #34cfeb;
+  background: #4d79ff;
 }
 </style>

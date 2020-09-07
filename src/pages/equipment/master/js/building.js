@@ -10,7 +10,8 @@ export default {
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'buildingName',
@@ -18,7 +19,8 @@ export default {
           field: 'buildingName',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'itCode',
@@ -26,7 +28,8 @@ export default {
           field: 'itCode',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'area',
@@ -34,7 +37,8 @@ export default {
           field: 'area',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'region',
@@ -42,27 +46,31 @@ export default {
           field: 'region',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'city',
           label: 'City',
           field: 'city',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'recordStatus',
           label: 'Status',
           field: 'recordStatus',
           align: 'left',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          style: 'width: 100px'
+          style: 'width: 100px',
+          headerClasses: 'bg-indigo-8 text-white'
         }
       ],
       regionColumns: [

@@ -10,7 +10,8 @@ export default {
           field: 'id',
           align: 'left',
           style: 'width: 100px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'area',
@@ -18,13 +19,24 @@ export default {
           field: 'area',
           align: 'left',
           style: 'width: 200px',
-          sortable: true
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
+        },
+        {
+          name: 'recordStatus',
+          label: 'Status',
+          field: 'recordStatus',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          style: 'width: 100px'
+          style: 'width: 100px',
+          headerClasses: 'bg-indigo-8 text-white'
         }
       ],
       regionColumns: [
@@ -94,7 +106,6 @@ export default {
           this.list = response.data.content
           this.pagination.rowsNumber = response.data.totalElements
           this.pagination.page = response.data.number + 1
-
           this.$q.loading.hide()
         })
         .catch((error) => {
