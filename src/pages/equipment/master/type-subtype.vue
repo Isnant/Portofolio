@@ -1,5 +1,6 @@
 <template>
-  <q-page> <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER PRODUCT TYPE - SUB TYPE</font>
+  <q-page>
+    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER PRODUCT TYPE - SUB TYPE</font>
      <div align="left" style="margin-bottom:30px; margin-top:20px;width:410px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER PRODUCT TYPE - SUB TYPE</font>
       <q-separator color="purple-10" />

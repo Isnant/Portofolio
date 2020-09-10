@@ -1,0 +1,415 @@
+import moment from 'moment'
+export default {
+  beforeMount () {
+    this.getInitPage()
+  },
+  data () {
+    return {
+      dataList: [],
+      jobStatusType: '',
+      masterName: '',
+      columnName: '',
+      masterFormLabel: '',
+      isCreate: true,
+      columns: [
+        {
+          name: 'attributedesc',
+          label: 'Division Name',
+          field: 'attributedesc',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'createdDate',
+          label: 'Create Date',
+          field: 'createdDate',
+          align: 'center',
+          sortable: true
+        },
+        {
+          name: 'recordStatus',
+          label: 'Status',
+          field: 'recordStatus',
+          align: 'center',
+          sortable: true
+        },
+        {
+          name: 'action',
+          label: 'Action',
+          field: 'action',
+          align: 'center'
+        }
+      ],
+      pagination: {
+        sortBy: 'attributename',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 0
+      },
+      formSearch: {
+        jobstatusName: ''
+      },
+      masterForm: false,
+      updateMasterForm: false,
+      deactivateForm: false,
+      historyForm: false,
+      input: {
+        attributeid: '',
+        attributename: 'division',
+        attributedesc: '',
+        attributecode: '1',
+        attributemap: 'Asset'
+      },
+      instance: {
+        name: '',
+        rights: [],
+        createBy: undefined
+      },
+      deactiveTittle: 'Deactivate Special Event',
+      deactivateText: 'Are You Sure to Deactivate this ?',
+      mode: 'deactivate',
+      deactivateError: '',
+      deactivateSucces: ''
+    }
+  },
+  methods: {
+    getInitPage () {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getStringmapInitPage`, {
+        params: {
+          pageSize: this.pagination.rowsPerPage,
+          sortBy: this.pagination.sortBy,
+          attributename: this.input.attributename,
+          attributedesc: this.formSearch.jobstatusName
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+
+          this.dataList = response.data.content
+          this.pagination.rowsNumber = response.data.totalElements
+          this.pagination.page = response.data.number + 1
+          this.dataList.forEach((element, index) => {
+            if (element.recordStatus === 'A') {
+              this.dataList[index].activeStatus = true
+              this.dataList[index].nonActiveStatus = false
+            } else {
+              this.dataList[index].activeStatus = false
+              this.dataList[index].nonActiveStatus = true
+            }
+          })
+          this.rights = response.data.listOfRights
+          this.updateColumn()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    getContent (props) {
+      this.$q.loading.show()
+      var pageIndex = ''
+      var pageSize = ''
+      var sortBy = ''
+      var descending = ''
+      if (typeof props === 'undefined') {
+        pageIndex = this.pagination.page - 1
+        pageSize = this.pagination.rowsPerPage
+        sortBy = this.pagination.sortBy
+        descending = this.pagination.descending
+      } else {
+        pageIndex = props.pagination.page - 1
+        pageSize = props.pagination.rowsPerPage
+        sortBy = props.pagination.sortBy
+        descending = props.pagination.descending
+        this.pagination.sortBy = props.pagination.sortBy
+        this.pagination.descending = props.pagination.descending
+      }
+
+      this.$axios.get(`${process.env.urlPrefix}getStringmapList`, {
+        params: {
+          pageIndex: pageIndex,
+          pageSize: pageSize,
+          sortBy: sortBy,
+          descending: descending,
+          attributename: this.input.attributename,
+          attributedesc: this.formSearch.jobstatusName
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          this.dataList = response.data.content
+          this.pagination.rowsNumber = response.data.totalElements
+          this.pagination.page = response.data.number + 1
+          this.pagination.rowsPerPage = response.data.pageable.pageSize
+
+          this.dataList.forEach((element, index) => {
+            if (element.recordStatus === 'true') {
+              this.dataList[index].activeStatus = true
+              this.dataList[index].nonActiveStatus = false
+            } else {
+              this.dataList[index].activeStatus = false
+              this.dataList[index].nonActiveStatus = true
+            }
+          })
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    doOpenForm (id) {
+      if (id === false) {
+        this.masterForm = true
+        this.isCreate = true
+      } else {
+        this.$q.loading.show()
+        this.$axios.get(`${process.env.urlPrefix}getDetailStringmap`, {
+          params: {
+            id: id
+          }
+        })
+          .then((response) => {
+            this.input = response.data
+            this.masterForm = true
+            this.isCreate = false
+            this.$q.loading.hide()
+          })
+          .catch((error) => {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: error
+            })
+            this.$q.loading.hide()
+          })
+      }
+    },
+    getDetailStringmap (id) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getDetailStringmap`, {
+        params: {
+          id: id
+        }
+      })
+        .then((response) => {
+          this.input = response.data
+          this.updateRootCauseModal = true
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
+    doSave () {
+      this.$refs.masterName.validate()
+      var vMasterName = this.$refs.masterName.hasError
+
+      if (!vMasterName) {
+        this.$q.loading.show()
+        var vSucces = ''
+        this.input.attributedesc = this.input.attributedesc.toUpperCase()
+
+        if (this.isCreate) {
+          vSucces = '" Saved'
+        } else {
+          vSucces = '" Updated'
+        }
+        this.$axios.post(`${process.env.urlPrefix}doSaveStringmap`, this.input)
+          .then((response) => {
+            this.$q.loading.hide()
+            this.$q.notify({
+              color: 'positive',
+              icon: 'done',
+              message: this.masterName + ': "' + this.input.attributedesc + vSucces
+            })
+
+            this.masterForm = false
+            this.Reset()
+          })
+          .catch((error) => {
+            this.$q.loading.hide()
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: error
+            })
+          })
+      }
+    },
+    deactivate (id, isDeactivate) {
+      this.$q.loading.show()
+      if (isDeactivate) {
+        this.deactivateButtonShow = true
+        this.activateButtonShow = false
+        this.deactiveTittle = 'Deactivate  Root Cause'
+        this.deactivateText = 'Are You Sure to Deactivate this ?'
+        this.mode = 'deactivate'
+        this.deactivateSucces = '" Deactivated'
+        this.deactivateError = '" failed deactivate'
+      } else {
+        this.deactivateButtonShow = false
+        this.activateButtonShow = true
+        this.deactiveTittle = 'Activate Root Cause'
+        this.deactivateText = 'Are You Sure to Activate this ?'
+        this.mode = 'activate'
+        this.deactivateSucces = '" Activated'
+        this.deactivateError = '" failed activate'
+      }
+      this.$axios.get(`${process.env.urlPrefix}getDetailStringmap`, {
+        params: {
+          id: id
+        }
+      })
+        .then((response) => {
+          this.input = response.data
+          this.deactivateForm = true
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
+    doDeactivate () {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}deactivateStringmap`, {
+        params: {
+          id: this.input.attributeid,
+          mode: this.mode
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'positive',
+            icon: 'report_problem',
+            message: 'Root Cause "' + this.input.attributedesc + this.deactivateSucces
+          })
+          this.deactivateForm = false
+          this.Reset()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    history (id) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getDetailStringmap`, {
+        params: {
+          id: id
+        }
+      })
+        .then((response) => {
+          this.input = response.data
+          this.input.createdDate = moment(this.input.createdDate).format('DD/MM/YYYY HH:mm')
+          this.input.lastModified = moment(this.input.lastModified).format('DD/MM/YYYY HH:mm')
+          this.historyForm = true
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
+    Reset () {
+      this.getInitPage()
+      this.clear()
+    },
+    clearSearch () {
+      if (this.formSearch.jobstatusName === null) {
+        this.formSearch.jobstatusName = ''
+        this.getInitPage()
+      }
+    },
+    clear () {
+      this.input.attributeid = ''
+      this.input.attributedesc = ''
+      this.input.attributecode = '1'
+      this.input.attributemap = 'Root Cause'
+      this.getInitPage()
+    },
+    updateColumn () {
+      if (this.input.attributename === 'division') {
+        this.columnName = 'Division Name'
+        this.masterName = 'Division'
+      } else if (this.input.attributename === 'department') {
+        this.columnName = 'Department Name'
+        this.masterName = 'Department'
+      } else if (this.input.attributename === 'assetCategory') {
+        this.columnName = 'Asset Category Name'
+        this.masterName = 'Asset Category'
+      } else if (this.input.attributename === 'propertyOf') {
+        this.columnName = 'PropertyOf Name'
+        this.masterName = 'Property Of'
+      } else if (this.input.attributename === 'statusReason') {
+        this.columnName = 'Status Reason Name'
+        this.masterName = 'Status Reason'
+      } else if (this.input.attributename === 'technology') {
+        this.columnName = 'Technology Name'
+        this.masterName = 'Technology'
+      } else if (this.input.attributename === 'assetStatus') {
+        this.columnName = 'Asset Status Name'
+        this.masterName = 'Asset Status'
+      }
+
+      this.masterFormLabel = this.masterName + ' Form'
+      this.columns = [
+        {
+          name: 'attributedesc',
+          label: this.columnName,
+          field: 'attributedesc',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'createdDate',
+          label: 'Create Date',
+          field: 'createdDate',
+          align: 'center',
+          sortable: true
+        },
+        {
+          name: 'recordStatus',
+          label: 'Status',
+          field: 'recordStatus',
+          align: 'center',
+          sortable: true
+        },
+        {
+          name: 'action',
+          label: 'Action',
+          field: 'action',
+          align: 'center'
+        }
+      ]
+    }
+  }
+}

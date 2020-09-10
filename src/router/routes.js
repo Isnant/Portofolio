@@ -13,7 +13,8 @@ const routes = [
       { path: '/mBuild', component: () => import('pages/equipment/master/building.vue') },
       { path: '/mPtst', component: () => import('pages/equipment/master/type-subtype.vue') },
       { path: '/mManBran', component: () => import('pages/equipment/master/manufacturer-brand.vue') },
-      { path: '/mPSeries', component: () => import('pages/equipment/master/series.vue') }
+      { path: '/mPSeries', component: () => import('pages/equipment/master/series.vue') },
+      { path: '/mOthers', component: () => import('pages/equipment/master/others.vue') }
     ]
   },
   {

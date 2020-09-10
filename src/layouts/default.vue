@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
   <q-layout view="hHh Lpr lff">
-    <q-header class="bg-indigo-10" elevated>
+    <q-header class="bg-indigo-5" elevated>
       <q-toolbar
         color="indigo-10">
         <q-btn
@@ -13,7 +13,7 @@
           <q-icon name="menu" />
         </q-btn>
         <q-toolbar-title>
-          <font color="white" class="text-bold">ENGINEERING ASSET MANAGEMENT SYSTEM</font>
+          <font color="white" size=3 class="text-bold">ENGINEERING ASSET MANAGEMENT SYSTEM</font>
         </q-toolbar-title>
         <q-toolbar-title shrink>
           <font size=2 style="margin-right:10px">{{userInfo.fullName}}</font>
@@ -43,7 +43,7 @@
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
-      content-class="bg-grey-10 text-white"
+      content-class="menu_right"
       bordered
       :breakpoint="500"
     >
@@ -129,6 +129,14 @@
               <q-item-label>Master Product Series</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item
+            to="/mOthers"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section>
+              <q-item-label>Others</q-item-label>
+            </q-item-section>
+          </q-item>
         </q-expansion-item>
       </q-list>
       </q-scroll-area>
@@ -145,5 +153,9 @@
 .my-menu-link {
   color: white;
   background: #4d79ff;
+}
+.menu_right {
+  background-color: #040218;
+  color: white;
 }
 </style>
