@@ -12,6 +12,7 @@
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
+        table-header-class="text-white bg-indigo-8"
         @request="getProductTypeSubTypeList"
         row-key="id"
         dense>

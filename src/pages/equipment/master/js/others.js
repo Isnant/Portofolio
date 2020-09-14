@@ -10,7 +10,7 @@ export default {
       masterName: '',
       columnName: '',
       masterFormLabel: '',
-      isCreate: true,
+      isCreate: false,
       columns: [
         {
           name: 'attributedesc',
@@ -51,8 +51,6 @@ export default {
         jobstatusName: ''
       },
       masterForm: false,
-      updateMasterForm: false,
-      deactivateForm: false,
       historyForm: false,
       input: {
         attributeid: '',
@@ -194,117 +192,40 @@ export default {
           })
       }
     },
-    getDetailStringmap (id) {
-      this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}getDetailStringmap`, {
-        params: {
-          id: id
-        }
-      })
-        .then((response) => {
-          this.input = response.data
-          this.updateRootCauseModal = true
-          this.$q.loading.hide()
-        })
-        .catch((error) => {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.$q.loading.hide()
-        })
-    },
-    doSave () {
+    doSubmit () {
       this.$refs.masterName.validate()
       var vMasterName = this.$refs.masterName.hasError
 
       if (!vMasterName) {
-        this.$q.loading.show()
-        var vSucces = ''
-        this.input.attributedesc = this.input.attributedesc.toUpperCase()
-
-        if (this.isCreate) {
-          vSucces = '" Saved'
-        } else {
-          vSucces = '" Updated'
-        }
-        this.$axios.post(`${process.env.urlPrefix}doSaveStringmap`, this.input)
-          .then((response) => {
-            this.$q.loading.hide()
-            this.$q.notify({
-              color: 'positive',
-              icon: 'done',
-              message: this.masterName + ': "' + this.input.attributedesc + vSucces
-            })
-
-            this.masterForm = false
-            this.Reset()
-          })
-          .catch((error) => {
-            this.$q.loading.hide()
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-          })
+        this.doSave()
       }
     },
-    deactivate (id, isDeactivate) {
+    doToggleStatus (cell) {
+      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
+      this.input = cell.row
+      this.doSave()
+    },
+    doSave () {
       this.$q.loading.show()
-      if (isDeactivate) {
-        this.deactivateButtonShow = true
-        this.activateButtonShow = false
-        this.deactiveTittle = 'Deactivate  Root Cause'
-        this.deactivateText = 'Are You Sure to Deactivate this ?'
-        this.mode = 'deactivate'
-        this.deactivateSucces = '" Deactivated'
-        this.deactivateError = '" failed deactivate'
+      var vSucces = ''
+      this.input.attributedesc = this.input.attributedesc.toUpperCase()
+
+      if (this.isCreate) {
+        vSucces = '" Saved'
       } else {
-        this.deactivateButtonShow = false
-        this.activateButtonShow = true
-        this.deactiveTittle = 'Activate Root Cause'
-        this.deactivateText = 'Are You Sure to Activate this ?'
-        this.mode = 'activate'
-        this.deactivateSucces = '" Activated'
-        this.deactivateError = '" failed activate'
+        vSucces = '" Updated'
       }
-      this.$axios.get(`${process.env.urlPrefix}getDetailStringmap`, {
-        params: {
-          id: id
-        }
-      })
-        .then((response) => {
-          this.input = response.data
-          this.deactivateForm = true
-          this.$q.loading.hide()
-        })
-        .catch((error) => {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.$q.loading.hide()
-        })
-    },
-    doDeactivate () {
-      this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}deactivateStringmap`, {
-        params: {
-          id: this.input.attributeid,
-          mode: this.mode
-        }
-      })
+
+      this.$axios.post(`${process.env.urlPrefix}doSaveStringmap`, this.input)
         .then((response) => {
           this.$q.loading.hide()
           this.$q.notify({
             color: 'positive',
-            icon: 'report_problem',
-            message: 'Root Cause "' + this.input.attributedesc + this.deactivateSucces
+            icon: 'done',
+            message: this.masterName + ': "' + this.input.attributedesc + vSucces
           })
-          this.deactivateForm = false
+
+          this.masterForm = false
           this.Reset()
         })
         .catch((error) => {
@@ -316,28 +237,11 @@ export default {
           })
         })
     },
-    history (id) {
-      this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}getDetailStringmap`, {
-        params: {
-          id: id
-        }
-      })
-        .then((response) => {
-          this.input = response.data
-          this.input.createdDate = moment(this.input.createdDate).format('DD/MM/YYYY HH:mm')
-          this.input.lastModified = moment(this.input.lastModified).format('DD/MM/YYYY HH:mm')
-          this.historyForm = true
-          this.$q.loading.hide()
-        })
-        .catch((error) => {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.$q.loading.hide()
-        })
+    doShowHistory (props) {
+      this.input = props.row
+      this.input.createdDate = moment(this.input.createdDate).format('DD/MM/YYYY HH:mm')
+      this.input.lastModified = moment(this.input.lastModified).format('DD/MM/YYYY HH:mm')
+      this.historyForm = true
     },
     Reset () {
       this.getInitPage()
@@ -353,7 +257,7 @@ export default {
       this.input.attributeid = ''
       this.input.attributedesc = ''
       this.input.attributecode = '1'
-      this.input.attributemap = 'Root Cause'
+      this.input.attributemap = 'Asset'
       this.getInitPage()
     },
     updateColumn () {

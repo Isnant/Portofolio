@@ -7,11 +7,12 @@
       <q-separator color="purple-10" />
     </div>
     <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Manufacturer - Brand</h4> -->
-    <div style="max-width: 600px">
+    <div style="max-width: 400px">
       <q-table
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
+        table-header-class="text-white bg-indigo-8"
         @request="getManufacturerBrandList"
         row-key="id"
         dense>
@@ -26,7 +27,7 @@
             <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
           </q-btn>
         </q-td> -->
-        <q-td slot="body-cell-action" slot-scope="props">
+        <q-td slot="body-cell-action" slot-scope="props"  align="center" >
           <q-btn-dropdown rounded size="sm" color="indigo-10">
             <q-list>
               <q-item clickable v-close-popup>
@@ -79,11 +80,9 @@
         <q-card-section>
           <div>
             <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
-              label="Id"/>
+              label="Manufacturer Code"/>
             <q-input v-model="formData.description"
               label="Description"/>
-            <q-input v-model="formData.productTypeSubType"
-              label="Product Type"/>
           </div>
           <br/>
           <fieldset>
@@ -117,7 +116,7 @@
                     <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
                 </div>
               </q-td>
-              <q-td slot="body-cell-action" slot-scope="cell">
+              <q-td slot="body-cell-action" slot-scope="cell" align="center">
                 <q-btn color="primary" round size="sm" @click="doToggleSubTypeStatus(cell)">
                   <q-icon :name="cell.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
                   <q-tooltip>{{ cell.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>

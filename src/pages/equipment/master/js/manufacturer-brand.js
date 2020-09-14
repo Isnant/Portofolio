@@ -5,13 +5,12 @@ export default {
       listOfBrand: [],
       tableColumns: [
         {
-          name: 'pid',
+          name: 'Manucaturer Code',
           label: 'Id',
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'description',
@@ -19,37 +18,25 @@ export default {
           field: 'description',
           align: 'left',
           style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
-        },
-        {
-          name: 'productTypeSubType',
-          label: 'Product Type',
-          field: 'productTypeSubType',
-          align: 'left',
-          style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'recordStatus',
           label: 'Status',
           field: 'recordStatus',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          style: 'width: 100px',
-          headerClasses: 'bg-indigo-8 text-white'
+          style: 'width: 100px'
         }
       ],
       brandColumns: [
         {
-          name: 'id',
+          name: 'Brand Code',
           label: 'Brand Id',
           field: 'id',
           align: 'left',
@@ -250,7 +237,6 @@ export default {
       this.formData = {
         pid: '',
         description: '',
-        productTypeSubType: '',
         mode: 'create'
       }
       this.listOfBrand = []

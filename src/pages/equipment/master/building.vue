@@ -12,6 +12,7 @@
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
+        table-header-class="text-white bg-indigo-8"
         @request="getBuildingList"
         row-key="id"
         dense>
@@ -80,7 +81,7 @@
           <div class="row">
             <div class="col">
               <q-input v-model="formData.pid"
-                stack-label label="Building Id"/>
+                stack-label label="Building Code"/>
               <q-input v-model="formData.fidRegion"
                 stack-label label="Region Id"/>
               <q-input v-model="formData.buildingType"
@@ -89,8 +90,13 @@
                 stack-label label="Building Name"/>
               <q-input v-model="formData.itCode"
                 stack-label label="IT Code"/>
-              <q-input v-model="formData.area"
-                stack-label label="Area"/>
+              <q-select v-model="formData.area"
+                label="Area Name"
+                :options="areaList"
+                @input="getRegion()"/>
+              <q-select v-model="formData.region"
+                label="Region"
+                :options="filteredRegionList"/>
               <q-input v-model="formData.region"
                 stack-label label="Region"/>
               <q-input v-model="formData.city"

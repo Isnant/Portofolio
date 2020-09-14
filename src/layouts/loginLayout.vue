@@ -1,10 +1,10 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="bg-indigo-10" :reveal="true" :reveal-offset="100" elevated>
+    <q-header class="bg-indigo-5" :reveal="true" :reveal-offset="100" elevated>
       <q-toolbar
-        color="indigo-10">
+        color="indigo-5">
         <q-toolbar-title align="center">
-          ENGINEERING ASSET MANAGEMENT SYSTEM
+          <font color="white" size=3 class="text-bold">ENGINEERING ASSET MANAGEMENT SYSTEM</font>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

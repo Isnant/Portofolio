@@ -2,16 +2,18 @@ export default {
   data () {
     return {
       dataList: [],
+      areaList: [],
+      regionList: [],
+      filteredRegionList: [],
       listOfRegion: [],
       tableColumns: [
         {
           name: 'pid',
-          label: 'Building Id',
+          label: 'Building Code',
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'buildingName',
@@ -19,8 +21,7 @@ export default {
           field: 'buildingName',
           align: 'left',
           style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'itCode',
@@ -28,8 +29,7 @@ export default {
           field: 'itCode',
           align: 'left',
           style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'area',
@@ -37,8 +37,7 @@ export default {
           field: 'area',
           align: 'left',
           style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'region',
@@ -46,31 +45,27 @@ export default {
           field: 'region',
           align: 'left',
           style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'city',
           label: 'City',
           field: 'city',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'recordStatus',
           label: 'Status',
           field: 'recordStatus',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          style: 'width: 100px',
-          headerClasses: 'bg-indigo-8 text-white'
+          style: 'width: 100px'
         }
       ],
       regionColumns: [
@@ -147,9 +142,11 @@ export default {
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.dataList = response.data.listOfBuilding.content
+          this.pagination.rowsNumber = response.data.listOfBuilding.totalElements
+          this.pagination.page = response.data.listOfBuilding.number + 1
+          this.areaList = response.data.listOfArea
+          this.regionList = response.data.listOfRegion
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -245,6 +242,10 @@ export default {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.formData = cell.row
       this.doSave()
+    },
+    getRegion () {
+      this.formData.area = this.formData.area.value
+      this.filteredRegionList = this.regionList.filter(v => v.cascadeValue.indexOf(this.formData.area) > -1)
     },
     doRefresh () {
       this.clear()

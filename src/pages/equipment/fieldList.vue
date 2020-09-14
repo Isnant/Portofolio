@@ -75,6 +75,7 @@
       :columns="equipmentListColumns"
       :pagination.sync="equipmentPagination"
       :rows-per-page-options="[10, 20, 50]"
+      table-header-class="text-white bg-indigo-8"
       @request="doMainEquipmentChangePage"
       row-key="id"
       dense>

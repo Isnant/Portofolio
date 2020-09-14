@@ -87,86 +87,75 @@ export default {
           label: 'Equipment Id',
           field: 'id',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'equipmentName',
           label: 'Equipment Name',
           field: 'equipmentName',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'description',
           label: 'Description',
           field: 'description',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'productType',
           label: 'Product Type',
           field: 'productType',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'productSubType',
           label: 'Product Sub Type',
           field: 'productSubType',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'productSeries',
           label: 'Product Series',
           field: 'productSeries',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'brand',
           label: 'Brand',
           field: 'brand',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'hubCode',
           label: 'Hub Code',
           field: 'hubCode',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'bdfCode',
           label: 'BDF Code',
           field: 'bdfCode',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'equipmentStatus',
           label: 'Equipment Status',
           field: 'equipmentStatus',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'action',
           label: 'Action',
-          align: 'center',
-          headerClasses: 'bg-indigo-8 text-white'
+          align: 'center'
         }
       ],
       equipmentPagination: {

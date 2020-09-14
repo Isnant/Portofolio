@@ -12,6 +12,7 @@
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
+        table-header-class="text-white bg-indigo-8"
         @request="getManufacturerBrandList"
         row-key="id"
         dense>

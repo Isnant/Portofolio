@@ -6,21 +6,19 @@ export default {
       tableColumns: [
         {
           name: 'id',
-          label: 'Area Id',
+          label: 'Area Code',
           field: 'id',
           align: 'left',
           style: 'width: 100px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
-          name: 'area',
+          name: 'areaName',
           label: 'Area Name',
-          field: 'area',
+          field: 'areaName',
           align: 'left',
           style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'recordStatus',
@@ -28,15 +26,13 @@ export default {
           field: 'recordStatus',
           align: 'left',
           style: 'width: 200px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'action',
           label: 'Action',
           align: 'center',
-          style: 'width: 100px',
-          headerClasses: 'bg-indigo-8 text-white'
+          style: 'width: 100px'
         }
       ],
       regionColumns: [
@@ -64,7 +60,7 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'area',
+        sortBy: 'areaName',
         descending: false,
         page: 1,
         rowsPerPage: 20,
@@ -77,10 +73,10 @@ export default {
       },
       searchVal: {
         id: '',
-        area: ''
+        areaName: ''
       },
       showForm: false,
-      formData: { id: '', area: '' }
+      formData: { id: '', areaName: '' }
     }
   },
 
@@ -141,7 +137,7 @@ export default {
       } else {
         this.formData = {
           id: '',
-          area: ''
+          areaName: ''
         }
       }
 

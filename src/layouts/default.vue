@@ -17,7 +17,7 @@
         </q-toolbar-title>
         <q-toolbar-title shrink>
           <font size=2 style="margin-right:10px">{{userInfo.fullName}}</font>
-           <q-btn-dropdown rounded size="sm" color="indigo-10">
+           <q-btn-dropdown rounded size="sm" color="indigo-5">
             <q-list>
               <q-item clickable v-close-popup >
                 <q-item-section>

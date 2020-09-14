@@ -12,6 +12,7 @@
         :data="list"
         :columns="tableColumns"
         :pagination.sync="pagination"
+        table-header-class="text-white bg-indigo-8"
         @request="doRefresh"
         row-key="id"
         dense>
@@ -69,7 +70,7 @@
         <q-card-section>
           <div>
             <q-input :readonly="formData.createdBy !== undefined" v-model="formData.id"
-              label="Area Id"/>
+              label="Area Code"/>
             <q-input v-model="formData.area"
               label="Area Name"/>
           </div>

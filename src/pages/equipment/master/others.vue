@@ -9,7 +9,7 @@
     <div class="row" style="margin-bottom:20px; width:60%">
       <div class="col" style="margin-right: 10px;width:10%;" align="right">
         <q-input v-model="formSearch.jobstatusName"
-        label="Route Cause Name"
+        :label=columnName
         clearable
         @input="clearSearch"
         @keydown.enter.prevent="getContent()"
@@ -33,6 +33,7 @@
         <q-radio v-model="input.attributename" val="assetStatus" @input="getInitPage" label="Asset Status"/>
       </fieldset>
     </div>
+
     <q-table
       :data="dataList"
       :columns="columns"
@@ -69,6 +70,14 @@
                 <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
                   <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
                   <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+                </q-btn>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-btn color="indigo-6" round size="sm" @click="doShowHistory(props)">
+                  <q-icon name="fas fa-history" />
+                  <q-tooltip>History</q-tooltip>
                 </q-btn>
               </q-item-section>
             </q-item>
@@ -118,7 +127,7 @@
             :rules="[val => !!val || 'this input is required']">
           </q-input>
           <div align="right">
-            <q-btn round icon="save" size="md"  style="margin-bottom:20px" color="warning" @click="doSave(true)">
+            <q-btn round icon="save" size="md"  style="margin-bottom:20px" color="warning" @click="doSubmit(true)">
               <q-tooltip>Submit</q-tooltip>
             </q-btn>
           </div>
@@ -126,75 +135,18 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="updateMasterForm" persistent @before-hide="clear()">
-      <q-card class="bg-white" style="width: 300px; max-width: 80vw;">
-        <q-bar class="bg-primary text-white">
-          <strong>Update Root Cause</strong>
-          <q-space />
-          <q-btn dense flat icon="close" v-close-popup />
-        </q-bar>
-        <q-card-section style="max-height: 50vh">
-          <q-input
-            v-model="input.attributeid"
-            stack-label label="Attribute Id"
-            readonly>
-          </q-input>
-          <q-input
-            v-model="input.attributedesc"
-            stack-label label="Root Cause Name"
-            type="textarea"
-            ref="cityName"
-            class="text-uppercase"
-            oninput="this.value = this.value.toUpperCase()"
-            :rules="[val => !!val || 'Root Cause is required']">
-          </q-input>
-          <q-radio v-model="input.attributename" val="RejectedUnStandard" @input="getInitPage" label="Rejected-Unstandard" style="margin-right:20px"/>
-          <q-radio v-model="input.attributename" val="RejectedNoNetwork" @input="getInitPage" label="Rejected-NoNetwork" style="margin-right:20px"/>
-          <q-radio v-model="input.attributename" val="RejectedOthers" @input="getInitPage" label="Rejected-Others" style="margin-right:20px"/>
-          <q-radio v-model="input.attributename" val="Approved" @input="getInitPage" label="Approved" style="margin-right:20px"/>
-          <q-radio v-model="input.attributename" val="IncompleteInfo" @input="getInitPage" label="Incomplete Info" style="margin-right:20px"/>
-          </q-card-section>
-        <q-card-actions align="right" class="q-pa-md">
-          <q-btn round icon="save" size="md" color="warning" @click="doSave(false)" >
-          <q-tooltip>Submit</q-tooltip>
-          </q-btn>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="deactivateForm" persistent @before-hide="clear()">
-      <q-card class="bg-white" style="width: 400px; max-width: 80vw;">
-        <q-bar :class="mode === 'activate' ?  'bg-positive' : 'bg-negative'" class="text-white">
-          <strong>{{deactiveTittle}}</strong>
-          <q-space />
-          <q-btn dense flat icon="close" v-close-popup />
-        </q-bar>
-          <q-card-section style="max-height: 50vh">
-            <font size="3" style="margin-bottom:30px">{{deactivateText}} </font>
-            <br><br>
-            <font size="2"><span class="text-bold" style="padding-right: 18px;">Root Cause</span>: {{input.attributedesc}}</font><br>
-          </q-card-section>
-        <q-card-actions align="right" class="q-pa-md">
-          <q-btn v-show="activateButtonShow" round icon="done" size="md" color="positive" @click="doDeactivate">
-            <q-tooltip>Activate</q-tooltip>
-          </q-btn>
-          <q-btn v-show="deactivateButtonShow" round icon="work_off" size="md" color="negative" @click="doDeactivate">
-            <q-tooltip>Deactivate</q-tooltip>
-          </q-btn>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
     <q-dialog v-model="historyForm" persistent @before-hide="clear()">
       <q-card class="bg-white" style="width: 300px; max-width: 80vw;">
         <q-bar class="bg-accent text-white">
-          <strong>History Root Cause</strong>
+          <strong>{{masterName}} History</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
           <q-card-section style="max-height: 50vh">
             <div align="center">
+              <strong>[{{input.attributedesc}}]</strong>
               <br>
+               <br>
               <font size="2" class="text-bold">Created:</font><br>
               <font size="2">[ {{input.createdBy || '-'}} ]</font><br>
               <font size="2">{{input.createdDate}}</font><br><br>
