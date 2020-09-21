@@ -3,10 +3,14 @@ export default {
     return {
       dataList: [],
       listOfBrand: [],
+      listOfManufacturer: [],
+      manufacturerCodeList: [],
+      productTypeList: [],
+      filteredBrandList: [],
       tableColumns: [
         {
           name: 'pid',
-          label: 'Id',
+          label: 'Series Code',
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
@@ -134,9 +138,12 @@ export default {
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.dataList = response.data.listOfProductSeries.content
+          this.pagination.rowsNumber = response.data.listOfProductSeries.totalElements
+          this.pagination.page = response.data.listOfProductSeries.number + 1
+          this.manufacturerCodeList = response.data.listOfManufacturerDropdown
+          this.listOfManufacturer = response.data.listOfManufacturer
+          this.productTypeList = response.data.listOfProductTypeDropdown
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -232,6 +239,20 @@ export default {
             message: error
           })
         })
+    },
+    getBrand () {
+      this.formData.manufacturerId = this.formData.manufacturerId.value
+      var brand = this.listOfManufacturer.filter(v => v.pid.indexOf(this.formData.manufacturerId) > -1)[0].brand
+      if (brand !== null) {
+        var brandList = JSON.parse(brand)
+        this.filteredBrandList = brandList.map(data => ({
+          label: data.brand.toUpperCase(),
+          value: data.brand.toUpperCase()
+        }))
+      } else {
+        this.filteredBrandList = []
+        this.formData.brand = ''
+      }
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'

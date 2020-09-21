@@ -80,15 +80,22 @@
         <q-card-section>
           <div>
             <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
-              label="Id"/>
+              label="Series Code"/>
             <q-input v-model="formData.description"
               label="Description"/>
-            <q-input v-model="formData.manufacturerId"
-              label="Manufacturer Id"/>
-            <q-input v-model="formData.brand"
-              label="Brand"/>
-            <q-input v-model="formData.productTypeSubType"
-              label="Product Type"/>
+            <q-select v-model="formData.manufacturerId"
+                stack-label
+                label="Manufacturer Code"
+                :options="manufacturerCodeList"
+                @input="getBrand()"/>
+            <q-select v-model="formData.brand"
+                stack-label
+                label="Brand"
+                :options="filteredBrandList"/>
+            <q-select v-model="formData.productTypeSubType"
+                stack-label
+                label="Product Type"
+                :options="productTypeList"/>
           </div>
           <br/>
           <div style="text-align: right">

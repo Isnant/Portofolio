@@ -58,7 +58,7 @@
       </q-btn>
     </q-page-sticky>
 
-    <q-dialog v-model="showForm" persistent>
+    <q-dialog v-model="showForm" persistent @before-hide="clear()">
 
       <q-card class="bg-white">
         <q-bar class="bg-blue-7 text-white">
@@ -71,7 +71,7 @@
           <div>
             <q-input :readonly="formData.createdBy !== undefined" v-model="formData.id"
               label="Area Code"/>
-            <q-input v-model="formData.area"
+            <q-input v-model="formData.areaName"
               label="Area Name"/>
           </div>
           <br/>
@@ -83,21 +83,27 @@
               :columns="regionColumns"
               :pagination.sync="regionPagination"
               @request="doRefreshRegion"
-              row-key="id"
-              :hide-bottom="true"
               dense>
 
-              <q-td slot="body-cell-id" slot-scope="cell">
-                {{ cell.row.id }}
-                <q-popup-edit v-model="cell.row.id" :disable="cell.row.createdDate !== undefined">
-                  <q-input v-model="cell.row.id" dense />
+              <q-td slot="body-cell-code" slot-scope="cell">
+                {{ cell.row.code }}
+               <q-popup-edit v-model="cell.row.code" buttons>
+                  <q-input v-model="cell.row.code" dense />
                 </q-popup-edit>
               </q-td>
               <q-td slot="body-cell-region" slot-scope="cell">
                 {{ cell.row.region }}
-                <q-popup-edit v-model="cell.row.region">
+                <q-popup-edit v-model="cell.row.region" buttons>
                   <q-input v-model="cell.row.region" dense />
                 </q-popup-edit>
+              </q-td>
+              <q-td slot="body-cell-recordStatus" slot-scope="props">
+                <div v-if="props.row.recordStatus === 'A'">
+                    <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+                </div>
+                <div v-else>
+                    <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
+                </div>
               </q-td>
               <q-td slot="body-cell-action" slot-scope="cell">
                 <q-btn color="primary" round size="sm" @click="doToggleRegionStatus(cell)">

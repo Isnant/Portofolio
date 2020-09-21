@@ -9,41 +9,41 @@ export default {
       listOfAreaForRegion: [],
       tableColumns: [
         {
-          name: 'pid',
-          label: 'Building Code',
-          field: 'pid',
+          name: 'hubCode',
+          label: 'Hub Code',
+          field: 'hubCode',
           align: 'left',
           style: 'width: 100px',
           sortable: true
         },
         {
-          name: 'buildingName',
-          label: 'Building Name',
-          field: 'buildingName',
+          name: 'hubName',
+          label: 'Hub Name',
+          field: 'hubName',
           align: 'left',
           style: 'width: 200px',
           sortable: true
         },
         {
-          name: 'itCode',
-          label: 'IT Code',
-          field: 'itCode',
+          name: 'hubCodeIt',
+          label: 'Hub Code It',
+          field: 'hubCodeIt',
           align: 'left',
           style: 'width: 200px',
           sortable: true
         },
         {
-          name: 'area',
+          name: 'areaName',
           label: 'Area',
-          field: 'area',
+          field: 'areaName',
           align: 'left',
           style: 'width: 200px',
           sortable: true
         },
         {
-          name: 'region',
+          name: 'regionName',
           label: 'Region',
-          field: 'region',
+          field: 'regionName',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -52,6 +52,20 @@ export default {
           name: 'city',
           label: 'City',
           field: 'city',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'address',
+          label: 'Address',
+          field: 'address',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'postalCode',
+          label: 'Postal Code',
+          field: 'postalCode',
           align: 'left',
           sortable: true
         },
@@ -79,9 +93,9 @@ export default {
           sortable: true
         },
         {
-          name: 'region',
+          name: 'regioName',
           label: 'Region Name',
-          field: 'region',
+          field: 'regioName',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -94,7 +108,7 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'id',
+        sortBy: 'hubCode',
         descending: false,
         page: 1,
         rowsPerPage: 10,
@@ -111,21 +125,16 @@ export default {
       },
       showForm: false,
       formData: {
-        pid: '',
-        fidRegion: '',
-        buildingType: '',
-        buildingName: '',
-        itCode: '',
-        area: '',
-        region: '',
+        hubCode: '',
+        hubName: '',
+        hubCodeIt: '',
+        areaName: '',
+        regionName: '',
         city: '',
-        locationName: '',
-        complexName: '',
-        streetName: '',
-        streetNumber: '',
+        address: '',
         postalCode: '',
         phone: '',
-        fax: ''
+        remarks: ''
       }
     }
   },
@@ -133,7 +142,7 @@ export default {
   methods: {
     doInitPage () {
       this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}getBuildingInitPage`, {
+      this.$axios.get(`${process.env.urlPrefix}getHubCodeInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
@@ -143,9 +152,9 @@ export default {
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.listOfBuilding.content
-          this.pagination.rowsNumber = response.data.listOfBuilding.totalElements
-          this.pagination.page = response.data.listOfBuilding.number + 1
+          this.dataList = response.data.listOfHubCode.content
+          this.pagination.rowsNumber = response.data.listOfHubCode.totalElements
+          this.pagination.page = response.data.listOfHubCode.number + 1
           this.areaList = response.data.listOfAreaDropdown
           this.listOfAreaForRegion = response.data.listOfArea
         })
@@ -187,36 +196,19 @@ export default {
           })
         })
     },
-    doOpenForm (pid) {
-      if (pid === false) {
-        this.showForm = true
+    doOpenForm (cell) {
+      if (cell !== undefined) {
+        this.formData = JSON.parse(JSON.stringify(cell.row))
+        this.vDisable = true
       } else {
-        this.$q.loading.show()
-        this.$axios.get(`${process.env.urlPrefix}getBuildingDetail`, {
-          params: {
-            pid: pid
-          }
-        })
-          .then((response) => {
-            this.formData = response.data
-            this.formData.mode = 'update'
-            this.showForm = true
-            this.$q.loading.hide()
-          })
-          .catch((error) => {
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-            this.$q.loading.hide()
-          })
+        this.clear()
       }
+      this.showForm = true
     },
     doSave () {
       this.$q.loading.show()
 
-      this.$axios.post(`${process.env.urlPrefix}saveBuilding`, this.formData)
+      this.$axios.post(`${process.env.urlPrefix}saveHubCode`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
           this.$q.notify({
@@ -245,8 +237,8 @@ export default {
       this.doSave()
     },
     getRegion () {
-      this.formData.area = this.formData.area.value
-      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(this.formData.area) > -1)[0].region
+      this.formData.areaName = this.formData.areaName.value
+      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(this.formData.areaName) > -1)[0].region
       if (region !== null) {
         var RegionList = JSON.parse(region)
         this.filteredRegionList = RegionList.map(data => ({
@@ -258,29 +250,27 @@ export default {
         this.formData.region = ''
       }
     },
+    doRegion () {
+      this.formData.regionName = this.formData.regionName.value
+    },
     doRefresh () {
       this.clear()
       this.doInitPage()
     },
     clear () {
       this.formData = {
-        pid: '',
-        fidRegion: '',
-        buildingType: '',
-        buildingName: '',
-        itCode: '',
-        area: '',
-        region: '',
+        hubCode: '',
+        hubName: '',
+        hubCodeIt: '',
+        areaName: '',
+        regionName: '',
         city: '',
-        locationName: '',
-        complexName: '',
-        streetName: '',
-        streetNumber: '',
+        address: '',
         postalCode: '',
         phone: '',
-        fax: '',
-        mode: 'create'
+        remarks: ''
       }
+      this.vDisable = false
     }
   },
   beforeMount () {

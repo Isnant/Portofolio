@@ -36,10 +36,11 @@ export default {
         }
       ],
       regionColumns: [
+
         {
-          name: 'id',
-          label: 'Region Id',
-          field: 'id',
+          name: 'code',
+          label: 'Region Code',
+          field: 'code',
           align: 'left',
           style: 'width: 100px',
           sortable: true
@@ -48,6 +49,14 @@ export default {
           name: 'region',
           label: 'Region Name',
           field: 'region',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'recordStatus',
+          label: 'Status',
+          field: 'recordStatus',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -82,11 +91,7 @@ export default {
 
   methods: {
     doInitPage () {
-      this.doRefresh()
-    },
-    doRefresh () {
       this.$q.loading.show()
-
       const params = {
         pageIndex: this.pagination.page - 1,
         pageSize: this.pagination.rowsPerPage,
@@ -116,24 +121,27 @@ export default {
     doOpenForm (cell) {
       if (cell !== undefined) {
         this.formData = JSON.parse(JSON.stringify(cell.row))
-
-        this.$q.loading.show()
-
-        this.$axios.get(`${process.env.urlPrefix}getRegionByArea/`, {
-          params: { areaId: cell.row.id }
-        })
-          .then((response) => {
-            this.listOfRegion = response.data
-            this.$q.loading.hide()
-          })
-          .catch((error) => {
-            this.$q.loading.hide()
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-          })
+        if (this.formData.region !== null) {
+          this.listOfRegion = JSON.parse(this.formData.region)
+        } else {
+          this.listOfRegion = []
+        }
+        // this.$axios.get(`${process.env.urlPrefix}getRegionByArea/`, {
+        //   params: { areaId: cell.row.id }
+        // })
+        //   .then((response) => {
+        //     this.formData = response.data
+        //     this.listOfRegion = JSON.parse(this.formData.region)
+        //     this.$q.loading.hide()
+        //   })
+        //   .catch((error) => {
+        //     this.$q.loading.hide()
+        //     this.$q.notify({
+        //       color: 'negative',
+        //       icon: 'report_problem',
+        //       message: error
+        //     })
+        //   })
       } else {
         this.formData = {
           id: '',
@@ -146,15 +154,17 @@ export default {
     doAddNewRegion () {
       let newRegion = {}
 
-      this.$set(newRegion, 'id', '')
+      this.$set(newRegion, 'code', '')
       this.$set(newRegion, 'region', '')
       this.$set(newRegion, 'recordStatus', 'A')
 
       this.listOfRegion.push(newRegion)
     },
-    doSave () {
+    doSave (dactivate) {
       this.$q.loading.show()
-
+      if (!dactivate) {
+        this.formData.region = JSON.stringify(this.listOfRegion)
+      }
       this.$axios.post(`${process.env.urlPrefix}doSaveArea`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -181,8 +191,23 @@ export default {
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.formData = cell.row
-
-      this.doSave()
+      this.doSave(true)
+    },
+    doToggleRegionStatus (cell) {
+      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
+      this.listOfRegion[cell] = cell.row
+    },
+    doRefresh () {
+      this.clear()
+      this.doInitPage()
+    },
+    clear () {
+      this.formData = {
+        id: '',
+        areaName: '',
+        region: ''
+      }
+      this.listOfRegion = []
     }
   },
   beforeMount () {

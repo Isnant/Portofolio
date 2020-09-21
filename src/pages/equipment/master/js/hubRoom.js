@@ -2,20 +2,40 @@ export default {
   data () {
     return {
       dataList: [],
-      listOfBrand: [],
+      areaList: [],
+      regionList: [],
+      filteredRegionList: [],
+      listOfRegion: [],
+      listOfAreaForRegion: [],
       tableColumns: [
         {
-          name: 'Manucaturer Code',
-          label: 'Manucaturer Code',
-          field: 'pid',
+          name: 'hubCodeRoom',
+          label: 'Hub Room Code ',
+          field: 'hubCodeRoom',
           align: 'left',
           style: 'width: 100px',
           sortable: true
         },
         {
-          name: 'description',
-          label: 'Description',
-          field: 'description',
+          name: 'room',
+          label: 'Room',
+          field: 'room',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'floor',
+          label: 'Floor',
+          field: 'floor',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'hubName',
+          label: 'Hub Name',
+          field: 'hubName',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -34,27 +54,19 @@ export default {
           style: 'width: 100px'
         }
       ],
-      brandColumns: [
+      regionColumns: [
         {
-          name: 'Brand Code',
-          label: 'Brand Id',
+          name: 'id',
+          label: 'Region Id',
           field: 'id',
           align: 'left',
           style: 'width: 100px',
           sortable: true
         },
         {
-          name: 'brand',
-          label: 'Brand Name',
-          field: 'brand',
-          align: 'left',
-          style: 'width: 200px',
-          sortable: true
-        },
-        {
-          name: 'recordStatus',
-          label: 'Status',
-          field: 'recordStatus',
+          name: 'regioName',
+          label: 'Region Name',
+          field: 'regioName',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -67,14 +79,14 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'pid',
+        sortBy: 'hubCodeRoom',
+        descending: false,
         page: 1,
         rowsPerPage: 10,
-        rowsNumber: 0,
-        descending: false
+        rowsNumber: 0
       },
-      subTypePagination: {
-        sortBy: 'id',
+      regionPagination: {
+        sortBy: 'region',
         descending: false,
         rowsPerPage: 0
       },
@@ -84,20 +96,18 @@ export default {
       },
       showForm: false,
       formData: {
-        pid: '',
-        description: '',
-        productTypeSubType: '',
-        mode: 'create'
+        hubCodeRoom: '',
+        hubName: '',
+        floor: '',
+        room: ''
       }
     }
   },
-  beforeMount () {
-    this.doInitPage()
-  },
+
   methods: {
     doInitPage () {
       this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}getManufacturerBrandInitPage`, {
+      this.$axios.get(`${process.env.urlPrefix}getHubRoomInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
@@ -120,12 +130,12 @@ export default {
           })
         })
     },
-    getManufacturerBrandList (props) {
+    getBuildingList (props) {
       this.$q.loading.show()
       this.pagination.sortBy = props.pagination.sortBy
       this.pagination.descending = props.pagination.descending
 
-      this.$axios.get(`${process.env.urlPrefix}getManufacturerBrandList`, {
+      this.$axios.get(`${process.env.urlPrefix}getHubRoomList`, {
         params: {
           pageIndex: props.pagination.page - 1,
           pageSize: props.pagination.rowsPerPage,
@@ -149,54 +159,28 @@ export default {
           })
         })
     },
-    doOpenForm (pid) {
-      if (pid === false) {
-        this.showForm = true
+    doOpenForm (cell) {
+      if (cell !== undefined) {
+        this.formData = JSON.parse(JSON.stringify(cell.row))
+        this.vDisable = true
       } else {
-        this.$q.loading.show()
-        this.$axios.get(`${process.env.urlPrefix}getManufacturerBrandDetail`, {
-          params: {
-            pid: pid
-          }
-        })
-          .then((response) => {
-            this.formData = response.data
-            this.formData.mode = 'update'
-            this.listOfBrand = JSON.parse(this.formData.brand)
-            this.showForm = true
-            this.$q.loading.hide()
-          })
-          .catch((error) => {
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-            this.$q.loading.hide()
-          })
+        this.clear()
+        this.vDisable = false
       }
+      this.showForm = true
     },
-    doSave (dactivate) {
+    doSave () {
       this.$q.loading.show()
-      if (!dactivate) {
-        this.formData.brand = JSON.stringify(this.listOfBrand)
-      }
-      this.$axios.post(`${process.env.urlPrefix}saveManufacturerBrand`, this.formData)
+
+      this.$axios.post(`${process.env.urlPrefix}saveHubRoom`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
-          if (response.data === 'Success') {
-            this.$q.notify({
-              color: 'positive',
-              icon: 'info',
-              message: 'Record successfully saved'
-            })
-          } else {
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: response.data
-            })
-          }
+          this.$q.notify({
+            color: 'positive',
+            icon: 'info',
+            message: 'Record successfully saved'
+          })
+
           this.showForm = false
           this.doRefresh()
         })
@@ -211,23 +195,27 @@ export default {
           this.doRefresh()
         })
     },
-    doAddNewRegion () {
-      let newBrand = {}
-      this.$set(newBrand, 'id', '')
-      this.$set(newBrand, 'brand', '')
-      this.$set(newBrand, 'recordStatus', 'A')
-
-      this.listOfBrand.push(newBrand)
-    },
-    doToggleStatus (props) {
-      props.row.recordStatus = props.row.recordStatus === 'I' ? 'A' : 'I'
-      this.formData = props.row
-      this.formData.mode = 'update'
-      this.doSave(true)
-    },
-    doToggleSubTypeStatus (cell) {
+    doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.listOfBrand[cell] = cell.row
+      this.formData = cell.row
+      this.doSave()
+    },
+    getRegion () {
+      this.formData.areaName = this.formData.areaName.value
+      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(this.formData.areaName) > -1)[0].region
+      if (region !== null) {
+        var RegionList = JSON.parse(region)
+        this.filteredRegionList = RegionList.map(data => ({
+          label: data.region.toUpperCase(),
+          value: data.region.toUpperCase()
+        }))
+      } else {
+        this.filteredRegionList = []
+        this.formData.region = ''
+      }
+    },
+    doRegion () {
+      this.formData.regionName = this.formData.regionName.value
     },
     doRefresh () {
       this.clear()
@@ -235,11 +223,15 @@ export default {
     },
     clear () {
       this.formData = {
-        pid: '',
-        description: '',
-        mode: 'create'
+        hubCodeRoom: '',
+        hubName: '',
+        floor: '',
+        room: ''
       }
-      this.listOfBrand = []
+      this.vDisable = false
     }
+  },
+  beforeMount () {
+    this.doInitPage()
   }
 }

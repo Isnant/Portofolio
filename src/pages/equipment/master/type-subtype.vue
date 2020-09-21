@@ -80,7 +80,7 @@
         <q-card-section>
           <div>
             <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
-              label="Tyoe Id"/>
+              label="Type Code"/>
             <q-input v-model="formData.equipmentCategory"
               label="Type Name"/>
           </div>

@@ -98,6 +98,22 @@
             </q-item-section>
           </q-item>
           <q-item
+            to="/mHubCode"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section>
+              <q-item-label>Master Hub Code</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mHubRoom"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section>
+              <q-item-label>Master Hub Room</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
             to="/mBuild"
             :inset-level="1"
             active-class="my-menu-link">
@@ -119,6 +135,14 @@
             active-class="my-menu-link">
             <q-item-section>
               <q-item-label>Manufacturer - Brand</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mBdf"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section>
+              <q-item-label>Master BDF</q-item-label>
             </q-item-section>
           </q-item>
           <q-item

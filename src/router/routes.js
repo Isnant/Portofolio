@@ -14,6 +14,9 @@ const routes = [
       { path: '/mPtst', component: () => import('pages/equipment/master/type-subtype.vue') },
       { path: '/mManBran', component: () => import('pages/equipment/master/manufacturer-brand.vue') },
       { path: '/mPSeries', component: () => import('pages/equipment/master/series.vue') },
+      { path: '/mHubCode', component: () => import('pages/equipment/master/HubCode.vue') },
+      { path: '/mHubRoom', component: () => import('pages/equipment/master/hubRoom.vue') },
+      { path: '/mBdf', component: () => import('pages/equipment/master/bdf.vue') },
       { path: '/mOthers', component: () => import('pages/equipment/master/others.vue') }
     ]
   },
