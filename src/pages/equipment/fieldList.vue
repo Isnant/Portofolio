@@ -16,8 +16,15 @@
       <legend class="legedn_search">Search</legend>
 
       <div class="row" style="width: 100%">
+        <div class="col-20" style="margin-right: 10px; width: 30%">
+          <q-input
+          v-model="searchVal.equipmentName"
+          stack-label
+          label="Equipment Name"
+          color="purple-6"/>
+        </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 25%">
+        <div class="col-20" style="margin-right: 10px; width: 30%">
           <q-select
           v-model="searchVal.productType"
           label="Product Type"
@@ -25,7 +32,7 @@
           :options="productTypeList"/>
         </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 15%">
+        <div class="col-20" style="margin-right: 10px; width: 30%">
           <q-input
             v-model="searchVal.productSeries"
             label="Product Series"
@@ -33,8 +40,9 @@
             stack-label
           />
         </div>
-
-        <div class="col-20" style="margin-right: 10px;width: 20%">
+      </div>
+      <div class="row" style="margin-top:20px">
+        <div class="col-20" style="margin-right: 10px;width: 30%">
           <q-select
             v-model="searchVal.hubCode"
             label="Hub Code"
@@ -43,7 +51,7 @@
           />
         </div>
 
-        <div class="col-20" style="margin-right: 10px;width: 20%">
+        <div class="col-20" style="margin-right: 10px;width: 30%">
           <q-select
             v-model="searchVal.bdfCode"
             label="BDF Code"
@@ -52,7 +60,7 @@
           />
         </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 10%">
+        <div class="col-20" style="margin-right: 10px; width: 30%">
           <q-input
             v-model="searchVal.nodeCode"
             label="Node Code"
@@ -135,14 +143,28 @@
     </q-page-sticky>
 
     <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
-      <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+      <q-card class="bg-white" >
+        <q-bar class="bg-indigo-10 text-white">
         <strong>Field Equipment Form</strong>
         <q-space/>
         <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
-        <div style="margin:20px">
-          <div class="row">
+        <div class="row" style="width:45%; margin-right:20px; margin-left:20px; margin-top:10px; margin-bottom:40px">
+          <div class="col" style="width:50%">
+            <q-input  v-model="input.id"
+              :stack-label="true"
+              label="Equipment Id"
+              disable
+              tabindex="1"/>
+          </div>
+        </div>
+        <q-expansion-item
+          label="Basic Information"
+          header-class="bg-indigo-5 text-white"
+          default-opened
+          style="margin-bottom:10px"
+          icon="article">
+          <div class="row"  style="margin:20px">
             <div class="col" style="margin-right:10px">
               <q-input v-model="input.equipmentCategory"
                 :stack-label="true"
@@ -171,6 +193,7 @@
                 :rules="[val => !! val || 'Product Sub Type is required']"
                 :stack-label="true"
                 :options="subTypeList"
+                 @input="getSubTypeValue()"
                 label="Product Sub Type*"
                 tabindex="5"/>
               <q-input v-model="input.productSeries" ref="fProductSeries"
@@ -183,15 +206,27 @@
                 :stack-label="true"
                 label="Manufacturer*"
                 :options="manufacturerList"
-                @input="getBrand"
+                @input="getBrand()"
                 tabindex="7"/>
               <q-select v-model="input.brand" ref="fBrand"
                 :rules="[val => !! val || 'Brand is required']"
                 :stack-label="true"
                 label="Brand*"
-                @input="convertBrand"
+                @input="convertBrand()"
                 :options="brandList"
                 tabindex="8"/>
+            </div>
+            <div class="col" style="margin-right:10px">
+              <q-input v-model="input.equipmentStatus"
+                :stack-label="true"
+                label="Status"
+                tabindex="42"/>
+              <q-input v-model="input.statusReason" ref="fStatusReason"
+                  :rules="[val => !! val || 'Status Reason is required']"
+                  :stack-label="true"
+                  label="Status Reason*"
+                  tabindex="42"
+                  style="margin-top:20px"/>
               <q-input v-model="input.serialNumberDevice"
                 :stack-label="true"
                 label="Serial Number Device"
@@ -208,6 +243,16 @@
                 type="number"
                 tabindex="11"
                 style="margin-top:20px"/>
+            </div>
+          </div>
+        </q-expansion-item>
+         <q-expansion-item
+          label="Location"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="location_on">
+          <div class="row" style="margin:20px">
+            <div class="col" style="margin-right:10px">
               <q-input v-model="input.rack"
                 :stack-label="true"
                 label="Rack"
@@ -228,17 +273,18 @@
                 label="Hub Code*"
                 tabindex="15"
                 style="margin-top:20px"/>
-              <q-input v-model="input.hubAddress"
+              <q-input v-model="input.hubCodeRoom"
                 :stack-label="true"
-                label="Hub Address"
+                label="Hub Code Room"
                 tabindex="16"/>
+            </div>
+            <div class="col" style="margin-right:10px">
               <q-input v-model="input.bdfCode"
                 :stack-label="true"
                 label="BDF Code"
-                tabindex="17"
-                style="margin-top:20px"/>
+                tabindex="17"/>
               <div v-if="input.productType === 'FIBERNODE'">
-                <q-input v-show="blueNodeCode" v-model="input.nodeCode" ref="fNodeCode"
+                <q-input v-show="blueNodeCode" v-model="input.nodeCode" ref="fNodeCodeBlue"
                   :rules="[val => !! val || 'Node Code is required']"
                   :stack-label="true"
                   label="Node Code*"
@@ -246,7 +292,7 @@
                   @input="changeColorNodeCode"
                   style="margin-top:20px">
                 </q-input>
-                <q-input v-show="orangeNodeCode" v-model="input.nodeCode" ref="fNodeCode"
+                <q-input v-show="orangeNodeCode" v-model="input.nodeCode" ref="fNodeCodeOrange"
                   color="orange"
                   :stack-label="true"
                   label="Node Code*"
@@ -260,7 +306,7 @@
                 </q-input>
               </div>
               <div v-else>
-                <q-input v-model="input.nodeCode" ref="fNodeCode"
+                <q-input v-model="input.nodeCode" ref="fNodeCodeElse"
                   :rules="[val => !! val || 'Node Code is required']"
                   :stack-label="true"
                   label="Node Code*"
@@ -270,13 +316,13 @@
                 </q-input>
               </div>
               <div v-if="input.productType === 'POWER SUPPLY' || input.productType === 'POWER SUPPLY INDOOR'">
-                <q-input v-show="bluePsCode" v-model="input.psCode" ref="fPowerSupplyCode"
+                <q-input v-show="bluePsCode" v-model="input.psCode" ref="fPowerSupplyCodeBlue"
                   :rules="[val => !! val || 'Power Supply Code is required']"
                   :stack-label="true"
                   label="Power Supply Code*"
                   @input="changeColorPsCode"
                   tabindex="19"/>
-                <q-input v-show="orangePsCode" v-model="input.psCode" ref="fPowerSupplyCode"
+                <q-input v-show="orangePsCode" v-model="input.psCode" ref="fPowerSupplyCodeOrange"
                   :rules="[val => !! val || 'Power Supply Code is required']"
                   :stack-label="true"
                   label="Power Supply Code*"
@@ -289,20 +335,20 @@
                 </q-input>
               </div>
               <div v-else>
-                <q-input v-model="input.psCode" ref="fPowerSupplyCode"
+                <q-input v-model="input.psCode" ref="fPowerSupplyCodeElse"
                   :rules="[val => !! val || 'Power Supply Code is required']"
                   :stack-label="true"
                   label="Power Supply Code*"
                   tabindex="19"/>
               </div>
               <div v-if="input.productType === 'AMPLIFIER' || input.productType === 'AMPLIFIER INDOOR'">
-                <q-input v-show="blueAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCode"
+                <q-input v-show="blueAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCodeBlue"
                   :rules="[val => !! val || 'Amplifier Code is required']"
                   :stack-label="true"
                   label="Amplifier Code*"
                   @input="changeColorAmplifierCode"
                   tabindex="20"/>
-                <q-input v-show="orangeAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCode"
+                <q-input v-show="orangeAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCodeOrange"
                   :rules="[val => !! val || 'Amplifier Code is required']"
                   :stack-label="true"
                   label="Amplifier Code*"
@@ -313,24 +359,34 @@
                     <font class="text-orange">{{amplifierCodeWarningText}}</font>
                   </template>
                 </q-input>
-                <q-input v-model="input.service" ref="fService"
+                <!-- <q-input v-model="input.service" ref="fService"
                   :rules="[val => !! val || 'Service is required']"
                   :stack-label="true"
                   label="Service*"
-                  tabindex="21"/>
+                  tabindex="21"/> -->
               </div>
               <div v-else>
                 <q-input v-model="input.amplifierCode"
                   :stack-label="true"
                   label="Amplifier Code"
                   tabindex="20"/>
-                <q-input v-model="input.service" ref="fService"
-                  :rules="[val => !! val || 'Service is required']"
-                  :stack-label="true"
-                  label="Service*"
-                  tabindex="21"
-                  style="margin-top:20px"/>
               </div>
+            </div>
+          </div>
+        </q-expansion-item>
+         <q-expansion-item
+          label="Detail Information"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="library_books">
+          <div class="row" style="margin:20px">
+             <div class="col" style="margin-right:10px">
+              <q-input v-model="input.service" ref="fService"
+                :rules="[val => !! val || 'Service is required']"
+                :stack-label="true"
+                label="Service*"
+                tabindex="21"
+                style="margin-top:20px"/>
               <q-input v-model="input.technology" ref="fTechnology"
                 :rules="[val => !! val || 'Technology is required']"
                 :stack-label="true"
@@ -365,13 +421,14 @@
                 label="Capacity 1"
                 tabindex="28"
                 style="margin-top:20px"/>
-            </div>
-            <div class="col">
               <q-input v-model="input.capacity2"
                 :stack-label="true"
                 label="Capacity 2"
-                tabindex="29"/>
-              <q-input v-model="input.capacity3"
+                tabindex="29"
+                style="margin-top:20px"/>
+            </div>
+            <div class="col">
+               <q-input v-model="input.capacity3"
                 :stack-label="true"
                 label="Capacity 3"
                 tabindex="30"
@@ -432,102 +489,123 @@
                 label="PIC"
                 tabindex="38"
                 style="margin-top:20px"/>
+            </div>
+          </div>
+        </q-expansion-item>
+        <q-expansion-item
+          label="Owners Information"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="account_circle">
+          <div class="row" style="margin:20px">
+            <div class="col" style="margin-right:10px">
               <q-input v-model="input.division" ref="fDivision"
                 :rules="[val => !! val || 'Division is required']"
                 :stack-label="true"
                 label="Division*"
-                tabindex="39"
-                style="margin-top:20px"/>
+                tabindex="39"/>
               <q-input v-model="input.department" ref="fDepartment"
                 :rules="[val => !! val || 'Department is required']"
                 :stack-label="true"
                 label="Department*"
                 tabindex="40"/>
+            </div>
+            <div class="col">
               <q-input v-model="input.propertyOf" ref="fPropertyOf"
                 :rules="[val => !! val || 'Property Of is required']"
                 :stack-label="true"
                 label="Property Of*"
                 tabindex="41"/>
-              <q-input v-model="input.equipmentStatus" ref="fEquipmentStatus"
-                :rules="[val => !! val || 'Status Reason is required']"
-                :stack-label="true"
-                label="Status Reason*"
-                tabindex="42"/>
-              <q-input v-model="input.predecessor" ref="fPredecessor"
-                :rules="[val => !! val || 'Predecessor is required']"
-                :stack-label="true"
-                label="Predecessor*"
-                tabindex="43"/>
-              <q-input v-model="input.itCode" ref="fItCode"
-                :rules="[val => !! val || 'IT Code is required']"
-                :stack-label="true"
-                label="IT Code*"
-                tabindex="44"/>
-              <q-input v-model="input.buildingName"
-                :stack-label="true"
-                label="Building Name"
-                tabindex="45"/>
-              <q-input v-model="input.tower"
-                :stack-label="true"
-                label="Tower"
-                tabindex="46"
-                style="margin-top:20px"/>
-              <q-input v-model="input.floor"
-                :stack-label="true"
-                label="Floor"
-                tabindex="47"
-                style="margin-top:20px"/>
-              <q-input v-model="input.complexName"
-                :stack-label="true"
-                label="Complex Name"
-                tabindex="48"
-                style="margin-top:20px"/>
-              <q-input v-model="input.streetName"
-                :stack-label="true"
-                label="Street Name"
-                tabindex="49"
-                style="margin-top:20px"/>
-              <q-input v-model="input.streetNumber"
-                :stack-label="true"
-                label="Street Number"
-                tabindex="50"
-                style="margin-top:20px"/>
-              <q-input v-model="input.kelurahan"
-                :stack-label="true"
-                label="District"
-                tabindex="51"
-                style="margin-top:20px"/>
-              <q-input v-model="input.postalCode"
-                :stack-label="true"
-                label="Postal Code"
-                tabindex="52"
-                style="margin-top:20px"/>
-              <q-input v-model="input.direction"
-                :stack-label="true"
-                label="Direction"
-                tabindex="53"
-                style="margin-top:20px"/>
-              <q-input v-model="input.normalDistance"
-                :stack-label="true"
-                label="Normal Distance"
-                tabindex="54"
-                style="margin-top:20px"/>
-              <q-input v-model="input.updateDistanceDate"
-                :stack-label="true"
-                label="Update Distance Date"
-                tabindex="55"
-                style="margin-top:20px"/>
-              <q-input v-model="input.remarks"
-                :stack-label="true"
-                label="Remarks"
-                tabindex="56"
-                style="margin-top:20px"/>
             </div>
           </div>
-          <div align="right">
-            <q-btn @click.native="saveEquipment" color="warning" icon="save"/>
+        </q-expansion-item>
+        <q-expansion-item
+          label="Others Information"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="dashboard">
+          <div class="row" style="margin:20px">
+             <div class="col" style="margin-right:10px">
+                <q-input v-model="input.predecessor" ref="fPredecessor"
+                  :rules="[val => !! val || 'Predecessor is required']"
+                  :stack-label="true"
+                  label="Predecessor*"
+                  tabindex="43"
+                   style="margin-top:20px"/>
+                <q-input v-model="input.itCode" ref="fItCode"
+                  :rules="[val => !! val || 'IT Code is required']"
+                  :stack-label="true"
+                  label="IT Code*"
+                  tabindex="44"/>
+                <q-input v-model="input.buildingName"
+                  :stack-label="true"
+                  label="Building Name"
+                  tabindex="45"/>
+                <q-input v-model="input.tower"
+                  :stack-label="true"
+                  label="Tower"
+                  tabindex="46"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.floor"
+                  :stack-label="true"
+                  label="Floor"
+                  tabindex="47"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.complexName"
+                  :stack-label="true"
+                  label="Complex Name"
+                  tabindex="48"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.streetName"
+                  :stack-label="true"
+                  label="Street Name"
+                  tabindex="49"
+                   style="margin-top:20px"/>
+              </div>
+              <div class="col" style="margin-right:10px">
+                <q-input v-model="input.streetNumber"
+                  :stack-label="true"
+                  label="Street Number"
+                  tabindex="50"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.kelurahan"
+                  :stack-label="true"
+                  label="District"
+                  tabindex="51"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.postalCode"
+                  :stack-label="true"
+                  label="Postal Code"
+                  tabindex="52"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.direction"
+                  :stack-label="true"
+                  label="Direction"
+                  tabindex="53"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.normalDistance"
+                  :stack-label="true"
+                  label="Normal Distance"
+                  tabindex="54"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.updateDistanceDate"
+                  :stack-label="true"
+                  label="Update Distance Date"
+                  tabindex="55"
+                  style="margin-top:20px"/>
+                <q-input v-model="input.remarks"
+                  :stack-label="true"
+                  label="Remarks"
+                  tabindex="56"
+                  style="margin-top:20px"/>
+              </div>
+            </div>
+        </q-expansion-item>
+          <div align="right" style="margin:20px">
+            <q-btn rounded @click.native="saveEquipment" color="warning" icon="save">
+            <q-tooltip>Submit</q-tooltip>
+            </q-btn>
           </div>
-        </div>
       </q-card>
     </q-dialog>
 

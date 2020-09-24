@@ -1,3 +1,4 @@
+import moment from 'moment'
 export default {
   data () {
     return {
@@ -310,9 +311,8 @@ export default {
       this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
-
           this.assetCategoryList = response.data.listOfAssetCategory
-          this.productTypeList = response.data.listOfProductSubType.map(productType => productType.value)
+          this.productTypeList = response.data.listOfProductSubType
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
@@ -381,10 +381,8 @@ export default {
       this.$refs.fDivision.validate()
       this.$refs.fDepartment.validate()
       this.$refs.fPropertyOf.validate()
-      this.$refs.fEquipmentStatus.validate()
+      this.$refs.fStatusReason.validate()
       this.$refs.fDescription.validate()
-      this.$refs.fNodeCode.validate()
-      this.$refs.fPowerSupplyCode.validate()
       this.$refs.fService.validate()
       this.$refs.fTechnology.validate()
       this.$refs.fCapacity.validate()
@@ -403,10 +401,10 @@ export default {
       var f9 = this.$refs.fDivision.hasError
       var f10 = this.$refs.fDepartment.hasError
       var f11 = this.$refs.fPropertyOf.hasError
-      var f12 = this.$refs.fEquipmentStatus.hasError
+      var f12 = this.$refs.fStatusReason.hasError
       var f13 = this.$refs.fDescription.hasError
-      var f14 = this.$refs.fNodeCode.hasError
-      var f15 = this.$refs.fPowerSupplyCode.hasError
+      var f14 = false
+      var f15 = false
       var f16 = false
       var f17 = this.$refs.fService.hasError
       var f18 = this.$refs.fTechnology.hasError
@@ -415,9 +413,40 @@ export default {
       var f21 = this.$refs.fPredecessor.hasError
       var f22 = this.$refs.fItCode.hasError
 
+      if (this.input.productType === 'POWER SUPPLY' || this.input.productType === 'POWER SUPPLY INDOOR') {
+        if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
+          this.$refs.fPowerSupplyCodeBlue.validate()
+          f15 = this.$refs.fPowerSupplyCodeBlue.hasError
+        } else {
+          this.$refs.fPowerSupplyCodeOrange.validate()
+          f15 = this.$refs.fPowerSupplyCodeOrange.hasError
+        }
+      } else {
+        this.$refs.fPowerSupplyCodeElse.validate()
+        f15 = this.$refs.fPowerSupplyCodeElse.hasError
+      }
+
       if (this.input.productType === 'AMPLIFIER' || this.input.productType === 'AMPLIFIER INDOOR') {
-        this.$refs.fAmplifierCode.validate()
-        f16 = this.$refs.fAmplifierCode.hasError
+        if (this.input.amplifierCode.length === 10) {
+          this.$refs.fAmplifierCodeBlue.validate()
+          f16 = this.$refs.fAmplifierCodeBlue.hasError
+        } else {
+          this.$refs.fAmplifierCodeOrange.validate()
+          f16 = this.$refs.fAmplifierCodeOrange.hasError
+        }
+      }
+
+      if (this.input.productType === 'FIBERNODE') {
+        if (this.input.nodeCode.length === 8) {
+          this.$refs.fNodeCodeBlue.validate()
+          f8 = this.$refs.fNodeCodeBlue.hasError
+        } else {
+          this.$refs.fNodeCodeOrange.validate()
+          f8 = this.$refs.fNodeCodeOrange.hasError
+        }
+      } else {
+        this.$refs.fNodeCodeElse.validate()
+        f8 = this.$refs.fNodeCodeElse.hasError
       }
 
       if (!f1 && !f2 && !f3 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f13 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22) {
@@ -426,6 +455,8 @@ export default {
     },
     doSaveEquipment () {
       this.$q.loading.show()
+      this.input.purchasedDate = this.input.purchasedDate === '' ? '' : moment(String(this.input.purchasedDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.installationDate = this.input.installationDate === '' ? '' : moment(String(this.input.installationDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
           this.$q.notify({
@@ -456,12 +487,15 @@ export default {
           .then((response) => {
             this.$q.loading.hide()
             this.listOfError = response.data
-            this.modalError = true
-            // this.$q.notify({
-            //   color: 'positive',
-            //   icon: 'info',
-            //   message: 'File successfully uploaded'
-            // })
+            if (this.listOfError[0].isError === false) {
+              this.$q.notify({
+                color: 'positive',
+                icon: 'info',
+                message: this.listOfError[0].message
+              })
+            } else {
+              this.modalError = true
+            }
           })
           .catch((error) => {
             this.$q.loading.hide()
@@ -1217,13 +1251,17 @@ export default {
     },
     getSubType () {
       this.$q.loading.show()
+      this.input.productType = this.input.productType.value
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
           pid: this.input.productType
         }
       })
         .then((response) => {
-          this.subTypeList = response.data.map(subType => subType.id)
+          this.subTypeList = response.data.map(data => ({
+            label: data.id.toUpperCase(),
+            value: data.id.toUpperCase()
+          }))
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -1234,6 +1272,9 @@ export default {
           })
           this.$q.loading.hide()
         })
+    },
+    getSubTypeValue () {
+      this.input.productSubType = this.input.productSubType.value
     },
     convertManufacturer () {
       this.input.manufacturer = this.input.manufacturer.value
@@ -1247,7 +1288,11 @@ export default {
         }
       })
         .then((response) => {
-          this.brandList = response.data.map(brand => brand.brand)
+          this.brandList = response.data.map(data => ({
+            label: data.brand.toUpperCase(),
+            value: data.brand.toUpperCase()
+          }))
+          // this.brandList = response.data.map(brand => brand.brand)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -1259,8 +1304,13 @@ export default {
           this.$q.loading.hide()
         })
     },
+    convertBrand () {
+      this.input.brand = this.input.brand.value
+    },
     doEdit (cell) {
       this.input = JSON.parse(JSON.stringify(cell.row))
+      this.input.purchasedDate = this.input.purchasedDate === null ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
+      this.input.installationDate = this.input.installationDate === null ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
       this.modalAddNewAsset = true
     },
     changeColorNodeCode () {
