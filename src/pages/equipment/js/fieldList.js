@@ -496,6 +496,9 @@ export default {
             } else {
               this.modalError = true
             }
+            this.modalUpload = false
+            this.doRefresh()
+            this.doMainInitPage()
           })
           .catch((error) => {
             this.$q.loading.hide()

@@ -617,7 +617,7 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <a href="/statics/template/FieldTemplate.xlsx">Download Template</a>
+          <a href="/statics/template/FieldTemplateExcel.xlsx">Download Template</a>
         </q-card-section>
         <q-card-section>
           <q-field style="padding-bottom: 20px;">
