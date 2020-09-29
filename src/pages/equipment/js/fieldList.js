@@ -182,6 +182,7 @@ export default {
       listOfError: [],
       modalUpload: false,
       modalError: false,
+      modalWarning: false,
       modalAddNewAsset: false,
       addHub: true,
       modalAddField: false,
@@ -480,21 +481,23 @@ export default {
     },
     doUploadFile (file) {
       this.$q.loading.show()
-
       let fr = new FileReader()
       fr.onload = (e) => {
         this.$axios.post(`${process.env.urlPrefix}uploadField`, { file64: e.target.result })
           .then((response) => {
             this.$q.loading.hide()
             this.listOfError = response.data
-            if (this.listOfError[0].isError === false) {
+            this.listOfError.sort(this.compare)
+            if (this.listOfError[0].messageStatus === 'error') {
+              this.modalError = true
+            } else if (this.listOfError[0].messageStatus === 'warning') {
+              this.modalWarning = true
+            } else {
               this.$q.notify({
                 color: 'positive',
                 icon: 'info',
                 message: this.listOfError[0].message
               })
-            } else {
-              this.modalError = true
             }
             this.modalUpload = false
             this.doRefresh()
@@ -511,6 +514,37 @@ export default {
           })
       }
       fr.readAsDataURL(this.$refs.fieldExcelFile.files[0])
+    },
+    doUploadAfterWarning () {
+      this.$q.loading.show()
+      this.$axios.post(`${process.env.urlPrefix}uploadFieldAfterWarning`)
+        .then((response) => {
+          this.$q.loading.hide()
+          this.listOfError = response.data
+          this.listOfError.sort(this.compare)
+          if (this.listOfError[0].messageStatus === 'error') {
+            this.modalError = true
+          } else if (this.listOfError[0].messageStatus === 'warning') {
+            this.modalWarning = true
+          } else {
+            this.$q.notify({
+              color: 'positive',
+              icon: 'info',
+              message: this.listOfError[0].message
+            })
+            this.modalWarning = false
+          }
+          this.doRefresh()
+          this.doMainInitPage()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     doMainOpenMigrationForm (cell) {
       this.showMigrationForm = true
@@ -1392,6 +1426,17 @@ export default {
         this.blueAmplifierCode = false
         this.orangeAmplifierCode = true
       }
+    },
+    compare (a, b) {
+      const statusA = a.messageStatus.toUpperCase()
+      const statusB = b.messageStatus.toUpperCase()
+      let comparison = 0
+      if (statusA > statusB) {
+        comparison = 1
+      } else if (statusA < statusB) {
+        comparison = -1
+      }
+      return comparison
     },
     doRefresh () {
       this.input = {

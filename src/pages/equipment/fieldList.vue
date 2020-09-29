@@ -656,6 +656,34 @@
       </q-card>
     </q-dialog>
 
+    <q-dialog v-model="modalWarning" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-orange text-white">
+          <strong>Warning</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+         <q-table
+          :data="listOfError"
+          :columns="errorListColumn"
+          dense>
+          <q-td slot="body-cell-message" slot-scope="props">
+            <div class="text-orange bg-white">
+              {{ props.row.message }}
+            </div>
+          </q-td>
+         </q-table>
+         <div align="right" style="margin-top:20px">
+           <q-btn round color="primary" @click="doUploadAfterWarning()">
+            <q-icon name="fas fa-file-upload"/>
+            <q-tooltip>Upload Data</q-tooltip>
+          </q-btn>
+         </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="showMigrationForm" :maximized="true" persistent>
 
       <q-card class="bg-white">
