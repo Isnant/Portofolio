@@ -30,6 +30,8 @@
         <q-radio v-model="input.attributename" val="propertyOf" @input="getInitPage" label="Property Of" style="margin-right:10px"/>
         <q-radio v-model="input.attributename" val="statusReason" @input="getInitPage" label="Status Reason" style="margin-right:10px"/>
         <q-radio v-model="input.attributename" val="technology" @input="getInitPage" label="Technology" style="margin-right:10px"/>
+        <q-radio v-model="input.attributename" val="service" @input="getInitPage" label="Service" style="margin-right:10px"/>
+        <q-radio v-model="input.attributename" val="capacityUnits" @input="getInitPage" label="Capacity Units" style="margin-right:10px"/>
         <q-radio v-model="input.attributename" val="assetStatus" @input="getInitPage" label="Asset Status"/>
       </fieldset>
     </div>
@@ -109,10 +111,12 @@
                 <q-radio v-model="input.attributename" val="department" @input="getInitPage" label="Department" style="margin-right:10px"/>
                 <q-radio v-model="input.attributename" val="assetCategory" @input="getInitPage" label="Asset Category" style="margin-right:10px"/>
                 <q-radio v-model="input.attributename" val="propertyOf" @input="getInitPage" label="Property Of" style="margin-right:10px"/>
+                <q-radio v-model="input.attributename" val="statusReason" @input="getInitPage" label="Status Reason" style="margin-right:10px"/>
               </div>
               <div class="col">
-                <q-radio v-model="input.attributename" val="statusReason" @input="getInitPage" label="Status Reason" style="margin-right:10px"/>
                 <q-radio v-model="input.attributename" val="technology" @input="getInitPage" label="Technology" style="margin-right:10px"/>
+                <q-radio v-model="input.attributename" val="service" @input="getInitPage" label="Service" style="margin-right:10px"/>
+                <q-radio v-model="input.attributename" val="capacityUnits" @input="getInitPage" label="Capacity Units" style="margin-right:10px"/>
                 <q-radio v-model="input.attributename" val="assetStatus" @input="getInitPage" label="Asset Status"/>
               </div>
             </div>
@@ -122,8 +126,6 @@
             stack-label
             :label=columnName
             ref="masterName"
-            class="text-uppercase"
-            oninput="this.value = this.value.toUpperCase()"
             :rules="[val => !!val || 'this input is required']">
           </q-input>
           <div align="right">

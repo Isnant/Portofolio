@@ -208,8 +208,6 @@ export default {
     doSave () {
       this.$q.loading.show()
       var vSucces = ''
-      this.input.attributedesc = this.input.attributedesc.toUpperCase()
-
       if (this.isCreate) {
         vSucces = '" Saved'
       } else {
@@ -277,8 +275,14 @@ export default {
         this.columnName = 'Status Reason Name'
         this.masterName = 'Status Reason'
       } else if (this.input.attributename === 'technology') {
-        this.columnName = 'Technology Name'
+        this.columnName = 'Technology'
         this.masterName = 'Technology'
+      } else if (this.input.attributename === 'service') {
+        this.columnName = 'Service Name'
+        this.masterName = 'Service'
+      } else if (this.input.attributename === 'capacityUnits') {
+        this.columnName = 'Capacity Units'
+        this.masterName = 'Capacity Units'
       } else if (this.input.attributename === 'assetStatus') {
         this.columnName = 'Asset Status Name'
         this.masterName = 'Asset Status'

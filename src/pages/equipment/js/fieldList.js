@@ -17,6 +17,14 @@ export default {
       hubCodeList: [],
       bdfCodeList: [],
       subTypeList: [],
+      hubCodeRoomList: [],
+      technologyList: [],
+      serviceList: [],
+      capacityUnitsList: [],
+      departmentList: [],
+      divisionList: [],
+      statusReasonList: [],
+      propertyOfList: [],
       manufacturerList: [],
       brandList: [],
       input: {
@@ -41,6 +49,7 @@ export default {
         nodeCode: '',
         psCode: '',
         amplifierCode: '',
+        fatCode: '',
         service: '',
         technology: '',
         ipAddress: '',
@@ -317,6 +326,14 @@ export default {
           this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
+          this.technologyList = response.data.listOfTechnology
+          this.serviceList = response.data.listOfService
+          this.statusReasonList = response.data.listOfStatusReason
+          this.departmentList = response.data.listOfDepartment
+          this.divisionList = response.data.listOfDivision
+          this.propertyOfList = response.data.listOfPropertyOf
+          this.capacityUnitsList = response.data.listOfCapacityUnits
+          this.hubCodeRoomList = response.data.listOfHubCodeRoom
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -458,6 +475,7 @@ export default {
       this.$q.loading.show()
       this.input.purchasedDate = this.input.purchasedDate === '' ? '' : moment(String(this.input.purchasedDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.input.installationDate = this.input.installationDate === '' ? '' : moment(String(this.input.installationDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.updateDistanceDate = this.input.updateDistanceDate === '' ? '' : moment(String(this.input.updateDistanceDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
           this.$q.notify({
@@ -1313,6 +1331,25 @@ export default {
     getSubTypeValue () {
       this.input.productSubType = this.input.productSubType.value
     },
+    getDropdownValue (type) {
+      if (type === 'statusReason') {
+        this.input.statusReason = this.input.statusReason.value
+      } else if (type === 'hubCode') {
+        this.input.hubCode = this.input.hubCode.value
+      } else if (type === 'hubCodeRoom') {
+        this.input.hubCodeRoom = this.input.hubCodeRoom.value
+      } else if (type === 'service') {
+        this.input.service = this.input.service.value
+      } else if (type === 'technology') {
+        this.input.technology = this.input.technology.value
+      } else if (type === 'capacityUnits') {
+        this.input.capacityUnits = this.input.capacityUnits.value
+      } else if (type === 'division') {
+        this.input.division = this.input.division.value
+      } else if (type === 'department') {
+        this.input.department = this.input.department.value
+      }
+    },
     convertManufacturer () {
       this.input.manufacturer = this.input.manufacturer.value
     },
@@ -1347,6 +1384,7 @@ export default {
     doEdit (cell) {
       this.input = JSON.parse(JSON.stringify(cell.row))
       this.input.purchasedDate = this.input.purchasedDate === null ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
+      this.input.updateDistanceDate = this.input.updateDistanceDate === null ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
       this.input.installationDate = this.input.installationDate === null ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
       this.modalAddNewAsset = true
     },
