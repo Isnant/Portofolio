@@ -137,8 +137,9 @@
         <q-tooltip>Upload</q-tooltip>
       </q-btn> -->
       <q-fab color="orange-4" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="orange-3" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
-        <q-fab-action color="orange-3" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
+        <q-btn round color="orange-3" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-btn>
+        <q-btn round color="orange-3" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-btn>
+        <q-btn round color="orange-3" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
       </q-fab>
     </q-page-sticky>
 

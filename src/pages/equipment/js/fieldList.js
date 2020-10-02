@@ -88,6 +88,9 @@ export default {
         remarks: '',
         cascades: '',
         amplifierNotes: '',
+        homepassed: '',
+        internetAccount: '',
+        customerType: '',
         memoActiveDate: '',
         electricalStatus: '',
         lastModifiedByExcel: '',
@@ -1464,6 +1467,33 @@ export default {
         this.blueAmplifierCode = false
         this.orangeAmplifierCode = true
       }
+    },
+    downloadExcel (props) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}fieldExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          searchVal: this.searchVal
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'field_excel_download.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     compare (a, b) {
       const statusA = a.messageStatus.toUpperCase()
