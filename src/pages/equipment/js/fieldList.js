@@ -674,7 +674,6 @@ export default {
       this.$axios.get(`${process.env.urlPrefix}getNodeChildMig`, { params: { nodeCode: nodeCodeParam } })
         .then((response) => {
           this.migrationListOriginal = response.data
-          console.log(response.data)
           this.doMigrationChangeHub()
           this.$q.loading.hide()
         })
