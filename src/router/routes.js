@@ -17,6 +17,9 @@ const routes = [
       { path: '/mHubCode', component: () => import('pages/equipment/master/HubCode.vue') },
       { path: '/mHubRoom', component: () => import('pages/equipment/master/hubRoom.vue') },
       { path: '/mBdf', component: () => import('pages/equipment/master/bdf.vue') },
+      { path: '/mNodeCode', component: () => import('pages/equipment/master/nodeCode.vue') },
+      { path: '/mPsCode', component: () => import('pages/equipment/master/psCode.vue') },
+      { path: '/mAmplifierCode', component: () => import('pages/equipment/master/amplifierCode.vue') },
       { path: '/mOthers', component: () => import('pages/equipment/master/others.vue') }
     ]
   },

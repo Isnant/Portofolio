@@ -153,6 +153,30 @@
               <q-item-label>Master Product Series</q-item-label>
             </q-item-section>
           </q-item>
+           <q-item
+            to="/mNodeCode"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section>
+              <q-item-label>Node Code</q-item-label>
+            </q-item-section>
+          </q-item>
+           <q-item
+            to="/mPsCode"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section>
+              <q-item-label>Power Supply Code</q-item-label>
+            </q-item-section>
+          </q-item>
+           <q-item
+            to="/mAmplifierCode"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section>
+              <q-item-label>Amplifier Code</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item
             to="/mOthers"
             :inset-level="1"
