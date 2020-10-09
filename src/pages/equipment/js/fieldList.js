@@ -948,7 +948,6 @@ export default {
             .then((response) => {
               this.lastCodes = response.data
               this.doMigrationInitializeList()
-
               this.$q.loading.hide()
             })
             .catch((error) => {
@@ -994,19 +993,26 @@ export default {
       if (cellRow.newName.length === 8) {
         cellRow.productType = 'FIBERNODE'
         cellRow.predecessor = ''
-      } else if (cellRow.newName.substring(cellRow.newName.length - 3) === '000') {
-        cellRow.productType = 'AMPLI 1'
-        cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
-      } else if (cellRow.newName.substring(cellRow.newName.length - 2) === '00') {
-        cellRow.productType = 'AMPLI 2'
-        cellRow.predecessor = cellRow.newName.substring(0, 7) + '000'
-      } else if (cellRow.newName.substring(cellRow.newName.length - 1) === '0') {
-        cellRow.productType = 'AMPLI 3'
-        cellRow.predecessor = cellRow.newName.substring(0, 8) + '00'
       } else if (cellRow.newName.length === 10) {
-        cellRow.productType = 'AMPLI 4'
-        cellRow.predecessor = cellRow.newName.substring(0, 9) + '0'
+        cellRow.productType = 'AMPLIFIER'
+        cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
+      } else if (cellRow.newName.length === 6) {
+        cellRow.productType = 'POWER SUPPLY'
+        cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
       }
+      // else if (cellRow.newName.substring(cellRow.newName.length - 3) === '000') {
+      //   cellRow.productType = 'AMPLI 1'
+      //   cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
+      // } else if (cellRow.newName.substring(cellRow.newName.length - 2) === '00') {
+      //   cellRow.productType = 'AMPLI 2'
+      //   cellRow.predecessor = cellRow.newName.substring(0, 7) + '000'
+      // } else if (cellRow.newName.substring(cellRow.newName.length - 1) === '0') {
+      //   cellRow.productType = 'AMPLI 3'
+      //   cellRow.predecessor = cellRow.newName.substring(0, 8) + '00'
+      // } else if (cellRow.newName.length === 10) {
+      //   cellRow.productType = 'AMPLI 4'
+      //   cellRow.predecessor = cellRow.newName.substring(0, 9) + '0'
+      // }
 
       if (this.equipmentToMigrate.migrationListNew.filter(item => item.newName === cellRow.newName).length > 1) {
         this.$q.notify({
@@ -1051,7 +1057,7 @@ export default {
       const newAmplifier = {
         id: 'Y' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
-        productType: 'AMPLI 1',
+        productType: 'AMPLIFIER',
         hubCode: this.equipmentToMigrate.newHubCode,
         predecessor: this.equipmentToMigrate.newNodeCode + '00',
         newName: '',
