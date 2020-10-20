@@ -823,7 +823,7 @@
               </div>
             </q-step>
 
-            <q-step :name="2" title="Setup New Hierarchy" :disable="isHierarchyDisabled">
+            <q-step :name="2" title="Setup New Hierarchy">
               <q-tabs class="shadow-1" v-model="migrationTab"
                   dense
                   active-color="primary"
@@ -847,11 +847,20 @@
 
                 <q-tab-panel name="newConfig">
                   <q-bar class="bg-white">
-                    <strong>Target Node:
+                    <div><strong>Target Node:
                       <font style="color: green">
                         {{ equipmentToMigrate.newNodeCode }}
                       </font>
                     </strong>
+                    <q-space />
+                    </div>
+                  </q-bar>
+                  <q-bar class="bg-white">
+                    <div><strong>Migration Type:
+                      <font style="color: green">
+                        {{ migrationType }}
+                      </font>
+                    </strong></div>
                     <q-space />
                     <q-btn round color="primary" @click="doMigrationAddPowerSupply()" size="sm"
                       v-show="isMigrationAddPowerSupplyVisible()"
@@ -874,45 +883,81 @@
                     dense
                     row-key="id">
 
-                    <q-td slot="body-cell-newName" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
-                      {{ cell.row.newName }}
-                      <q-popup-edit v-model="cell.row.newName" :disable="cell.row.productType === 'FIBERNODE'">
+                    <q-td align="center" slot="body-cell-newName" slot-scope="cell">
+                      <div v-if="cell.row.migrate === false || cell.row.assetStatus === 'Inactive'" class="text-red">
+                        {{ cell.row.newName }}
+                      </div>
+                      <div v-else-if="cell.row.assetStatus === 'Replace'" class="text-blue">
+                        {{ cell.row.newName }}
+                      </div>
+                      <div v-else class="text-green">
+                        {{ cell.row.newName }}
+                      </div>
+                      <q-popup-edit v-model="cell.row.newName" :disable="cell.row.productType === 'FIBERNODE'" buttons>
                         <q-input v-model="cell.row.newNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
-                          :mask="((cell.row.equipmentName !== undefined && cell.row.productType === 'PS') ? 'A' : 'XXXX')"
+                          :mask="((cell.row.equipmentName !== undefined && cell.row.productType === 'POWER SUPPLY') ? 'A' : 'XXXX')"
                           fill-mask="#" unmasked-value
-                          @change="doMigrationChangeEquipmentName(cell.row)"/>
+                          @input="doMigrationChangeEquipmentName(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-productType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
-                      {{ cell.row.productType }}
+                    <q-td align="center" slot="body-cell-productType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
+                       <q-select
+                        v-model="cell.row.productType"
+                        :options="newProductTypeList"/>
                     </q-td>
-                    <q-td slot="body-cell-predecessor" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
-                      {{ cell.row.predecessor }}
-                      <q-popup-edit v-model="cell.row.predecessor" :disable="cell.row.productType !== 'PS'">
+                    <q-td align="center" slot="body-cell-newPredecessor" slot-scope="cell">
+                       <div v-if="cell.row.migrate === false || cell.row.assetStatus === 'Inactive'" class="text-red">
+                        {{ cell.row.newPredecessor }}
+                      </div>
+                      <div v-else-if="cell.row.assetStatus === 'Replace'" class="text-blue">
+                        {{ cell.row.newPredecessor }}
+                      </div>
+                      <div v-else class="text-green">
+                        {{ cell.row.newPredecessor }}
+                      </div>
+                      <q-popup-edit v-model="cell.row.newPredecessor">
                         <q-input v-model="cell.row.newPredecessorNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
                           mask="XXXX"
                           fill-mask="#"
-                          @change="doMigrationChangePredecessor(cell.row)"/>
+                          @input="doMigrationChangePredecessor(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
-                    <q-td slot="body-cell-psCode" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
-                      {{ cell.row.psCode }}
-                      <q-popup-edit v-model="cell.row.psCode" :disable="cell.row.productType === 'PS'">
-                        <q-input v-model="cell.row.psCode" dense
+                    <q-td align="center" slot="body-cell-newPsCode" slot-scope="cell">
+                      <div v-if="cell.row.migrate === false || cell.row.assetStatus === 'Inactive'" class="text-red">
+                        {{ cell.row.newPsCode }}
+                      </div>
+                      <div v-else-if="cell.row.assetStatus === 'Replace'" class="text-blue">
+                        {{ cell.row.newPsCode }}
+                      </div>
+                      <div v-else class="text-green">
+                        {{ cell.row.newPsCode }}
+                      </div>
+                      <q-popup-edit v-model="cell.row.newPsCode" :disable="cell.row.productType === 'PS'">
+                        <q-input v-model="cell.row.newPsCode" dense
                           mask="AAA###A"/>
                       </q-popup-edit>
                     </q-td>
 
-                    <q-td slot="body-cell-action" slot-scope="cell">
+                    <q-td slot="body-cell-action" slot-scope="cell" align="center">
                       <q-btn round color="primary" @click="doMigrationStayOrMove(cell.row)" size="sm" v-show="isMigrationStayOrMoveVisible(cell.row)"
                         style="margin-right: 10px">
                         <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
                         <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
                       </q-btn>
-                      <q-btn round color="primary" @click="doMigrationPromoteToFibernode(cell.row)" size="sm" v-show="isMigrationPromoteVisible(cell.row)">
+                      <q-btn round icon="delete_outline" color="primary" @click="doRemove(cell)" size="sm" v-show="isMigrationRemoveVisible(cell.row)" style="margin-right: 10px">
+                        <q-tooltip>Romove</q-tooltip>
+                      </q-btn>
+                      <q-btn round color="primary" @click="doInactive(cell.row)" size="sm" v-show="isMigrationReplaceVisible(cell.row)" style="margin-right: 10px">
+                        <q-icon :name="cell.row.assetStatus === 'Inactive' ? 'done' : 'clear'"/>
+                        <q-tooltip>{{ cell.row.assetStatus === 'Inactive' ? 'Active' : 'Inactive' }}</q-tooltip>
+                      </q-btn>
+                      <q-btn round icon="compare_arrows" color="primary" @click="doReplace(cell.row)" size="sm" v-show="isMigrationReplaceVisible(cell.row)">
+                        <q-tooltip>Replace</q-tooltip>
+                      </q-btn>
+                      <!-- <q-btn round color="primary" @click="doMigrationPromoteToFibernode(cell.row)" size="sm" v-show="isMigrationPromoteVisible(cell.row)">
                         <q-icon name="fas fa-medal"/>
                         <q-tooltip>Promote To Fibernode</q-tooltip>
-                      </q-btn>
+                      </q-btn> -->
                     </q-td>
 
                   </q-table>
@@ -953,7 +998,7 @@
                     </q-tree>
                   </q-card-section>
                 </q-card>
-                <q-card class="preview-tree-card" v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'">
+                <q-card class="preview-tree-card">
                   <q-card-section>
                     <q-tree
                       :nodes="targetPreview"
@@ -963,7 +1008,9 @@
                     >
                       <template v-slot:default-header="prop">
                         <span class="row items-center">
-                          <span class="text-weight-bold text-green">{{ prop.node.label }}</span>
+                          <span v-if="prop.node.status === 'Inactive'" class="text-weight-bold text-red">{{ prop.node.label }}</span>
+                          <span v-else-if="prop.node.status === 'Replace'" class="text-weight-bold text-blue">{{ prop.node.label }}</span>
+                          <span v-else class="text-weight-bold text-green">{{ prop.node.label }}</span>
                           <span
                             class="text-weight-bold text-black"
                             v-if="prop.node.label !== prop.node.original && prop.node.original !== undefined">

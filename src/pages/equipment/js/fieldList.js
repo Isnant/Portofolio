@@ -14,6 +14,7 @@ export default {
       amplifierCodeWarningText: '',
       file: undefined,
       productTypeList: [],
+      newProductTypeList: ['AMPLIFIER', 'POWER SUPPLY', 'FIBERNODE'],
       hubCodeList: [],
       bdfCodeList: [],
       subTypeList: [],
@@ -27,6 +28,7 @@ export default {
       propertyOfList: [],
       manufacturerList: [],
       brandList: [],
+      migrationType: '',
       input: {
         id: '',
         equipmentCategory: 'Field',
@@ -240,15 +242,15 @@ export default {
       migrationListOriginal: [],
       migrationOriginalColumns: [
         {
-          name: 'equipmentName',
-          label: 'Code',
-          field: 'equipmentName',
-          align: 'center'
-        },
-        {
           name: 'productType',
           label: 'Product Type',
           field: 'productType',
+          align: 'left'
+        },
+        {
+          name: 'equipmentName',
+          label: 'Code',
+          field: 'equipmentName',
           align: 'center'
         },
         {
@@ -269,8 +271,14 @@ export default {
       },
       migrationNewColumns: [
         {
+          name: 'productType',
+          label: 'Product Type',
+          field: 'productType',
+          align: 'center'
+        },
+        {
           name: 'equipmentName',
-          label: 'Code',
+          label: 'Source Code',
           field: 'equipmentName',
           align: 'center'
         },
@@ -281,21 +289,15 @@ export default {
           align: 'center'
         },
         {
-          name: 'productType',
-          label: 'Product Type',
-          field: 'productType',
-          align: 'center'
-        },
-        {
-          name: 'predecessor',
+          name: 'newPredecessor',
           label: 'Predecessor',
-          field: 'predecessor',
+          field: 'newPredecessor',
           align: 'center'
         },
         {
-          name: 'psCode',
+          name: 'newPsCode',
           label: 'Power Supply',
-          field: 'psCode',
+          field: 'newPsCode',
           align: 'center'
         },
         {
@@ -689,7 +691,6 @@ export default {
     doMigrationConstructNewAmpliCode (ampliCodePrefix, counter, selectedElement, oldNewMap, isMovedEquipment) {
       let prefix = ''
       let usedCounter = counter.ampliCounter
-
       let staticCounter = ''
       let newSequence = 0
 
@@ -700,10 +701,10 @@ export default {
         if (newAmpliCode.length > 0) {
           selectedElement.predecessor = newAmpliCode[0].newCode
         } else {
-          selectedElement.productType = 'AMPLI 1'
+          selectedElement.productType = 'AMPLIFIER'
         }
 
-        if (selectedElement.productType === 'AMPLI 1') {
+        if (selectedElement.productType === 'AMPLIFIER') {
           selectedElement.predecessor = this.equipmentToMigrate.newNodeCode + '00'
 
           prefix = selectedElement.predecessor.substring(0, 6)
@@ -717,10 +718,10 @@ export default {
 
         if (this.equipmentToMigrate.migrationListNew.filter(item => item.newName === selectedElement.predecessor).length <= 0) {
           selectedElement.predecessor = this.equipmentToMigrate.nodeCode + '00'
-          selectedElement.productType = 'AMPLI 1'
+          selectedElement.productType = 'AMPLIFIER'
         }
 
-        if (selectedElement.productType === 'AMPLI 1') {
+        if (selectedElement.productType === 'AMPLIFIER') {
           prefix = selectedElement.predecessor.substring(0, 6)
           newSequence = usedCounter.charCodeAt(0) + 1
         }
@@ -776,120 +777,48 @@ export default {
       return selectedElement
     },
     doMigrationAssignNewName () {
-      let ampliCodePrefix
-      let psCodePrefix
-
-      let counter = {
-        ampliCounter: '0',
-        psCounter: 63,
-        stayAmpliCounter: '0',
-        stayPsCounter: 63
-      }
-
-      let oldNewMap = []
-      let oldNewStayMap = []
-      let defaultOldPsCode
-      let defaultNewPsCode
-
-      if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
-        if (this.lastCodes.lastAmplifierCode !== null) {
-          counter.ampliCounter = this.lastCodes.lastAmplifierCode.substring(6, 7)
-          ampliCodePrefix = this.lastCodes.lastAmplifierCode.substring(0, 3)
-        } else {
-          ampliCodePrefix = this.equipmentToMigrate.newNodeCode.substring(0, 3)
-        }
-
-        if (this.lastCodes.lastPsCode !== null) {
-          defaultNewPsCode = this.lastCodes.lastPsCode
-          psCodePrefix = this.lastCodes.lastPsCode.substring(0, 6)
-
-          if (this.lastCodes.lastPsCode.length > 6) {
-            counter.psCounter = this.lastCodes.lastPsCode.charCodeAt(6)
-            if ((counter.psCounter) < 64) counter.psCounter = 64
-          } else {
-            counter.psCounter += 1
-          }
-        } else {
-          psCodePrefix = this.equipmentToMigrate.newNodeCode.substring(0, 6)
-        }
-      } else {
-        if (!this.equipmentToMigrate.isNewNode && this.equipmentToMigrate.selectedMoveNodeOption !== 'C') {
-          const lastNodeNumber = '000' + (parseInt(this.lastNodeCode.substring(3, 6), 10) + 1)
-          this.equipmentToMigrate.newNodeCode = this.lastNodeCode.substring(0, 3) + lastNodeNumber.substr(lastNodeNumber.length - 3) + '00'
-        }
-        ampliCodePrefix = this.equipmentToMigrate.newNodeCode.substring(0, 3)
-        psCodePrefix = this.equipmentToMigrate.newNodeCode.substring(0, 6)
-      }
-
+      let prefix = this.equipmentToMigrate.newNodeCode.substring(0, 6)
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
-        if ((defaultNewPsCode !== undefined) && (this.equipmentToMigrate.migrationListNew[i].productType !== 'PS')) {
-          this.equipmentToMigrate.migrationListNew[i].psCode = defaultNewPsCode
-        }
-
-        if (this.equipmentToMigrate.migrationListNew[i].productType === 'FIBERNODE') {
-          this.equipmentToMigrate.migrationListNew[i].newName = this.equipmentToMigrate.newNodeCode
-        }
-
-        if (this.equipmentToMigrate.migrationListNew[i].migrate || this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
-          if (this.equipmentToMigrate.migrationListNew[i].productType === 'PS') {
-            this.equipmentToMigrate.migrationListNew[i].newName = psCodePrefix
-
-            if (counter.psCounter < 64) {
-              counter.psCounter += 1
-            } else {
-              this.equipmentToMigrate.migrationListNew[i].newName = this.equipmentToMigrate.migrationListNew[i].newName +
-                String.fromCharCode(++counter.psCounter)
-            }
-
-            this.equipmentToMigrate.migrationListNew[i].psCode = this.equipmentToMigrate.migrationListNew[i].newName
-            defaultNewPsCode = this.equipmentToMigrate.migrationListNew[i].newName
-
-            this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrate.newNodeCode + '00'
-
-            oldNewMap.push({
-              oldCode: this.equipmentToMigrate.migrationListNew[i].equipmentName,
-              newCode: this.equipmentToMigrate.migrationListNew[i].newName
-            })
-          } else if (this.equipmentToMigrate.migrationListNew[i].productType !== 'FIBERNODE') {
-            this.equipmentToMigrate.migrationListNew[i] = this.doMigrationConstructNewAmpliCode(ampliCodePrefix, counter,
-              this.equipmentToMigrate.migrationListNew[i], oldNewMap, true)
-          }
+        if (this.equipmentToMigrate.migrationListNew[i].newNumber === '') {
+          this.equipmentToMigrate.migrationListNew[i].newName = prefix + this.equipmentToMigrate.migrationListNew[i].equipmentName.substring(6, this.equipmentToMigrate.migrationListNew[i].equipmentName.length)
+          this.equipmentToMigrate.migrationListNew[i].newPsCode = prefix + this.equipmentToMigrate.migrationListNew[i].psCode.substring(6, this.equipmentToMigrate.migrationListNew[i].psCode.length)
         } else {
-          if (this.equipmentToMigrate.migrationListNew[i].productType === 'PS') {
-            counter.stayPsCounter += 1
-            let strPsCounter = ''
+          this.equipmentToMigrate.migrationListNew[i].newName = prefix + this.equipmentToMigrate.migrationListNew[i].newNumber
+          this.equipmentToMigrate.migrationListNew[i].newPsCode = prefix + this.equipmentToMigrate.migrationListNew[i].newNumber
+        }
 
-            if (counter.stayPsCounter >= 65) {
-              strPsCounter = String.fromCharCode(counter.stayPsCounter)
-            }
-            this.equipmentToMigrate.migrationListNew[i].newName = this.equipmentToMigrate.nodeCode.substring(0, 6) + strPsCounter
-            this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrate.nodeCode + '00'
+        if (this.equipmentToMigrate.migrationListNew[i].predecessor === null) {
+          this.equipmentToMigrate.migrationListNew[i].predecessor = ''
+        }
 
-            this.equipmentToMigrate.migrationListNew[i].psCode = this.equipmentToMigrate.migrationListNew[i].newName
-            defaultOldPsCode = this.equipmentToMigrate.migrationListNew[i].newName
-
-            oldNewStayMap.push({
-              oldCode: this.equipmentToMigrate.migrationListNew[i].equipmentName,
-              newCode: this.equipmentToMigrate.migrationListNew[i].newName
-            })
-          } else {
-            this.equipmentToMigrate.migrationListNew[i] = this.doMigrationConstructNewAmpliCode(this.equipmentToMigrate.nodeCode.substring(0, 3), counter,
-              this.equipmentToMigrate.migrationListNew[i], oldNewStayMap, false)
-
-            if (defaultOldPsCode !== undefined) {
-              this.equipmentToMigrate.migrationListNew[i].psCode = defaultOldPsCode
-            } else {
-              this.equipmentToMigrate.migrationListNew[i].psCode = this.equipmentToMigrate.migrationListNew[i].originalPsCode
+        if (this.equipmentToMigrate.migrationListNew[i].predecessor !== '') {
+          this.equipmentToMigrate.migrationListNew[i].newPredecessor = prefix + this.equipmentToMigrate.migrationListNew[i].predecessor.substring(6, this.equipmentToMigrate.migrationListNew[i].predecessor.length)
+        } else {
+          if (this.equipmentToMigrate.migrationListNew[i].productType === 'POWER SUPPLY') {
+            this.equipmentToMigrate.migrationListNew[i].newPredecessor = prefix + '0000'
+          }
+          if (this.equipmentToMigrate.migrationListNew[i].productType === 'AMPLIFIER') {
+            var lastString = this.equipmentToMigrate.migrationListNew[i].equipmentName.substring(6, this.equipmentToMigrate.migrationListNew[i].equipmentName.length)
+            var cascades = lastString.replaceAll('0', '').length
+            if (cascades === 1) {
+              this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrate.migrationListNew[i].equipmentName.substring(0, 6) + '0000'
+              this.equipmentToMigrate.migrationListNew[i].newPredecessor = this.equipmentToMigrate.migrationListNew[i].newName.substring(0, 6) + '0000'
+            } else if (cascades === 2) {
+              this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrate.migrationListNew[i].equipmentName.substring(0, 7) + '000'
+              this.equipmentToMigrate.migrationListNew[i].newPredecessor = this.equipmentToMigrate.migrationListNew[i].newName.substring(0, 7) + '000'
+            } else if (cascades === 3) {
+              this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrat.migrationListNew[i].equipmentName.substring(0, 8) + '00'
+              this.equipmentToMigrate.migrationListNew[i].newPredecessor = this.equipmentToMigrat.migrationListNew[i].newName.substring(0, 8) + '00'
+            } else if (cascades === 4) {
+              this.equipmentToMigrate.migrationListNew[i].predecessor = this.equipmentToMigrate.migrationListNew[i].equipmentName.substring(0, 9) + '0'
+              this.equipmentToMigrate.migrationListNew[i].newPredecessor = this.equipmentToMigrate.migrationListNew[i].newName.substring(0, 9) + '0'
             }
           }
         }
-        this.equipmentToMigrate.migrationListNew[i].newNumber = this.equipmentToMigrate.migrationListNew[i].newName.substring(6)
-        this.equipmentToMigrate.migrationListNew[i].newPredecessorNumber = this.equipmentToMigrate.migrationListNew[i].predecessor.substring(6)
       }
     },
     doMigrationInitializeEquipmentList (removeNode) {
       const oppositeService = this.equipmentToMigrate.service === 'DIGITAL' ? 'ANALOG' : 'DIGITAL'
-
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         let selectedElement = this.equipmentToMigrate.migrationListNew[i]
 
@@ -902,21 +831,28 @@ export default {
             this.equipmentToMigrate.migrationListNew.splice(i--, 1)
             continue
           } else {
-            selectedElement.predecessor = ''
+            this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
+            this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
             this.$set(selectedElement, 'newName', '')
+            this.$set(selectedElement, 'newPsCode', '')
+            this.$set(selectedElement, 'newPredecessor', '')
             this.$set(selectedElement, 'migrate', true)
+            this.$set(selectedElement, 'newNumber', '')
+            this.$set(selectedElement, 'assetStatus', 'Update')
           }
         } else {
           this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
           this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
           this.$set(selectedElement, 'newName', '')
+          this.$set(selectedElement, 'newPsCode', '')
+          this.$set(selectedElement, 'newPredecessor', '')
           this.$set(selectedElement, 'migrate', true)
+          this.$set(selectedElement, 'newNumber', '')
+          this.$set(selectedElement, 'assetStatus', 'Update')
         }
-
-        if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
-          this.$set(selectedElement, 'migrate', false)
-        }
-
+        // if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+        //   this.$set(selectedElement, 'migrate', false)
+        // }
         this.$set(this.equipmentToMigrate.migrationListNew, i, selectedElement)
       }
       this.doMigrationAssignNewName()
@@ -924,7 +860,7 @@ export default {
     doMigrationInitializeList () {
       if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
         this.doMigrationInitializeEquipmentList(true)
-      } else if (this.equipmentToMigrate.selectedMoveNodeOption === 'N') {
+      } else {
         this.doMigrationInitializeEquipmentList(false)
       }
     },
@@ -932,7 +868,10 @@ export default {
       if (!this.equipmentToMigrate.isNewNode) {
         this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode
       }
-
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+        this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.newServiceNodeNumber + '00'
+        this.equipmentToMigrate.newNodeNumber = this.equipmentToMigrate.newServiceNodeNumber.substring(3, 6)
+      }
       if (this.equipmentToMigrate.newNodeCode === undefined) {
         this.$refs.stepper.previous()
       } else {
@@ -967,39 +906,78 @@ export default {
     },
     doMigrationStayOrMove (row) {
       row.migrate = !row.migrate
-      this.doMigrationAssignNewName()
+      if (row.migrate) {
+        row.newName = this.getMigrationEquipmentPrefix(row) + row.equipmentName.substring(6, row.equipmentName.length)
+        row.newPredecessor = this.getMigrationEquipmentPrefix(row) + row.predecessor.substring(6, row.predecessor.length)
+        row.newPsCode = this.getMigrationEquipmentPrefix(row)
+      } else {
+        row.newName = row.equipmentName
+        row.newPredecessor = row.predecessor
+        row.newPsCode = row.psCode
+      }
+      // this.doMigrationAssignNewName()
+    },
+    doRemove (cell) {
+      this.equipmentToMigrate.migrationListNew.splice(cell.pageIndex, 1)
+    },
+    doInactive (row) {
+      if (row.assetStatus !== 'Inactive') {
+        row.newName = '[-]'
+        row.assetStatus = 'Inactive'
+      } else {
+        row.newName = this.getMigrationEquipmentPrefix(row) + row.equipmentName.substring(6, row.equipmentName.length)
+        row.assetStatus = 'Update'
+      }
+    },
+    doReplace (row) {
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+        if (row.assetStatus === 'Replace') {
+          row.assetStatus = 'Update'
+        } else {
+          row.assetStatus = 'Replace'
+        }
+      }
     },
     doMigrationChangeEquipmentName (cellRow) {
       cellRow.newName = this.getMigrationEquipmentPrefix(cellRow) + cellRow.newNumber
-      if ((cellRow.newName.length === 6) || (cellRow.newName.length === 7)) {
-        if (cellRow.productType !== 'PS') {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: 'Cannot change ' + cellRow.productType + ' to PS'
-          })
-
-          cellRow.newName = cellRow.newName + '0000'
-          if (cellRow.productType === 'FIBERNODE') {
-            cellRow.newName = cellRow.newName.substring(0, 8)
-          } else {
-            cellRow.newName = cellRow.newName.substring(0, 10)
-          }
-        }
-      } else if (cellRow.newName.length === 9) {
-        cellRow.newName = cellRow.newName + '0'
+      if (this.equipmentToMigrate.migrationListNew.filter(item => item.newName === cellRow.newName).length > 1) {
+        cellRow.newName = this.getMigrationEquipmentPrefix(cellRow) + '0000'
+        cellRow.newNumber = '0000'
+        this.$q.notify({
+          color: 'negative',
+          icon: 'report_problem',
+          message: cellRow.newName + ' already used. Please use another.'
+        })
       }
+      // if ((cellRow.newName.length === 6) || (cellRow.newName.length === 7)) {
+      //   if (cellRow.productType !== 'PS') {
+      //     this.$q.notify({
+      //       color: 'negative',
+      //       icon: 'report_problem',
+      //       message: 'Cannot change ' + cellRow.productType + ' to PS'
+      //     })
 
-      if (cellRow.newName.length === 8) {
-        cellRow.productType = 'FIBERNODE'
-        cellRow.predecessor = ''
-      } else if (cellRow.newName.length === 10) {
-        cellRow.productType = 'AMPLIFIER'
-        cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
-      } else if (cellRow.newName.length === 6) {
-        cellRow.productType = 'POWER SUPPLY'
-        cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
-      }
+      //     cellRow.newName = cellRow.newName + '0000'
+      //     if (cellRow.productType === 'FIBERNODE') {
+      //       cellRow.newName = cellRow.newName.substring(0, 8)
+      //     } else {
+      //       cellRow.newName = cellRow.newName.substring(0, 10)
+      //     }
+      //   }
+      // } else if (cellRow.newName.length === 9) {
+      //   cellRow.newName = cellRow.newName + '0'
+      // }
+
+      // if (cellRow.newName.length === 8) {
+      //   cellRow.productType = 'FIBERNODE'
+      //   cellRow.predecessor = ''
+      // } else if (cellRow.newName.length === 10) {
+      //   cellRow.productType = 'AMPLIFIER'
+      //   cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
+      // } else if (cellRow.newName.length === 6) {
+      //   cellRow.productType = 'POWER SUPPLY'
+      //   cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
+      // }
       // else if (cellRow.newName.substring(cellRow.newName.length - 3) === '000') {
       //   cellRow.productType = 'AMPLI 1'
       //   cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
@@ -1013,24 +991,30 @@ export default {
       //   cellRow.productType = 'AMPLI 4'
       //   cellRow.predecessor = cellRow.newName.substring(0, 9) + '0'
       // }
-
-      if (this.equipmentToMigrate.migrationListNew.filter(item => item.newName === cellRow.newName).length > 1) {
-        this.$q.notify({
-          color: 'negative',
-          icon: 'report_problem',
-          message: cellRow.newName + ' already used. Please use another.'
-        })
-      }
     },
     doMigrationChangePredecessor (cellRow) {
-      cellRow.predecessor = this.getMigrationEquipmentPrefix(cellRow) + cellRow.newPredecessorNumber
+      cellRow.newPredecessor = this.getMigrationEquipmentPrefix(cellRow) + cellRow.newPredecessorNumber
     },
     isMigrationPromoteVisible (row) {
       return (row.productType !== 'PS' && row.productType !== 'FIBERNODE' &&
         this.equipmentToMigrate.isNewNode && row.migrate && this.equipmentToMigrate.selectedMoveNodeOption === 'X')
     },
     isMigrationStayOrMoveVisible (row) {
-      return (row.productType !== 'FIBERNODE' && this.equipmentToMigrate.selectedMoveNodeOption !== 'N')
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+        return false
+      } else if (row.productType !== 'FIBERNODE' && this.equipmentToMigrate.selectedMoveNodeOption !== 'N') {
+        return true
+      }
+    },
+    isMigrationReplaceVisible (row) {
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+        return true
+      }
+    },
+    isMigrationRemoveVisible (row) {
+      if (this.equipmentToMigrate.selectedMoveNodeOption !== 'C') {
+        return true
+      }
     },
     isMigrationAddPowerSupplyVisible () {
       return this.equipmentToMigrate.selectedMoveNodeOption !== 'C'
@@ -1042,16 +1026,20 @@ export default {
       const newPowerSupply = {
         id: 'X' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
-        productType: 'PS',
+        productType: 'POWER SUPPLY',
         hubCode: this.equipmentToMigrate.newHubCode,
         predecessor: this.equipmentToMigrate.newNodeCode + '00',
-        newName: '',
+        newName: this.equipmentToMigrate.newNodeCode.substring(0, 6) + '#',
+        newPredecessor: this.equipmentToMigrate.newNodeCode + '00',
+        newPsCode: this.equipmentToMigrate.newNodeCode.substring(0, 6),
         amplifierCode: '',
-        migrate: true
+        migrate: true,
+        newNumber: '',
+        assetStatus: 'New'
       }
 
       this.equipmentToMigrate.migrationListNew.unshift(newPowerSupply)
-      this.doMigrationAssignNewName()
+      // this.doMigrationAssignNewName()
     },
     doMigrationAddAmplifier () {
       const newAmplifier = {
@@ -1060,12 +1048,16 @@ export default {
         productType: 'AMPLIFIER',
         hubCode: this.equipmentToMigrate.newHubCode,
         predecessor: this.equipmentToMigrate.newNodeCode + '00',
-        newName: '',
-        migrate: true
+        newName: this.equipmentToMigrate.newNodeCode.substring(0, 6) + '####',
+        newPsCode: this.equipmentToMigrate.newNodeCode.substring(0, 6),
+        newPredecessor: this.equipmentToMigrate.newNodeCode + '00',
+        migrate: true,
+        newNumber: '',
+        assetStatus: 'New'
       }
 
       this.equipmentToMigrate.migrationListNew.push(newAmplifier)
-      this.doMigrationAssignNewName()
+      // this.doMigrationAssignNewName()
     },
     doMigrationCascadeUpgrade (row) {
       const listOfChild = this.equipmentToMigrate.migrationListNew.filter(item => item.predecessor === row.newName)
@@ -1101,9 +1093,17 @@ export default {
       }
     },
     getMigrationPreviewChild (parent, list, migrate) {
-      let rawChildren = list.filter(f => f.predecessor === parent &&
-        f.productType !== 'FIBERNODE' && f.migrate === migrate)
+      let rawChildren = list.filter(f => f.newPredecessor === parent &&
+        f.productType !== 'FIBERNODE' && f.migrate === migrate && f.newName.substring(6, f.newName.length) !== '0000')
       let result = []
+
+      // if (rawChildren.length === 0 && hierarchy === 1) {
+      //   let newParent = list[0].newName
+      //   console.log(newParent)
+      //   rawChildren = list.filter(f => f.newPredecessor === newParent &&
+      //     f.productType !== 'FIBERNODE' && f.migrate === migrate)
+      //   console.log(rawChildren)
+      // }
 
       for (let i = 0; i < rawChildren.length; i++) {
         let original = rawChildren[i].equipmentName
@@ -1113,8 +1113,9 @@ export default {
         }
 
         let child = {
-          label: rawChildren[i].newName,
+          label: rawChildren[i].newName + ' - ' + rawChildren[i].assetStatus,
           original: original,
+          status: rawChildren[i].assetStatus,
           children: []
         }
 
@@ -1128,31 +1129,52 @@ export default {
     doMigrationPreview () {
       // Source Preview
       const fiberNode = this.migrationListOriginal.filter(f => f.productType === 'FIBERNODE')
-
       if (fiberNode.length !== 1) {
         this.validationResults.push({ id: this.validationResults.length, message: 'Source have invlaid node. Please check' })
       } else {
         let source = this.equipmentToMigrate.hubCode + ' - ' + fiberNode[0].equipmentName
         let original
-        let sourceNodeReference = fiberNode[0].amplifierCode
+        let sourceNodeReference = fiberNode[0].equipmentName + '00'
 
-        if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
-          original = fiberNode[0].equipmentName
-          source = this.equipmentToMigrate.hubCode + ' - ' + this.equipmentToMigrate.newNodeCode
-          sourceNodeReference = this.equipmentToMigrate.newNodeCode + '00'
-        }
+        // if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+        //   original = fiberNode[0].equipmentName
+        //   source = this.equipmentToMigrate.hubCode + ' - ' + this.equipmentToMigrate.newNodeCode
+        //   sourceNodeReference = this.equipmentToMigrate.newNodeCode + '00'
+        // }
+
         let sourceTree = {
           label: source,
           original: original,
+          status: '',
           header: 'root',
           children: []
         }
 
-        const child = this.getMigrationPreviewChild(sourceNodeReference, this.equipmentToMigrate.migrationListNew, false)
+        let originalVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === false)
 
-        if (child.length > 0) {
-          sourceTree.children = child
+        let sourceChild = {
+          label: '',
+          original: '',
+          status: '',
+          children: []
         }
+
+        if (originalVirtualAmpli.length > 0) {
+          sourceChild = {
+            label: originalVirtualAmpli[0].newName,
+            original: originalVirtualAmpli[0].equipmentName,
+            children: []
+          }
+        }
+
+        const child = this.getMigrationPreviewChild(sourceNodeReference, this.equipmentToMigrate.migrationListNew, false)
+        if (child.length > 0) {
+          sourceChild.children = child
+        }
+
+        let sourceChildResult = []
+        sourceChildResult.push(sourceChild)
+        sourceTree.children = sourceChildResult
 
         this.$set(this.sourcePreview, 0, sourceTree)
 
@@ -1175,14 +1197,79 @@ export default {
         label: this.equipmentToMigrate.newHubCode + ' - ' + this.equipmentToMigrate.newNodeCode,
         original: original,
         header: 'root',
+        status: '',
         children: []
+      }
+
+      let newVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === true)
+
+      let targetChild = {
+        label: '[]',
+        original: '',
+        status: '',
+        children: []
+      }
+
+      if (newVirtualAmpli.length > 0) {
+        targetChild = {
+          label: newVirtualAmpli[0].newName + ' - ' + newVirtualAmpli[0].assetStatus,
+          original: newVirtualAmpli[0].equipmentName,
+          status: newVirtualAmpli[0].assetStatus,
+          children: []
+        }
       }
 
       const child = this.getMigrationPreviewChild(this.equipmentToMigrate.newNodeCode + '00', this.equipmentToMigrate.migrationListNew, true)
 
       if (child.length > 0) {
-        targetTree.children = child
+        targetChild.children = child
+      } else {
+        let parentList2 = this.equipmentToMigrate.migrationListNew.filter(f => f.newPredecessor.substring(7, f.newPredecessor.length) === '000' &&
+          f.migrate === true && f.newPredecessor.substring(6, f.newPredecessor.length) !== '0000')
+        let newChild = []
+        for (let i = 0; i < parentList2.length; i++) {
+          let original = parentList2[i].equipmentName
+          if (original === '') {
+            original = 'NEW'
+          }
+
+          let child2 = {
+            label: parentList2[i].newName,
+            original: original,
+            children: []
+          }
+          const child3 = this.getMigrationPreviewChild(parentList2[i].amplifierCode, this.equipmentToMigrate.migrationListNew, true)
+          child2.children = child3
+          newChild.push(child2)
+        }
+
+        if (newChild.length > 0) {
+          targetChild.children = newChild
+        } else {
+          let parentList3 = this.equipmentToMigrate.migrationListNew.filter(f => f.newPredecessor.substring(8, f.newPredecessor.length) === '00' &&
+            f.migrate === true && f.newPredecessor.substring(7, f.newPredecessor.length) !== '000')
+          let newChild2 = []
+          for (let i = 0; i < parentList3.length; i++) {
+            let original = parentList3[i].equipmentName
+            if (original === '') {
+              original = 'NEW'
+            }
+            let child = {
+              label: parentList3[i].newName,
+              original: original,
+              children: []
+            }
+            const child3 = this.getMigrationPreviewChild(parentList3[i].amplifierCode, this.equipmentToMigrate.migrationListNew, true)
+            child.children = child3
+            newChild2.push(child)
+          }
+          targetChild.children = newChild2
+        }
       }
+
+      let targetChildResult = []
+      targetChildResult.push(targetChild)
+      targetTree.children = targetChildResult
 
       this.$set(this.targetPreview, 0, targetTree)
 
@@ -1192,7 +1279,7 @@ export default {
       this.$q.loading.show()
 
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
-        if (this.equipmentToMigrate.migrationListNew[i].productType !== 'PS') {
+        if (this.equipmentToMigrate.migrationListNew[i].productType !== 'POWER SUPPLY') {
           this.equipmentToMigrate.migrationListNew[i].amplifierCode = (this.equipmentToMigrate.migrationListNew[i].newName +
             '0000').substring(0, 10)
         }
@@ -1238,16 +1325,18 @@ export default {
         this.reloadMigrationList = true
       } else if (this.migrationStep === 2) {
         if (this.reloadMigrationList) {
+          if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
+            this.migrationType = 'Split Node'
+          } else if (this.equipmentToMigrate.selectedMoveNodeOption === 'N') {
+            this.migrationType = 'Swap Node'
+          } else {
+            this.migrationType = 'Change Service'
+          }
           this.doMigrationSetupNewHierarchy()
         }
         this.reloadMigrationList = true
       } else if (this.migrationStep === 3) {
-        if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
-          this.doMigrationChangeServiceHierarchy()
-        } else {
-          this.reloadMigrationList = false
-        }
-
+        this.reloadMigrationList = false
         this.doMigrationValidate()
       }
     },
