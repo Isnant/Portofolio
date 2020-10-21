@@ -1017,10 +1017,12 @@ export default {
       }
     },
     isMigrationAddPowerSupplyVisible () {
-      return this.equipmentToMigrate.selectedMoveNodeOption !== 'C'
+      return true
+      // return this.equipmentToMigrate.selectedMoveNodeOption !== 'C'
     },
     isMigrationAddAmplifierVisible () {
-      return this.equipmentToMigrate.selectedMoveNodeOption !== 'C'
+      return true
+      // return this.equipmentToMigrate.selectedMoveNodeOption !== 'C'
     },
     doMigrationAddPowerSupply () {
       const newPowerSupply = {

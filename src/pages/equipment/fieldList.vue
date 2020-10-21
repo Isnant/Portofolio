@@ -1009,6 +1009,7 @@
                       <template v-slot:default-header="prop">
                         <span class="row items-center">
                           <span v-if="prop.node.status === 'Inactive'" class="text-weight-bold text-red">{{ prop.node.label }}</span>
+                          <span v-else-if="prop.node.status === 'New'" class="text-weight-bold text-orange">{{ prop.node.label }}</span>
                           <span v-else-if="prop.node.status === 'Replace'" class="text-weight-bold text-blue">{{ prop.node.label }}</span>
                           <span v-else class="text-weight-bold text-green">{{ prop.node.label }}</span>
                           <span
