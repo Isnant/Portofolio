@@ -659,7 +659,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="modalUpload" persistent>
+    <q-dialog v-model="modalUpload" persistent @before-hide="doHideButton()">
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
           <strong>Upload Equipment File</strong>
@@ -670,16 +670,18 @@
           <a href="/statics/template/FieldTemplateExcel.xlsx">Download Template</a>
         </q-card-section>
         <q-card-section>
-          <q-field style="padding-bottom: 20px;">
+          <!-- <q-field style="padding-bottom: 20px;"> -->
             <input
               id="excelFile"
               type="file"
               ref="fieldExcelFile"
+              @input="val => { doAttachFile(val) }"
             />
-            <q-btn round color="primary" @click="doUploadFile()">
+            <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
               <q-icon name="fas fa-file-upload"/>
+              <q-tooltip>Upload</q-tooltip>
             </q-btn>
-          </q-field>
+          <!-- </q-field> -->
         </q-card-section>
       </q-card>
     </q-dialog>

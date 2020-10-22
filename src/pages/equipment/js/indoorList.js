@@ -2,6 +2,7 @@ export default {
   data () {
     return {
       file: undefined,
+      uploadButton: false,
       productTypeList: [],
       hubCodeList: [],
       bdfCodeList: [],
@@ -322,6 +323,12 @@ export default {
 
       this.doMainRefresh(params)
     },
+    doAttachFile (file) {
+      this.uploadButton = true
+    },
+    doHideButton () {
+      this.uploadButton = false
+    },
     doUploadFile () {
       this.$q.loading.show()
 
@@ -336,7 +343,7 @@ export default {
               icon: 'info',
               message: 'File successfully uploaded'
             })
-
+            this.modalUpload = false
             this.doMainInitPage()
           })
           .catch((error) => {
@@ -395,6 +402,33 @@ export default {
     doEdit (cell) {
       this.input = JSON.parse(JSON.stringify(cell.row))
       this.modalAddNewAsset = true
+    },
+    downloadExcel (props) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}fieldExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          searchVal: this.searchVal
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'indoor_excel_download.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     doRefresh () {
       this.input = {

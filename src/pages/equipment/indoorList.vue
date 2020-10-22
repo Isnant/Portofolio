@@ -98,6 +98,7 @@
       <q-fab color="orange-4" glossy icon="keyboard_arrow_down" direction="down">
         <q-fab-action color="orange-3" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
         <q-fab-action color="orange-3" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
+        <q-btn round color="orange-3" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
       </q-fab>
     </q-page-sticky>
 
@@ -358,7 +359,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="modalUpload" persistent>
+    <q-dialog v-model="modalUpload" persistent @before-hide="doHideButton()">
       <q-card class="bg-white">
         <q-bar class="bg-primary text-white">
           <strong>Upload Equipment File</strong>
@@ -366,19 +367,22 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <a href="/statics/template/IndoorTemplate.xlsx">Download Template</a>
+          <a href="/statics/template/FieldTemplateExcel.xlsx">Download Template</a>
         </q-card-section>
         <q-card-section>
-          <q-field style="padding-bottom: 20px;">
+          <!-- <q-field style="padding-bottom: 20px;"> -->
             <input
               id="excelFile"
               type="file"
               ref="excelFile"
+              @input="val => { doAttachFile(val) }"
+              clearable
             />
-            <q-btn round color="primary" @click="doUploadFile()">
+            <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
               <q-icon name="fas fa-file-upload"/>
+              <q-tooltip>Upload</q-tooltip>
             </q-btn>
-          </q-field>
+          <!-- </q-field> -->
         </q-card-section>
       </q-card>
     </q-dialog>

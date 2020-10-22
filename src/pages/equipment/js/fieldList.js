@@ -5,6 +5,7 @@ export default {
       isActive: false,
       colorLabel: 'orange',
       bluePsCode: false,
+      uploadButton: false,
       orangePsCode: true,
       psCodeWarningText: '',
       blueNodeCode: false,
@@ -501,6 +502,12 @@ export default {
           })
           this.$q.loading.hide()
         })
+    },
+    doAttachFile (file) {
+      this.uploadButton = true
+    },
+    doHideButton () {
+      this.uploadButton = false
     },
     doUploadFile (file) {
       this.$q.loading.show()
@@ -1457,7 +1464,7 @@ export default {
       this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
-          pid: this.input.manufacturer
+          description: this.input.manufacturer
         }
       })
         .then((response) => {
