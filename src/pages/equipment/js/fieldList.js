@@ -320,6 +320,7 @@ export default {
     doMainFillTableResult (pagedEquipment) {
       this.listOfEquipment = pagedEquipment.content
       this.equipmentPagination.rowsNumber = pagedEquipment.totalElements
+      this.equipmentPagination.rowsPerPage = pagedEquipment.pageable.pageSize
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
@@ -352,7 +353,6 @@ export default {
     },
     doMainRefresh (params) {
       this.$q.loading.show()
-
       this.$axios.get(`${process.env.urlPrefix}getFieldPagedEquipment/`, {
         params: params
       })
@@ -594,57 +594,60 @@ export default {
       this.getMigrationEquipment(this.equipmentToMigrate.nodeCode)
     },
     doMigrationChangeHub () {
-      this.$axios.get(`${process.env.urlPrefix}getNodeByHub/`,
-        {
-          params: {
-            hubCode: this.equipmentToMigrate.newHubCode,
-            service: this.equipmentToMigrate.service
-          }
-        })
-        .then((response) => {
-          this.fullNodeListByHub = []
-
-          if (response.data.length > 0) {
-            this.fullNodeListByHub = response.data.map(nodeChoice => nodeChoice.value)
-            this.nodePrefixByHub = this.fullNodeListByHub[0].substring(0, 3)
-
-            if (this.equipmentToMigrate.newHubCode === this.equipmentToMigrate.hubCode) {
-              for (let i = 0; i < this.fullNodeListByHub.length; i += 1) {
-                if ((this.fullNodeListByHub[i] === this.equipmentToMigrate.nodeCode) ||
-                  (parseInt(this.fullNodeListByHub[i].substring(3)) < 10)) {
-                  this.fullNodeListByHub.splice(i--, 1)
-                }
-              }
-            }
-          }
-
-          if (this.fullNodeListByHub.length < 1) {
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: `Hub ${this.equipmentToMigrate.newHubCode} does not have nodes. Please add one before proceeding.`
-            })
-            this.equipmentToMigrate.selectedNewNode = undefined
-            this.equipmentToMigrate.newNodeCode = undefined
-
-            this.destinationNodeOptions = []
-          } else {
-            this.equipmentToMigrate.selectedNewNode = this.fullNodeListByHub[0]
-            this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode.value
-
-            this.destinationNodeOptions.push(this.fullNodeListByHub[0])
-          }
-
-          this.$q.loading.hide()
-        })
-        .catch((error) => {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-        })
+      // console.log(this.equipmentToMigrate.newHubCode)
     },
+    // doMigrationChangeHub () {
+    //   this.$axios.get(`${process.env.urlPrefix}getNodeByHub/`,
+    //     {
+    //       params: {
+    //         hubCode: this.equipmentToMigrate.newHubCode,
+    //         service: this.equipmentToMigrate.service
+    //       }
+    //     })
+    //     .then((response) => {
+    //       this.fullNodeListByHub = []
+
+    //       if (response.data.length > 0) {
+    //         this.fullNodeListByHub = response.data.map(nodeChoice => nodeChoice.value)
+    //         this.nodePrefixByHub = this.fullNodeListByHub[0].substring(0, 3)
+
+    //         if (this.equipmentToMigrate.newHubCode === this.equipmentToMigrate.hubCode) {
+    //           for (let i = 0; i < this.fullNodeListByHub.length; i += 1) {
+    //             if ((this.fullNodeListByHub[i] === this.equipmentToMigrate.nodeCode) ||
+    //               (parseInt(this.fullNodeListByHub[i].substring(3)) < 10)) {
+    //               this.fullNodeListByHub.splice(i--, 1)
+    //             }
+    //           }
+    //         }
+    //       }
+
+    //       if (this.fullNodeListByHub.length < 1) {
+    //         this.$q.notify({
+    //           color: 'negative',
+    //           icon: 'report_problem',
+    //           message: `Hub ${this.equipmentToMigrate.newHubCode} does not have nodes. Please add one before proceeding.`
+    //         })
+    //         this.equipmentToMigrate.selectedNewNode = undefined
+    //         this.equipmentToMigrate.newNodeCode = undefined
+
+    //         this.destinationNodeOptions = []
+    //       } else {
+    //         this.equipmentToMigrate.selectedNewNode = this.fullNodeListByHub[0]
+    //         this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode.value
+
+    //         this.destinationNodeOptions.push(this.fullNodeListByHub[0])
+    //       }
+
+    //       this.$q.loading.hide()
+    //     })
+    //     .catch((error) => {
+    //       this.$q.notify({
+    //         color: 'negative',
+    //         icon: 'report_problem',
+    //         message: error
+    //       })
+    //     })
+    // },
     doMigrationChangeNewNode () {
       if (this.equipmentToMigrate.isNewNode) {
         this.equipmentToMigrate.newNodeCode = undefined
@@ -683,7 +686,7 @@ export default {
       this.$axios.get(`${process.env.urlPrefix}getNodeChildMig`, { params: { nodeCode: nodeCodeParam } })
         .then((response) => {
           this.migrationListOriginal = response.data
-          this.doMigrationChangeHub()
+          // this.doMigrationChangeHub()
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -876,8 +879,8 @@ export default {
         this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode
       }
       if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
-        this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.newServiceNodeNumber + '00'
-        this.equipmentToMigrate.newNodeNumber = this.equipmentToMigrate.newServiceNodeNumber.substring(3, 6)
+        // this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.newServiceNodeNumber + '00'
+        this.equipmentToMigrate.newNodeNumber = this.equipmentToMigrate.newNodeCode.substring(3, 6)
       }
       if (this.equipmentToMigrate.newNodeCode === undefined) {
         this.$refs.stepper.previous()

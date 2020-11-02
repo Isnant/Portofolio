@@ -82,7 +82,7 @@
       :data="listOfEquipment"
       :columns="equipmentListColumns"
       :pagination.sync="equipmentPagination"
-      :rows-per-page-options="[10, 20, 50]"
+      :rows-per-page-options="[10, 20, 50, 100]"
       table-header-class="text-white bg-indigo-8"
       @request="doMainEquipmentChangePage"
       row-key="id"
@@ -746,13 +746,20 @@
         </q-bar>
 
         <q-card-section>
-          <q-stepper ref="stepper" v-model="migrationStep" color="primary"
-              style="max-width: 90%" animated @before-transition="doMigrationCheckStep()">
-            <q-step :name="1"
-                title="Setup Destination"
-                :error="fullNodeListByHub.length < 1">
-              <div class="row">
+          <q-stepper ref="stepper"
+            v-model="migrationStep"
+            color="primary"
+            style="max-width: 90%"
+            animated
+            inactive-color="warning"
+            done-color="positive"
+            @before-transition="doMigrationCheckStep()">
 
+            <q-step
+              :name="1"
+              :done="migrationStep > 1"
+              title="Setup Destination">
+              <div class="row">
                 <div style="margin-right: 20px">
                   <q-input readonly v-model="equipmentToMigrate.hubCode"
                     label="Source Hub"/>
@@ -766,9 +773,10 @@
                     @input="doMigrationChangeHub()"
                     label="Destination Hub"
                     :options="hubCodeList"
-                    v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'"
                   />
-                  <div class="row">
+                  <q-input v-model="equipmentToMigrate.selectedNewNode"
+                    label="Destination Node"/>
+                  <!-- <div class="row">
                     <q-select
                       style="margin-right: 20px"
                       use-input
@@ -812,7 +820,7 @@
                       v-show="equipmentToMigrate.selectedMoveNodeOption !== 'C'"
                       v-model="equipmentToMigrate.isNewNode"
                       label="New Node" />
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="row">
@@ -825,7 +833,9 @@
               </div>
             </q-step>
 
-            <q-step :name="2" title="Setup New Hierarchy">
+            <q-step :name="2"
+            title="Setup New Hierarchy"
+            :done="migrationStep > 2">
               <q-tabs class="shadow-1" v-model="migrationTab"
                   dense
                   active-color="primary"
