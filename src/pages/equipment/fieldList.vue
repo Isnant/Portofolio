@@ -16,7 +16,18 @@
       <legend class="legedn_search">Search</legend>
 
       <div class="row" style="width: 100%">
-        <div class="col-20" style="margin-right: 10px; width: 30%">
+        <div class="col-15" style="margin-right: 10px; width: 22%">
+          <q-select
+            v-model="searchVal.equipmentStatus"
+            stack-label
+            label="Equipment Status"
+            color="purple-6"
+            :options="equipmentStatusList"
+            @input="getValueSelect('equipmentStatus')"
+          />
+        </div>
+
+        <div class="col-15" style="margin-right: 10px; width: 22%">
           <q-input
           v-model="searchVal.equipmentName"
           stack-label
@@ -24,15 +35,17 @@
           color="purple-6"/>
         </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 30%">
+        <div class="col-15" style="margin-right: 10px; width: 22%">
           <q-select
           v-model="searchVal.productType"
           label="Product Type"
           color="purple-6"
-          :options="productTypeList"/>
+          :options="productTypeList"
+          @input="getValueSelect('productType')"
+          />
         </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 30%">
+        <div class="col-15" style="margin-right: 10px; width: 22%">
           <q-input
             v-model="searchVal.productSeries"
             label="Product Series"
@@ -42,25 +55,37 @@
         </div>
       </div>
       <div class="row" style="margin-top:20px">
-        <div class="col-20" style="margin-right: 10px;width: 30%">
+        <div class="col-20" style="margin-right: 10px; width: 22%">
+           <q-select
+            v-model="searchVal.assetStatus"
+            stack-label
+            label="Asset Status"
+            color="purple-6"
+            :options="assetStatusList"
+            @input="getValueSelect('assetStatus')"
+          />
+        </div>
+        <div class="col-20" style="margin-right: 10px;width: 22%">
           <q-select
             v-model="searchVal.hubCode"
             label="Hub Code"
             color="purple-6"
             :options="hubCodeList"
+            @input="getValueSelect('hubCode')"
           />
         </div>
 
-        <div class="col-20" style="margin-right: 10px;width: 30%">
+        <div class="col-20" style="margin-right: 10px;width: 22%">
           <q-select
             v-model="searchVal.bdfCode"
             label="BDF Code"
             color="purple-6"
             :options="bdfCodeList"
+            @input="getValueSelect('bdfCode')"
           />
         </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 30%">
+        <div class="col-20" style="margin-right: 10px; width: 22%">
           <q-input
             v-model="searchVal.nodeCode"
             label="Node Code"
@@ -642,6 +667,26 @@
               </div>
             </div>
         </q-expansion-item>
+         <q-expansion-item
+          label="Migration History"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="grading">
+          <div class="row" style="margin:20px">
+            <q-table
+              :data="migrationHistoryList"
+              :columns="migrationColumns"
+              :pagination.sync="pagination"
+              table-header-class="text-white bg-indigo-8"
+              @request="getBuildingList"
+              row-key="id"
+              dense>
+              <q-td slot="body-cell-historyDate" slot-scope="props">
+                {{ props.row.historyDate | formatDate}}
+              </q-td>
+            </q-table>
+          </div>
+        </q-expansion-item>
         <q-separator></q-separator>
         <div align="right" style="margin:20px;width:50%">
           <q-input v-model="input.remarks"
@@ -759,6 +804,14 @@
               :name="1"
               :done="migrationStep > 1"
               title="Setup Destination">
+              <div class="row" style="margin-bottom:20px">
+                <q-option-group
+                    style="margin: 10px 0px 0px 0px"
+                    v-model="equipmentToMigrate.selectedMoveNodeOption"
+                    @input="doMigrationChangeMoveNodeOption()"
+                    :options="moveNodeOptions"
+                    inline />
+              </div>
               <div class="row">
                 <div style="margin-right: 20px">
                   <q-input readonly v-model="equipmentToMigrate.hubCode"
@@ -767,15 +820,32 @@
                     label="Source Node"/>
                 </div>
 
-                <div>
+                <div style="margin-right: 20px">
                   <q-select
-                    v-model="equipmentToMigrate.newHubCode"
+                    v-model="hubCodeName"
                     @input="doMigrationChangeHub()"
                     label="Destination Hub"
                     :options="hubCodeList"
                   />
                   <q-input v-model="equipmentToMigrate.selectedNewNode"
-                    label="Destination Node"/>
+                    :stack-label="true"
+                    ref="destinationNode"
+                    label="Destination Node"
+                    :rules="[val => !!val || 'Destination Node is required']"/>
+                </div>
+                <div>
+                  <q-input v-model="equipmentToMigrate.date"
+                    :stack-label="true"
+                    label="Migration Date"
+                    tabindex="35">
+                    <template v-slot:after>
+                      <q-icon name="event">
+                        <q-popup-proxy ref="qPurchasedDate" transition-show="scale" transition-hide="scale">
+                          <q-date v-model="equipmentToMigrate.date" mask="DD/MM/YYYY" @input="() => $refs.qPurchasedDate.hide()" />
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
                   <!-- <div class="row">
                     <q-select
                       style="margin-right: 20px"
@@ -823,14 +893,6 @@
                   </div> -->
                 </div>
               </div>
-              <div class="row">
-                <q-option-group
-                    style="margin: 10px 0px 0px 0px"
-                    v-model="equipmentToMigrate.selectedMoveNodeOption"
-                    @input="doMigrationChangeMoveNodeOption()"
-                    :options="moveNodeOptions"
-                    inline />
-              </div>
             </q-step>
 
             <q-step :name="2"
@@ -859,26 +921,44 @@
 
                 <q-tab-panel name="newConfig">
                   <q-bar class="bg-white">
-                    <div><strong>Target Node:
-                      <font style="color: green">
-                        {{ equipmentToMigrate.newNodeCode }}
-                      </font>
-                    </strong>
-                    <q-space />
-                    </div>
+                    <div class="row" style="width:40%">
+                      <div class="col"><strong>Source Node:
+                        <font style="color: green">
+                          {{ equipmentToMigrate.nodeCode }}
+                        </font>
+                        </strong>
+                        <q-space />
+                      </div>
+                      <div class="col"><strong>Target Node:
+                        <font style="color: green">
+                          {{ equipmentToMigrate.newNodeCode }}
+                        </font>
+                        </strong>
+                        <q-space />
+                      </div>
+                      </div>
                   </q-bar>
                   <q-bar class="bg-white">
-                    <div><strong>Migration Type:
-                      <font style="color: green">
-                        {{ migrationType }}
-                      </font>
-                    </strong></div>
+                    <div class="row" style="width:40%">
+                      <div class="col"><strong>Migration Type:
+                        <font style="color: green">
+                          {{ migrationType }}
+                        </font>
+                      </strong>
+                      </div>
+                      <div class="col"><strong>Migration Date:
+                        <font style="color: green">
+                          {{ equipmentToMigrate.date }}
+                        </font>
+                      </strong>
+                      </div>
+                    </div>
                     <q-space />
                     <q-btn round color="primary" @click="doMigrationAddPowerSupply()" size="sm"
                       v-show="isMigrationAddPowerSupplyVisible()"
                       style="margin-right: 10px">
                       <q-icon name="fas fa-car-battery"/>
-                      <q-tooltip>Add Power Supply</q-tooltip>
+                      <q-tooltip>Add Power Supply or Fibernode</q-tooltip>
                     </q-btn>
                     <q-btn round color="primary" @click="doMigrationAddAmplifier()" size="sm"
                       v-show="isMigrationAddAmplifierVisible()"
@@ -905,17 +985,18 @@
                       <div v-else class="text-green">
                         {{ cell.row.newName }}
                       </div>
-                      <q-popup-edit v-model="cell.row.newName" :disable="cell.row.productType === 'FIBERNODE'" buttons>
+                      <q-popup-edit v-model="cell.row.newName">
                         <q-input v-model="cell.row.newNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
                           :mask="((cell.row.equipmentName !== undefined && cell.row.productType === 'POWER SUPPLY') ? 'A' : 'XXXX')"
-                          fill-mask="#" unmasked-value
+                          unmasked-value
                           @input="doMigrationChangeEquipmentName(cell.row)"/>
                       </q-popup-edit>
                     </q-td>
                     <q-td align="center" slot="body-cell-productType" slot-scope="cell" :style="cell.row.migrate ? 'color:#3a6' : 'color:#c63'">
                        <q-select
                         v-model="cell.row.productType"
-                        :options="newProductTypeList"/>
+                        :options="newProductTypeList"
+                        @input="doMigrationChangeProductType(cell.row)"/>
                     </q-td>
                     <q-td align="center" slot="body-cell-newPredecessor" slot-scope="cell">
                        <div v-if="cell.row.migrate === false || cell.row.assetStatus === 'Inactive'" class="text-red">
@@ -927,10 +1008,9 @@
                       <div v-else class="text-green">
                         {{ cell.row.newPredecessor }}
                       </div>
-                      <q-popup-edit v-model="cell.row.newPredecessor">
+                      <q-popup-edit v-model="cell.row.newPredecessor" :disable="cell.row.productType === 'FIBERNODE' || cell.row.productType === 'POWER SUPPLY'" >
                         <q-input v-model="cell.row.newPredecessorNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
                           mask="XXXX"
-                          fill-mask="#"
                           @input="doMigrationChangePredecessor(cell.row)"/>
                       </q-popup-edit>
                     </q-td>

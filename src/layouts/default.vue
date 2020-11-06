@@ -84,6 +84,14 @@
             <q-item-label>Network Equipment</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item to="/migrationHistory" active-class="my-menu-link">
+          <q-item-section avatar>
+            <q-icon name="grading" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Migration History</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-expansion-item
           icon="fas fa-database"
           label="Master Data"
@@ -158,7 +166,7 @@
             :inset-level="1"
             active-class="my-menu-link">
             <q-item-section>
-              <q-item-label>Node Code</q-item-label>
+              <q-item-label>Master Node</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -166,7 +174,7 @@
             :inset-level="1"
             active-class="my-menu-link">
             <q-item-section>
-              <q-item-label>Power Supply Code</q-item-label>
+              <q-item-label>Master Power Supply</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -174,7 +182,7 @@
             :inset-level="1"
             active-class="my-menu-link">
             <q-item-section>
-              <q-item-label>Amplifier Code</q-item-label>
+              <q-item-label>Master Amplifier</q-item-label>
             </q-item-section>
           </q-item>
           <q-item

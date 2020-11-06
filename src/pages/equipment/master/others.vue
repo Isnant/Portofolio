@@ -32,6 +32,7 @@
         <q-radio v-model="input.attributename" val="technology" @input="getInitPage" label="Technology" style="margin-right:10px"/>
         <q-radio v-model="input.attributename" val="service" @input="getInitPage" label="Service" style="margin-right:10px"/>
         <q-radio v-model="input.attributename" val="capacityUnits" @input="getInitPage" label="Capacity Units" style="margin-right:10px"/>
+        <q-radio v-model="input.attributename" val="equipmentStatus" @input="getInitPage" label="Equipment Status" style="margin-right:10px"/>
         <q-radio v-model="input.attributename" val="assetStatus" @input="getInitPage" label="Asset Status"/>
       </fieldset>
     </div>
@@ -117,6 +118,7 @@
                 <q-radio v-model="input.attributename" val="technology" @input="getInitPage" label="Technology" style="margin-right:10px"/>
                 <q-radio v-model="input.attributename" val="service" @input="getInitPage" label="Service" style="margin-right:10px"/>
                 <q-radio v-model="input.attributename" val="capacityUnits" @input="getInitPage" label="Capacity Units" style="margin-right:10px"/>
+                <q-radio v-model="input.attributename" val="equipmentStatus" @input="getInitPage" label="Equipment Status" style="margin-right:10px"/>
                 <q-radio v-model="input.attributename" val="assetStatus" @input="getInitPage" label="Asset Status"/>
               </div>
             </div>

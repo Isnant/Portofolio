@@ -8,6 +8,7 @@ const routes = [
       { path: '/fieldEq', component: () => import('pages/equipment/fieldList.vue') },
       { path: '/indoorEq', component: () => import('pages/equipment/indoorList.vue') },
       { path: '/networkEq', component: () => import('pages/equipment/networkList.vue') },
+      { path: '/migrationHistory', component: () => import('pages/equipment/migrationHistory.vue') },
       { path: '/mAreaRegion', component: () => import('pages/equipment/master/area-region.vue') },
       { path: '/mReg', component: () => import('pages/equipment/master/region.vue') },
       { path: '/mBuild', component: () => import('pages/equipment/master/building.vue') },

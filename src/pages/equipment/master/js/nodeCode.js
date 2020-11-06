@@ -2,11 +2,17 @@ export default {
   data () {
     return {
       dataList: [],
+      data: '',
       areaList: [],
       regionList: [],
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      hubCodeList: [],
+      searchVal: {
+        hubCode: 'All',
+        nodeCode: ''
+      },
       tableColumns: [
         {
           name: 'equipmentName',
@@ -14,14 +20,6 @@ export default {
           field: 'equipmentName',
           align: 'left',
           style: 'width: 100px',
-          sortable: true
-        },
-        {
-          name: 'itCode',
-          label: 'Node IT Code',
-          field: 'itCode',
-          align: 'left',
-          style: 'width: 200px',
           sortable: true
         },
         {
@@ -49,11 +47,24 @@ export default {
           sortable: true
         },
         {
+          name: 'itCode',
+          label: 'Node IT Code',
+          field: 'itCode',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
           name: 'technology',
           label: 'Technology',
           field: 'technology',
           align: 'left',
           sortable: true
+        },
+        {
+          name: 'action',
+          label: 'Action',
+          align: 'center'
         }
       ],
       regionColumns: [
@@ -87,32 +98,75 @@ export default {
         rowsPerPage: 10,
         rowsNumber: 0
       },
-      regionPagination: {
-        sortBy: 'region',
-        descending: false,
-        rowsPerPage: 0
-      },
-      searchVal: {
-        id: '',
-        area: ''
-      },
       showForm: false,
       formData: {
-        pid: '',
-        fidRegion: '',
-        buildingType: '',
-        buildingName: '',
+        id: '',
+        equipmentCategory: 'Field',
+        equipmentName: '',
+        description: '',
+        productType: '',
+        productSubType: '',
+        productSeries: '',
+        manufacturer: '',
+        brand: '',
+        serialNumberDevice: '',
+        serialNumberInternal: '',
+        quantity: '',
+        rack: '',
+        chassis: '',
+        slot: '',
+        hubCode: '',
+        hubAddress: '',
+        bdfCode: '',
+        nodeCode: '',
+        psCode: '',
+        amplifierCode: '',
+        fatCode: '',
+        service: '',
+        technology: '',
+        ipAddress: '',
+        macAddress: '',
+        capacity: '',
+        capacityUnits: '',
+        usedCapacity: '',
+        capacity1: '',
+        capacity2: '',
+        capacity3: '',
+        noOfPortFront: '',
+        noOfPortRear: '',
+        productionYear: '',
+        assetLifetime: '',
+        purchasedDate: '',
+        installationDate: '',
+        installedBy: '',
+        pic: '',
+        division: '',
+        department: '',
+        propertyOf: '',
+        equipmentStatus: '',
+        predecessor: '',
         itCode: '',
-        area: '',
-        region: '',
-        city: '',
-        locationName: '',
+        buildingName: '',
+        tower: '',
+        floor: '',
         complexName: '',
         streetName: '',
         streetNumber: '',
+        kelurahan: '',
         postalCode: '',
-        phone: '',
-        fax: ''
+        direction: '',
+        normalDistance: '',
+        updateDistanceDate: '',
+        remarks: '',
+        cascades: '',
+        amplifierNotes: '',
+        homepassed: '',
+        internetAccount: '',
+        customerType: '',
+        memoActiveDate: '',
+        electricalStatus: '',
+        lastModifiedByExcel: '',
+        isComplete: ''
       }
     }
   },
@@ -120,19 +174,45 @@ export default {
   methods: {
     doInitPage () {
       this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getNodeInitPage`, {
+        params: {
+          pageIndex: this.pagination.page - 1,
+          pageSize: this.pagination.rowsPerPage,
+          sortBy: this.pagination.sortBy,
+          descending: this.pagination.descending,
+          hubCode: this.searchVal.hubCode,
+          nodeCode: this.searchVal.nodeCode
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          this.doMainFillTableResult(response.data.listOfNode)
+          this.hubCodeList = response.data.listOfHub
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    getNodeCodeList () {
+      this.$q.loading.show()
       this.$axios.get(`${process.env.urlPrefix}getNodeList`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
-          descending: this.pagination.descending
+          descending: this.pagination.descending,
+          hubCode: this.searchVal.hubCode,
+          nodeCode: this.searchVal.nodeCode
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -143,86 +223,18 @@ export default {
           })
         })
     },
-    getBuildingList (props) {
-      this.$q.loading.show()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
-
-      this.$axios.get(`${process.env.urlPrefix}getNodeList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
-      })
-        .then((response) => {
-          this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
-        })
-        .catch((error) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-        })
+    doMainFillTableResult (pagedEquipment) {
+      this.dataList = pagedEquipment.content
+      this.pagination.rowsNumber = pagedEquipment.totalElements
+      this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
+      this.pagination.page = pagedEquipment.number + 1
     },
-    doOpenForm (pid) {
-      if (pid === false) {
-        this.showForm = true
-      } else {
-        this.$q.loading.show()
-        this.$axios.get(`${process.env.urlPrefix}getBuildingDetail`, {
-          params: {
-            pid: pid
-          }
-        })
-          .then((response) => {
-            this.formData = response.data
-            this.formData.mode = 'update'
-            this.showForm = true
-            this.$q.loading.hide()
-          })
-          .catch((error) => {
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-            this.$q.loading.hide()
-          })
-      }
+    doOpenForm (cell) {
+      this.formData = JSON.parse(JSON.stringify(cell.row))
+      this.showForm = true
     },
-    doSave () {
-      this.$q.loading.show()
-
-      this.$axios.post(`${process.env.urlPrefix}saveBuilding`, this.formData)
-        .then((response) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'positive',
-            icon: 'info',
-            message: 'Record successfully saved'
-          })
-
-          this.showForm = false
-          this.doRefresh()
-        })
-        .catch((error) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.showForm = false
-          this.doRefresh()
-        })
+    getValueSelect () {
+      this.searchVal.hubCode = this.searchVal.hubCode.value
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
@@ -242,6 +254,38 @@ export default {
         this.filteredRegionList = []
         this.formData.region = ''
       }
+    },
+    downloadExcel (props) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}nodeCodeExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          pageIndex: this.pagination.page - 1,
+          pageSize: this.pagination.rowsPerPage,
+          sortBy: this.pagination.sortBy,
+          descending: this.pagination.descending,
+          hubCode: this.searchVal.hubCode,
+          nodeCode: this.searchVal.nodeCode
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'node_excel_download.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     doRefresh () {
       this.clear()

@@ -1,105 +1,32 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER AMPLIFIER</font>
-     <div align="left" style="margin-bottom:30px; margin-top:20px;width:230px">
-      <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER AMPLIFIER</font>
+     <div align="left" style="margin-bottom:30px; margin-top:20px;width:260px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">MIGRATION HISTORY</font>
       <q-separator color="purple-10" />
       <q-separator color="purple-10" />
     </div>
-
-    <div class="row" style="margin-buttom:20px">
-      <div class="col-15" style="margin-right: 10px; width: 22%">
-        <q-select
-          v-model="searchVal.hubCode"
-          stack-label
-          label="Hub Code"
-          color="purple-6"
-          :options="hubCodeList"
-          @input="getValueSelect()"
-        />
-      </div>
-
-      <div class="col-15" style="margin-right: 10px; width: 22%">
-        <q-input
-        v-model="searchVal.amplifier"
-        stack-label
-        label="Amplifier Code"
-        color="purple-6"/>
-      </div>
-
-      <div class="col" style="width: 5%">
-        <q-btn round color="purple-10" @click="doSearchByFilter()">
-          <q-icon name="search"/>
-          <q-tooltip>Search</q-tooltip>
-        </q-btn>
-      </div>
-    </div>
-
-    <q-page-sticky position="top-right" :offset="[15, 30]">
-     <q-btn round color="green" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
-    </q-page-sticky>
-
-    <div style="width: 70%; margin-top:20px">
+    <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Building</h4> -->
+    <div style="max-width: 1200px">
       <q-table
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
         table-header-class="text-white bg-indigo-8"
-        :rows-per-page-options="[10, 20, 50, 100]"
-        @request="doMainEquipmentChangePage"
+        @request="getBuildingList"
         row-key="id"
         dense>
-
-        <!-- <q-td slot="body-cell-action" slot-scope="props">
-          <q-btn color="primary" round size="sm" @click="doOpenForm(props.row.pid)" style="margin-right: 10px">
-            <q-icon name="fas fa-edit" />
-            <q-tooltip>Edit</q-tooltip>
-          </q-btn>
-          <q-btn color="primary" round size="sm" @click="doToggleStatus(props)">
-            <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-            <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
-          </q-btn>
-        </q-td> -->
-        <q-td slot="body-cell-action" slot-scope="props">
-          <q-btn-dropdown rounded size="sm" color="indigo-10">
-            <q-list>
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-btn color="indigo-6" round size="sm" @click="doOpenForm(props.row.pid)">
-                    <q-icon name="fas fa-edit" />
-                    <q-tooltip>Edit</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
-                    <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-                    <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
+        <q-td slot="body-cell-historyDate" slot-scope="props">
+          {{ props.row.historyDate | formatDate}}
         </q-td>
-        <q-td slot="body-cell-recordStatus" slot-scope="props">
-          <div v-if="props.row.recordStatus === 'A'">
-            <q-icon name="done" color="primary"  style="font-size: 20px;"/>
-          </div>
-          <div v-else>
-            <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
-          </div>
-        </q-td>
-
       </q-table>
     </div>
 
-    <!-- <q-page-sticky position="top-right" :offset="[15, 30]">
+    <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="orange-4" @click.native="doOpenForm(false)">
         <q-icon name="fas fa-plus" />
         <q-tooltip>Add New Record</q-tooltip>
       </q-btn>
-    </q-page-sticky> -->
+    </q-page-sticky>
 
     <q-dialog v-model="showForm" persistent  @before-hide="clear()">
 
@@ -195,4 +122,4 @@ fieldset legend{
 }
 </style>
 
-<script src="./js/amplifierCode.js"></script>
+<script src="./js/migrationHistory.js"></script>

@@ -7,6 +7,10 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      searchVal: {
+        hubCode: 'All',
+        amplifier: ''
+      },
       tableColumns: [
         {
           name: 'nodeCode',
@@ -14,22 +18,6 @@ export default {
           field: 'nodeCode',
           align: 'left',
           style: 'width: 100px',
-          sortable: true
-        },
-        {
-          name: 'itCode',
-          label: 'IT Code',
-          field: 'itCode',
-          align: 'left',
-          style: 'width: 200px',
-          sortable: true
-        },
-        {
-          name: 'psCode',
-          label: 'PS Code',
-          field: 'psCode',
-          align: 'left',
-          style: 'width: 200px',
           sortable: true
         },
         {
@@ -44,6 +32,30 @@ export default {
           name: 'predecessor',
           label: 'Predecessor',
           field: 'predecessor',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'psCode',
+          label: 'PS Code',
+          field: 'psCode',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'hubCode',
+          label: 'Hub Code',
+          field: 'hubCode',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'itCode',
+          label: 'IT Code',
+          field: 'itCode',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -84,17 +96,8 @@ export default {
         sortBy: 'id',
         descending: false,
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 5,
         rowsNumber: 0
-      },
-      regionPagination: {
-        sortBy: 'region',
-        descending: false,
-        rowsPerPage: 0
-      },
-      searchVal: {
-        id: '',
-        area: ''
       },
       showForm: false,
       formData: {
@@ -120,19 +123,20 @@ export default {
   methods: {
     doInitPage () {
       this.$q.loading.show()
-      this.$axios.get(`${process.env.urlPrefix}getAmplifierList`, {
+      this.$axios.get(`${process.env.urlPrefix}getAmplifierInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
-          descending: this.pagination.descending
+          descending: this.pagination.descending,
+          hubCode: this.searchVal.hubCode,
+          amplifier: this.searchVal.amplifier
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.doMainFillTableResult(response.data.listOfNode)
+          this.hubCodeList = response.data.listOfHub
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -143,129 +147,83 @@ export default {
           })
         })
     },
-    getBuildingList (props) {
+    getAmplifierList (params) {
       this.$q.loading.show()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
-
-      this.$axios.get(`${process.env.urlPrefix}getNodeList`, {
+      this.$axios.get(`${process.env.urlPrefix}getAmplifierList`, {
+        params: params
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          this.doMainFillTableResult(response.data)
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    doMainFillTableResult (pagedEquipment) {
+      this.dataList = pagedEquipment.content
+      this.pagination.rowsNumber = pagedEquipment.totalElements
+      this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
+      this.pagination.page = pagedEquipment.number + 1
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        hubCode: this.searchVal.hubCode,
+        amplifier: this.searchVal.amplifier
+      }
+      this.getAmplifierList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        hubCode: this.searchVal.hubCode,
+        amplifier: this.searchVal.amplifier
+      }
+      this.getAmplifierList(params)
+    },
+    getValueSelect () {
+      this.searchVal.hubCode = this.searchVal.hubCode.value
+    },
+    downloadExcel (props) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}amplifierExcelDownload`, {
+        responseType: 'arraybuffer',
         params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
+          hubCode: this.searchVal.hubCode,
+          amplifier: this.searchVal.amplifier
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'amplifier_excel_download.xlsx'
+          document.body.appendChild(link)
+          link.click()
         })
         .catch((error) => {
           this.$q.loading.hide()
-          this.$q.notify({
+          this.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error
           })
         })
-    },
-    doOpenForm (pid) {
-      if (pid === false) {
-        this.showForm = true
-      } else {
-        this.$q.loading.show()
-        this.$axios.get(`${process.env.urlPrefix}getBuildingDetail`, {
-          params: {
-            pid: pid
-          }
-        })
-          .then((response) => {
-            this.formData = response.data
-            this.formData.mode = 'update'
-            this.showForm = true
-            this.$q.loading.hide()
-          })
-          .catch((error) => {
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-            this.$q.loading.hide()
-          })
-      }
-    },
-    doSave () {
-      this.$q.loading.show()
-
-      this.$axios.post(`${process.env.urlPrefix}saveBuilding`, this.formData)
-        .then((response) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'positive',
-            icon: 'info',
-            message: 'Record successfully saved'
-          })
-
-          this.showForm = false
-          this.doRefresh()
-        })
-        .catch((error) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.showForm = false
-          this.doRefresh()
-        })
-    },
-    doToggleStatus (cell) {
-      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.formData = cell.row
-      this.doSave()
-    },
-    getRegion () {
-      this.formData.area = this.formData.area.value
-      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(this.formData.area) > -1)[0].region
-      if (region !== null) {
-        var RegionList = JSON.parse(region)
-        this.filteredRegionList = RegionList.map(data => ({
-          label: data.region.toUpperCase(),
-          value: data.region.toUpperCase()
-        }))
-      } else {
-        this.filteredRegionList = []
-        this.formData.region = ''
-      }
-    },
-    doRefresh () {
-      this.clear()
-      this.doInitPage()
-    },
-    clear () {
-      this.formData = {
-        pid: '',
-        fidRegion: '',
-        buildingType: '',
-        buildingName: '',
-        itCode: '',
-        area: '',
-        region: '',
-        city: '',
-        locationName: '',
-        complexName: '',
-        streetName: '',
-        streetNumber: '',
-        postalCode: '',
-        phone: '',
-        fax: '',
-        mode: 'create'
-      }
     }
   },
   beforeMount () {

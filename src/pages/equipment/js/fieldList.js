@@ -3,6 +3,8 @@ export default {
   data () {
     return {
       isActive: false,
+      hubCodeName: '',
+      migrationHistoryList: [],
       colorLabel: 'orange',
       bluePsCode: false,
       uploadButton: false,
@@ -29,6 +31,8 @@ export default {
       propertyOfList: [],
       manufacturerList: [],
       brandList: [],
+      equipmentStatusList: [],
+      assetStatusList: [],
       migrationType: '',
       input: {
         id: '',
@@ -106,7 +110,9 @@ export default {
         productSeries: '',
         hubCode: 'All',
         bdfCode: 'All',
-        nodeCode: ''
+        nodeCode: '',
+        assetStatus: 'All',
+        equipmentStatus: 'All'
       },
       equipmentListColumns: [
         {
@@ -173,9 +179,79 @@ export default {
           sortable: true
         },
         {
+          name: 'equipmentUploadStatus',
+          label: 'Asset Status',
+          field: 'equipmentUploadStatus',
+          align: 'left',
+          sortable: true
+        },
+        {
           name: 'action',
           label: 'Action',
           align: 'center'
+        }
+      ],
+      migrationColumns: [
+        {
+          name: 'newProductType',
+          label: 'Product Type',
+          field: 'newProductType',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'originalCode',
+          label: 'Source Code',
+          field: 'originalCode',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'newCode',
+          label: 'New Code',
+          field: 'newCode',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'originalHub',
+          label: 'Source Hub',
+          field: 'originalHub',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'newHub',
+          label: 'New Hub',
+          field: 'newHub',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'assetStatus',
+          label: 'Asset Status',
+          field: 'assetStatus',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        }, {
+          name: 'historyDate',
+          label: 'Migration Date',
+          field: 'historyDate',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'migrationType',
+          label: 'Migration Type',
+          field: 'migrationType',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
         }
       ],
       equipmentPagination: {
@@ -218,6 +294,7 @@ export default {
         selectedNewNode: undefined,
         selectedMoveNodeOption: undefined,
         isNewNode: false,
+        date: '',
         migrationListNew: []
       },
       nodePrefixByHub: '',
@@ -330,7 +407,7 @@ export default {
           this.doMainFillTableResult(response.data.listOfEquipment)
           this.assetCategoryList = response.data.listOfAssetCategory
           this.productTypeList = response.data.listOfProductSubType
-          this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
+          this.hubCodeList = response.data.listOfHubCode
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
           this.technologyList = response.data.listOfTechnology
@@ -341,6 +418,12 @@ export default {
           this.propertyOfList = response.data.listOfPropertyOf
           this.capacityUnitsList = response.data.listOfCapacityUnits
           this.hubCodeRoomList = response.data.listOfHubCodeRoom
+          this.assetStatusList = response.data.listAssetStatus
+          this.equipmentStatusList = response.data.listEquipmentStatus
+
+          this.assetStatusList.unshift({ label: 'All', value: 'All' })
+          this.equipmentStatusList.unshift({ label: 'All', value: 'All' })
+          this.productTypeList.unshift({ label: 'All', value: 'All' })
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -588,13 +671,14 @@ export default {
       this.equipmentToMigrate.migrationListNew = []
       this.equipmentToMigrate.isNewNode = false
       this.equipmentToMigrate.newServiceNodeNumber = undefined
-
+      this.hubCodeName = this.hubCodeList.filter(v => v.value.indexOf(this.equipmentToMigrate.newHubCode) > -1)[0].label
       this.equipmentToMigrate.selectedMoveNodeOption = this.moveNodeOptions[0].value
+      this.equipmentToMigrate.date = this.getCurrentDate()
 
       this.getMigrationEquipment(this.equipmentToMigrate.nodeCode)
     },
     doMigrationChangeHub () {
-      // console.log(this.equipmentToMigrate.newHubCode)
+      this.equipmentToMigrate.newHubCode = this.hubCodeName.value
     },
     // doMigrationChangeHub () {
     //   this.$axios.get(`${process.env.urlPrefix}getNodeByHub/`,
@@ -804,9 +888,6 @@ export default {
         if (this.equipmentToMigrate.migrationListNew[i].predecessor !== '') {
           this.equipmentToMigrate.migrationListNew[i].newPredecessor = prefix + this.equipmentToMigrate.migrationListNew[i].predecessor.substring(6, this.equipmentToMigrate.migrationListNew[i].predecessor.length)
         } else {
-          if (this.equipmentToMigrate.migrationListNew[i].productType === 'POWER SUPPLY') {
-            this.equipmentToMigrate.migrationListNew[i].newPredecessor = prefix + '0000'
-          }
           if (this.equipmentToMigrate.migrationListNew[i].productType === 'AMPLIFIER') {
             var lastString = this.equipmentToMigrate.migrationListNew[i].equipmentName.substring(6, this.equipmentToMigrate.migrationListNew[i].equipmentName.length)
             var cascades = lastString.replaceAll('0', '').length
@@ -948,6 +1029,9 @@ export default {
         }
       }
     },
+    doMigrationChangeProductType (cellRow) {
+      cellRow.newPredecessor = ''
+    },
     doMigrationChangeEquipmentName (cellRow) {
       cellRow.newName = this.getMigrationEquipmentPrefix(cellRow) + cellRow.newNumber
       if (this.equipmentToMigrate.migrationListNew.filter(item => item.newName === cellRow.newName).length > 1) {
@@ -1010,7 +1094,7 @@ export default {
         this.equipmentToMigrate.isNewNode && row.migrate && this.equipmentToMigrate.selectedMoveNodeOption === 'X')
     },
     isMigrationStayOrMoveVisible (row) {
-      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C' || row.equipmentName === '') {
         return false
       } else if (row.productType !== 'FIBERNODE' && this.equipmentToMigrate.selectedMoveNodeOption !== 'N') {
         return true
@@ -1038,11 +1122,11 @@ export default {
       const newPowerSupply = {
         id: 'X' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
-        productType: 'POWER SUPPLY',
+        productType: 'FIBERNODE',
         hubCode: this.equipmentToMigrate.newHubCode,
         predecessor: this.equipmentToMigrate.newNodeCode + '00',
-        newName: this.equipmentToMigrate.newNodeCode.substring(0, 6) + '#',
-        newPredecessor: this.equipmentToMigrate.newNodeCode + '00',
+        newName: this.equipmentToMigrate.newNodeCode.substring(0, 6),
+        newPredecessor: '',
         newPsCode: this.equipmentToMigrate.newNodeCode.substring(0, 6),
         amplifierCode: '',
         migrate: true,
@@ -1116,7 +1200,6 @@ export default {
       //     f.productType !== 'FIBERNODE' && f.migrate === migrate)
       //   console.log(rawChildren)
       // }
-
       for (let i = 0; i < rawChildren.length; i++) {
         let original = rawChildren[i].equipmentName
 
@@ -1298,7 +1381,6 @@ export default {
 
         this.equipmentToMigrate.migrationListNew[i].nodeCode = this.equipmentToMigrate.newNodeCode
       }
-
       this.$axios.post(`${process.env.urlPrefix}doValidate/`, this.equipmentToMigrate)
         .then((response) => {
           this.validationResults = []
@@ -1336,7 +1418,9 @@ export default {
       if (this.migrationStep === 1) {
         this.reloadMigrationList = true
       } else if (this.migrationStep === 2) {
-        if (this.reloadMigrationList) {
+        this.$refs.destinationNode.validate()
+        var vDestinationNode = this.$refs.destinationNode.hasError
+        if (this.reloadMigrationList && !vDestinationNode) {
           if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
             this.migrationType = 'Split Node'
           } else if (this.equipmentToMigrate.selectedMoveNodeOption === 'N') {
@@ -1345,6 +1429,8 @@ export default {
             this.migrationType = 'Change Service'
           }
           this.doMigrationSetupNewHierarchy()
+        } else {
+          this.$refs.stepper.previous()
         }
         this.reloadMigrationList = true
       } else if (this.migrationStep === 3) {
@@ -1495,6 +1581,23 @@ export default {
       this.input.purchasedDate = this.input.purchasedDate === null ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
       this.input.updateDistanceDate = this.input.updateDistanceDate === null ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
       this.input.installationDate = this.input.installationDate === null ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
+      var assetId = cell.row.id.toString()
+      this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryByAssetId`, {
+        params: {
+          assetId: assetId
+        }
+      })
+        .then((response) => {
+          this.migrationHistoryList = response.data
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+      this.$q.loading.hide()
       this.modalAddNewAsset = true
     },
     changeColorNodeCode () {
@@ -1611,6 +1714,31 @@ export default {
         comparison = -1
       }
       return comparison
+    },
+    getCurrentDate () {
+      var today = new Date()
+      var month = today.getMonth() + 1
+      var strDate = (today.getDate().toString().length === 1 ? '0' + today.getDate() : today.getDate())
+      var strMonth = month.toString().toString().length === 1 ? '0' + month.toString() : month.toString()
+      var currentDate = strDate + '/' + strMonth + '/' + today.getFullYear()
+      return currentDate
+    },
+    getValueSelect (type) {
+      if (type === 'equipmentStatus') {
+        this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
+      }
+      if (type === 'assetStatus') {
+        this.searchVal.assetStatus = this.searchVal.assetStatus.value
+      }
+      if (type === 'productType') {
+        this.searchVal.productType = this.searchVal.productType.value
+      }
+      if (type === 'hubCode') {
+        this.searchVal.hubCode = this.searchVal.hubCode.value
+      }
+      if (type === 'bdfCode') {
+        this.searchVal.bdfCode = this.searchVal.bdfCode.value
+      }
     },
     doRefresh () {
       this.input = {

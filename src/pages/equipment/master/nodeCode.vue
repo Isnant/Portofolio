@@ -1,19 +1,51 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / NODE CODE</font>
-     <div align="left" style="margin-bottom:30px; margin-top:20px;width:150px">
-      <font size="5" class="text-bold" style="margin-bottom: 10px">NODE CODE</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER NODE</font>
+     <div align="left" style="margin-bottom:30px; margin-top:20px;width:180px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER NODE</font>
       <q-separator color="purple-10" />
       <q-separator color="purple-10" />
     </div>
     <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Building</h4> -->
-    <div style="max-width: 1200px">
+    <div class="row" style="margin-buttom:20px">
+      <div class="col-15" style="margin-right: 10px; width: 22%">
+        <q-select
+          v-model="searchVal.hubCode"
+          stack-label
+          label="Hub Code"
+          color="purple-6"
+          :options="hubCodeList"
+          @input="getValueSelect()"
+        />
+      </div>
+
+      <div class="col-15" style="margin-right: 10px; width: 22%">
+        <q-input
+        v-model="searchVal.nodeCode"
+        stack-label
+        label="Node Code"
+        color="purple-6"/>
+      </div>
+
+      <div class="col" style="width: 5%">
+        <q-btn round color="purple-10" @click="getNodeCodeList()">
+          <q-icon name="search"/>
+          <q-tooltip>Search</q-tooltip>
+        </q-btn>
+      </div>
+    </div>
+
+    <q-page-sticky position="top-right" :offset="[15, 30]">
+     <q-btn round color="green" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
+    </q-page-sticky>
+
+    <div style="margin-top:20px; width: 80%">
       <q-table
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
+        :rows-per-page-options="[10, 20, 50, 100]"
         table-header-class="text-white bg-indigo-8"
-        @request="getBuildingList"
         row-key="id"
         dense>
 
@@ -27,22 +59,14 @@
             <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
           </q-btn>
         </q-td> -->
-        <q-td slot="body-cell-action" slot-scope="props">
+        <q-td slot="body-cell-action" align="center" slot-scope="cell">
           <q-btn-dropdown rounded size="sm" color="indigo-10">
             <q-list>
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-btn color="indigo-6" round size="sm" @click="doOpenForm(props.row.pid)">
+                  <q-btn color="indigo-6" round size="sm" @click="doOpenForm(cell)">
                     <q-icon name="fas fa-edit" />
-                    <q-tooltip>Edit</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
-                    <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-                    <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+                    <q-tooltip>Detail</q-tooltip>
                   </q-btn>
                 </q-item-section>
               </q-item>
@@ -72,7 +96,7 @@
 
       <q-card class="bg-white">
         <q-bar class="bg-blue-7 text-white">
-          <strong>Building Form</strong>
+          <strong>Node Detail</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
@@ -80,50 +104,55 @@
         <q-card-section>
           <div class="row">
             <div class="col">
-              <q-input v-model="formData.pid"
-                stack-label label="Building Code"/>
-              <q-input v-model="formData.fidRegion"
-                stack-label label="Region Id"/>
-              <q-input v-model="formData.buildingType"
-                stack-label label="Building buildingType"/>
-              <q-input v-model="formData.buildingName"
-                stack-label label="Building Name"/>
+               <q-input v-model="formData.equipmentName"
+                readonly stack-label label="Node Code"/>
               <q-input v-model="formData.itCode"
-                stack-label label="IT Code"/>
-              <q-select v-model="formData.area"
-                stack-label
-                label="Area Name"
-                :options="areaList"
-                @input="getRegion()"/>
-              <q-select v-model="formData.region"
-                stack-label
-                label="Region"
-                :options="filteredRegionList"/>
-              <q-input v-model="formData.city"
-                stack-label label="City"/>
+                readonly stack-label label="IT Code"/>
+              <q-input v-model="formData.description"
+                readonly stack-label label="Node Name"/>
+              <q-input v-model="formData.psCode"
+                readonly stack-label label="PS Code"/>
+              <q-input v-model="formData.hubCode"
+                readonly stack-label label="Hub Code"/>
+              <q-input v-model="formData.technology"
+                readonly stack-label label="Technology"/>
+              <q-input v-model="formData.itCode"
+                readonly stack-label label="IT Code"/>
+              <q-input v-model="formData.buildingName"
+                readonly stack-label label="Building Name"/>
+              <q-input v-model="formData.tower"
+                readonly stack-label label="Tower"/>
+              <q-input v-model="formData.floor"
+                readonly stack-label label="Floor"/>
+              <q-input v-model="formData.complexName"
+                readonly stack-label label="Complex Name"/>
+              <q-input v-model="formData.streetName"
+                readonly stack-label label="Street Name"/>
             </div>
             <div class="col" style="margin-left:20px">
-              <q-input v-model="formData.locationName"
-                stack-label label="Location Name"/>
-              <q-input v-model="formData.complexName"
-                stack-label label="ComplexName"/>
-              <q-input v-model="formData.streetName"
-                stack-label label="Steet Name"/>
               <q-input v-model="formData.streetNumber"
-                stack-label label="Street Number"/>
+                readonly stack-label label="Street Number"/>
+              <q-input v-model="formData.kelurahan"
+                readonly stack-label label="District"/>
               <q-input v-model="formData.postalCode"
-                stack-label label="Postal Code"/>
-              <q-input v-model="formData.phone"
-                stack-label label="Phone"/>
-              <q-input v-model="formData.fax"
-                stack-label label="Fax"/>
+                readonly stack-label label="Postal Code"/>
+              <q-input v-model="formData.direction"
+                readonly stack-label label="Direction"/>
+              <q-input v-model="formData.cascades"
+                readonly stack-label label="Cascades"/>
+              <q-input v-model="formData.customerType"
+                readonly stack-label label="Customer Type"/>
+              <q-input v-model="formData.normalDistance"
+                readonly stack-label label="Normal Distance"/>
+              <q-input v-model="formData.updateDistanceDate"
+                readonly stack-label label="Update Distance Date"/>
+              <q-input v-model="formData.homepassed"
+                readonly stack-label label="Homepassed"/>
+              <q-input v-model="formData.internetAccount"
+                readonly stack-label label="Internet Account"/>
+              <q-input v-model="formData.remarks"
+                readonly stack-label label="Remarks"/>
             </div>
-          </div>
-          <div style="text-align: right">
-            <q-btn round color="primary" @click.native="doSave()" size="small">
-              <q-icon name="fas fa-save"/>
-              <q-tooltip>Save Form</q-tooltip>
-            </q-btn>
           </div>
         </q-card-section>
       </q-card>
