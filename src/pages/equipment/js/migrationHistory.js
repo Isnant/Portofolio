@@ -153,7 +153,6 @@ export default {
         .then((response) => {
           this.$q.loading.hide()
           this.dataList = response.data.content
-          console.log(this.dataList)
         })
         .catch((error) => {
           this.$q.loading.hide()
