@@ -67,7 +67,7 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'pid',
+        sortBy: 'description',
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,

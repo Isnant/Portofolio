@@ -92,7 +92,7 @@ export default {
         sortBy: 'id',
         descending: false,
         page: 1,
-        rowsPerPage: 5,
+        rowsPerPage: 10,
         rowsNumber: 0
       },
       regionPagination: {
@@ -217,7 +217,7 @@ export default {
           const link = document.createElement('a')
           link.href = url
           link.style = 'display: none'
-          link.download = 'amplifier_excel_download.xlsx'
+          link.download = 'ps_excel_download.xlsx'
           document.body.appendChild(link)
           link.click()
         })

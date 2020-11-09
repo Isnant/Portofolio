@@ -91,11 +91,13 @@
             <q-select v-model="formData.brand"
                 stack-label
                 label="Brand"
-                :options="filteredBrandList"/>
+                :options="filteredBrandList"
+                 @input="getBrandValue()"/>
             <q-select v-model="formData.productTypeSubType"
                 stack-label
                 label="Product Type"
-                :options="productTypeList"/>
+                :options="productTypeList"
+                 @input="getProductTypeValue()"/>
           </div>
           <br/>
           <div style="text-align: right">

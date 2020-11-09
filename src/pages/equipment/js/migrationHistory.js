@@ -78,33 +78,9 @@ export default {
           sortable: true
         }
       ],
-      regionColumns: [
-        {
-          name: 'id',
-          label: 'Region Id',
-          field: 'id',
-          align: 'left',
-          style: 'width: 100px',
-          sortable: true
-        },
-        {
-          name: 'region',
-          label: 'Region Name',
-          field: 'region',
-          align: 'left',
-          style: 'width: 200px',
-          sortable: true
-        },
-        {
-          name: 'action',
-          label: 'Action',
-          align: 'center',
-          style: 'width: 100px'
-        }
-      ],
       pagination: {
-        sortBy: 'id',
-        descending: false,
+        sortBy: 'historyDate',
+        descending: true,
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0
@@ -115,8 +91,8 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
-        id: '',
-        area: ''
+        reqStartDate: '',
+        reqEndDate: ''
       },
       showForm: false,
       formData: {
@@ -147,12 +123,16 @@ export default {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
-          descending: this.pagination.descending
+          descending: this.pagination.descending,
+          startDate: this.searchVal.reqStartDate,
+          endDate: this.searchVal.reqEndDate
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
+          this.doMainFillTableResult(response.data)
+          // this.searchVal.reqStartDate = this.getFirstDate()
+          // this.searchVal.reqEndDate = this.getCurrentDate()
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -163,25 +143,14 @@ export default {
           })
         })
     },
-    getBuildingList (props) {
+    getMigrationHistoryList (params) {
       this.$q.loading.show()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
-
-      this.$axios.get(`${process.env.urlPrefix}getBuildingList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
+      this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryList`, {
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -192,100 +161,46 @@ export default {
           })
         })
     },
-    doOpenForm (pid) {
-      if (pid === false) {
-        this.showForm = true
+    doMainFillTableResult (pagedEquipment) {
+      this.dataList = pagedEquipment.content
+      this.pagination.rowsNumber = pagedEquipment.totalElements
+      this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
+      this.pagination.page = pagedEquipment.number + 1
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        startDate: this.searchVal.reqStartDate,
+        endDate: this.searchVal.reqEndDate
+      }
+      this.getMigrationHistoryList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        startDate: this.searchVal.reqStartDate,
+        endDate: this.searchVal.reqEndDate
+      }
+      this.getMigrationHistoryList(params)
+    },
+    doClearSearchVal (type) {
+      if (type === 'start') {
+        if (this.searchVal.reqStartDate === null) {
+          this.searchVal.reqStartDate = ''
+        }
       } else {
-        this.$q.loading.show()
-        this.$axios.get(`${process.env.urlPrefix}getBuildingDetail`, {
-          params: {
-            pid: pid
-          }
-        })
-          .then((response) => {
-            this.formData = response.data
-            this.formData.mode = 'update'
-            this.showForm = true
-            this.$q.loading.hide()
-          })
-          .catch((error) => {
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-            this.$q.loading.hide()
-          })
+        if (this.searchVal.reqEndDate === null) {
+          this.searchVal.reqEndDate = ''
+        }
       }
-    },
-    doSave () {
-      this.$q.loading.show()
-
-      this.$axios.post(`${process.env.urlPrefix}saveBuilding`, this.formData)
-        .then((response) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'positive',
-            icon: 'info',
-            message: 'Record successfully saved'
-          })
-
-          this.showForm = false
-          this.doRefresh()
-        })
-        .catch((error) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.showForm = false
-          this.doRefresh()
-        })
-    },
-    doToggleStatus (cell) {
-      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.formData = cell.row
-      this.doSave()
-    },
-    getRegion () {
-      this.formData.area = this.formData.area.value
-      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(this.formData.area) > -1)[0].region
-      if (region !== null) {
-        var RegionList = JSON.parse(region)
-        this.filteredRegionList = RegionList.map(data => ({
-          label: data.region.toUpperCase(),
-          value: data.region.toUpperCase()
-        }))
-      } else {
-        this.filteredRegionList = []
-        this.formData.region = ''
-      }
-    },
-    doRefresh () {
-      this.clear()
-      this.doInitPage()
-    },
-    clear () {
-      this.formData = {
-        pid: '',
-        fidRegion: '',
-        buildingType: '',
-        buildingName: '',
-        itCode: '',
-        area: '',
-        region: '',
-        city: '',
-        locationName: '',
-        complexName: '',
-        streetName: '',
-        streetNumber: '',
-        postalCode: '',
-        phone: '',
-        fax: '',
-        mode: 'create'
-      }
+      this.doSearchByFilter()
     }
   },
   beforeMount () {

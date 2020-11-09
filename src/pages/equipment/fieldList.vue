@@ -831,6 +831,8 @@
                     :stack-label="true"
                     ref="destinationNode"
                     label="Destination Node"
+                    oninput="this.value = this.value.toUpperCase()"
+                    class="text-uppercase"
                     :rules="[val => !!val || 'Destination Node is required']"/>
                 </div>
                 <div>

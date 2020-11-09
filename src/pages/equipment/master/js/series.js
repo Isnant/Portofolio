@@ -242,7 +242,7 @@ export default {
     },
     getBrand () {
       this.formData.manufacturerId = this.formData.manufacturerId.value
-      var brand = this.listOfManufacturer.filter(v => v.pid.indexOf(this.formData.manufacturerId) > -1)[0].brand
+      var brand = this.listOfManufacturer.filter(v => v.description.indexOf(this.formData.manufacturerId) > -1)[0].brand
       if (brand !== null) {
         var brandList = JSON.parse(brand)
         this.filteredBrandList = brandList.map(data => ({
@@ -253,6 +253,12 @@ export default {
         this.filteredBrandList = []
         this.formData.brand = ''
       }
+    },
+    getBrandValue () {
+      this.formData.brand = this.formData.brand.value
+    },
+    getProductTypeValue () {
+      this.formData.productTypeSubType = this.formData.productTypeSubType.value
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'

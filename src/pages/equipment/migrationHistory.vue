@@ -5,14 +5,57 @@
       <q-separator color="purple-10" />
       <q-separator color="purple-10" />
     </div>
-    <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Building</h4> -->
+    <div class="row" style="width:700px;margin:10px">
+      <div class="col" style="margin-right:20px">
+        <q-input
+          v-model="searchVal.reqStartDate"
+          clearable
+          stack-label
+          @input="doClearSearchVal('start')"
+          label="Start Date">
+          <template v-slot:prepend>
+            <q-icon name="event">
+              <q-popup-proxy ref="qreqDateStart" transition-show="scale" transition-hide="scale">
+                <q-date v-model="searchVal.reqStartDate"
+                mask="DD/MM/YYYY"
+                @input="() => $refs.qreqDateStart.hide()"/>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+      <div class="col">
+        <q-input
+          v-model="searchVal.reqEndDate"
+          stack-label
+          clearable
+          @input="doClearSearchVal('end')"
+          label="End Date">
+          <template v-slot:prepend>
+            <q-icon name="event">
+              <q-popup-proxy ref="qreqDateEnd" transition-show="scale" transition-hide="scale">
+                <q-date v-model="searchVal.reqEndDate"
+                mask="DD/MM/YYYY"
+                @input="() => $refs.qreqDateEnd.hide()"/>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+      <div class="col">
+        <q-btn round color="purple-10" @click="doSearchByFilter()">
+          <q-icon name="search"/>
+          <q-tooltip>Search</q-tooltip>
+        </q-btn>
+      </div>
+    </div>
     <div style="max-width: 1200px">
       <q-table
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
         table-header-class="text-white bg-indigo-8"
-        @request="getBuildingList"
+        @request="doMainEquipmentChangePage"
         row-key="id"
         dense>
         <q-td slot="body-cell-historyDate" slot-scope="props">

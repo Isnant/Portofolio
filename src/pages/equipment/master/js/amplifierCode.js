@@ -96,7 +96,7 @@ export default {
         sortBy: 'id',
         descending: false,
         page: 1,
-        rowsPerPage: 5,
+        rowsPerPage: 10,
         rowsNumber: 0
       },
       showForm: false,
