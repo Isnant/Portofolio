@@ -207,7 +207,7 @@ export default {
     },
     setTreeHierarchy (dataList, row) {
       let sourceTree = {
-        label: row.equipmentName + '-' + row.equipmentId,
+        label: row.equipmentName + '-' + row.equipmentId + ' - [' + row.productType + ']',
         header: 'root',
         children: []
       }
@@ -222,7 +222,7 @@ export default {
       let result = []
       for (let i = 0; i < rawChildren.length; i++) {
         let child = {
-          label: rawChildren[i].equipmentName + ' - ' + rawChildren[i].equipmentId,
+          label: rawChildren[i].equipmentName + ' - ' + rawChildren[i].equipmentId + ' - [' + rawChildren[i].productType + ']',
           children: []
         }
         child.children = this.getMigrationPreviewChild(dataList, rawChildren[i].equipmentName)
