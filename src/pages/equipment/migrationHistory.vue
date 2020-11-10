@@ -64,13 +64,6 @@
       </q-table>
     </div>
 
-    <q-page-sticky position="top-right" :offset="[15, 30]">
-      <q-btn round color="orange-4" @click.native="doOpenForm(false)">
-        <q-icon name="fas fa-plus" />
-        <q-tooltip>Add New Record</q-tooltip>
-      </q-btn>
-    </q-page-sticky>
-
     <q-dialog v-model="showForm" persistent  @before-hide="clear()">
 
       <q-card class="bg-white">

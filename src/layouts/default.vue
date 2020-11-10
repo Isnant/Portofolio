@@ -92,6 +92,14 @@
             <q-item-label>Migration History</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item to="/hierarchy" active-class="my-menu-link">
+          <q-item-section avatar>
+            <q-icon name="account_tree" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Hierarchy</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-expansion-item
           icon="fas fa-database"
           label="Master Data"
