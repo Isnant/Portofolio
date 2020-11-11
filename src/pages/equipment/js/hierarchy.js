@@ -4,7 +4,7 @@ export default {
       dataList: [],
       areaList: [],
       sourcePreview: [],
-      regionList: [],
+      statusList: ['All', 'Active', 'Inactive'],
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
@@ -74,8 +74,10 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
+        equipmentId: '',
         equipmentName: '',
-        equipmentParent: ''
+        equipmentParent: '',
+        status: 'Active'
       },
       showForm: false,
       formData: {
@@ -108,7 +110,9 @@ export default {
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
           equipmentName: this.searchVal.equipmentName,
-          equipmentParent: this.searchVal.equipmentParent
+          equipmentParent: this.searchVal.equipmentParent,
+          status: this.searchVal.status,
+          equipmentId: this.searchVal.equipmentId
         }
       })
         .then((response) => {
@@ -158,7 +162,9 @@ export default {
         sortBy: sortBy,
         descending: descending,
         equipmentName: this.searchVal.equipmentName,
-        equipmentParent: this.searchVal.equipmentParent
+        equipmentParent: this.searchVal.equipmentParent,
+        status: this.searchVal.status,
+        equipmentId: this.searchVal.equipmentId
       }
       this.getHierarchyList(params)
     },
@@ -169,7 +175,9 @@ export default {
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
         equipmentName: this.searchVal.equipmentName,
-        equipmentParent: this.searchVal.equipmentParent
+        equipmentParent: this.searchVal.equipmentParent,
+        status: this.searchVal.status,
+        equipmentId: this.searchVal.equipmentId
       }
       this.getHierarchyList(params)
     },

@@ -5,8 +5,15 @@
       <q-separator color="purple-10" />
       <q-separator color="purple-10" />
     </div>
-    <div class="row" style="width:700px;margin:10px">
-      <div class="col" style="margin-right:20px">
+    <div class="row" style="width: 1200px;margin-bottom:20px">
+      <div class="col" style="margin-right:10px">
+        <q-input
+          v-model="searchVal.equipmentId"
+          stack-label
+          label="Equipment Id">
+        </q-input>
+      </div>
+      <div class="col" style="margin-right:10px">
         <q-input
           v-model="searchVal.equipmentName"
           stack-label
@@ -26,7 +33,17 @@
           <q-tooltip>Search</q-tooltip>
         </q-btn>
       </div>
+      <div class="col-20" style="width: 8%" align="left">
+        <q-select
+          v-model="searchVal.status"
+          stack-label
+          :options="statusList"
+          @input="doSearchByFilter()"
+          label="Status">
+        </q-select>
+      </div>
     </div>
+
     <div style="max-width: 1200px">
       <q-table
         :data="dataList"
