@@ -5,7 +5,7 @@
       <q-separator color="purple-10" />
       <q-separator color="purple-10" />
     </div>
-    <div class="row" style="width: 1200px;margin-bottom:20px">
+    <div class="row" style="margin-bottom:20px">
       <div class="col" style="margin-right:10px">
         <q-input
           v-model="searchVal.equipmentId"
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div style="max-width: 1200px">
+    <div>
       <q-table
         :data="dataList"
         :columns="tableColumns"
