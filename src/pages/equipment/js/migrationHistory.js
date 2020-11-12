@@ -61,10 +61,19 @@ export default {
           align: 'left',
           style: 'width: 200px',
           sortable: true
-        }, {
+        },
+        {
           name: 'historyDate',
           label: 'Migration Date',
           field: 'historyDate',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'createdDate',
+          label: 'Created Date',
+          field: 'createdDate',
           align: 'left',
           style: 'width: 200px',
           sortable: true

@@ -61,6 +61,9 @@
         <q-td slot="body-cell-historyDate" slot-scope="props">
           {{ props.row.historyDate | formatDate}}
         </q-td>
+        <q-td slot="body-cell-createdDate" slot-scope="props">
+          {{ props.row.createdDate | formatDateTime}}
+        </q-td>
       </q-table>
     </div>
 
