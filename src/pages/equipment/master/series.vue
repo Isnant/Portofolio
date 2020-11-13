@@ -6,14 +6,31 @@
       <q-separator color="purple-10" />
       <q-separator color="purple-10" />
     </div>
-    <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Product Series</h4> -->
+
+    <div class="row" style="width:700px;margin:10px">
+      <div class="col" style="margin-right:20px">
+        <q-input
+          v-model="searchVal.series"
+          label="Product Series"
+          stack-label>
+        </q-input>
+      </div>
+
+      <div class="col">
+        <q-btn round color="purple-10" @click="doSearchByFilter()">
+          <q-icon name="search"/>
+          <q-tooltip>Search</q-tooltip>
+        </q-btn>
+      </div>
+    </div>
+
     <div style="max-width: 800px">
       <q-table
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
         table-header-class="text-white bg-indigo-8"
-        @request="getManufacturerBrandList"
+        @request="doMainEquipmentChangePage"
         row-key="id"
         dense>
 

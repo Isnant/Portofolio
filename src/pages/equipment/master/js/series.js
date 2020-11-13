@@ -18,6 +18,15 @@ export default {
           headerClasses: 'bg-indigo-8 text-white'
         },
         {
+          name: 'series',
+          label: 'Series',
+          field: 'series',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true,
+          headerClasses: 'bg-indigo-8 text-white'
+        },
+        {
           name: 'description',
           label: 'Description',
           field: 'description',
@@ -108,8 +117,7 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
-        id: '',
-        area: ''
+        series: ''
       },
       showForm: false,
       formData: {
@@ -130,17 +138,16 @@ export default {
       this.$q.loading.show()
       this.$axios.get(`${process.env.urlPrefix}getProductSeriesInitPage`, {
         params: {
-          pageIndex: this.pagination.page - 1,
+          pageIndex: 0,
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
-          descending: this.pagination.descending
+          descending: this.pagination.descending,
+          series: this.searchVal.series
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.listOfProductSeries.content
-          this.pagination.rowsNumber = response.data.listOfProductSeries.totalElements
-          this.pagination.page = response.data.listOfProductSeries.number + 1
+          this.doMainFillTableResult(response.data.listOfProductSeries)
           this.manufacturerCodeList = response.data.listOfManufacturerDropdown
           this.listOfManufacturer = response.data.listOfManufacturer
           this.productTypeList = response.data.listOfProductTypeDropdown
@@ -154,25 +161,14 @@ export default {
           })
         })
     },
-    getManufacturerBrandList (props) {
+    getProductSeriesList (params) {
       this.$q.loading.show()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
-
       this.$axios.get(`${process.env.urlPrefix}getProductSeriesList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -182,6 +178,33 @@ export default {
             message: error
           })
         })
+    },
+    doMainFillTableResult (pagedEquipment) {
+      this.dataList = pagedEquipment.content
+      this.pagination.rowsNumber = pagedEquipment.totalElements
+      this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
+      this.pagination.page = pagedEquipment.number + 1
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        series: this.searchVal.series
+      }
+      this.getProductSeriesList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        series: this.searchVal.series
+      }
+      this.getProductSeriesList(params)
     },
     doOpenForm (pid) {
       if (pid === false) {
