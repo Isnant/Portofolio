@@ -97,7 +97,7 @@
             <q-icon name="account_tree" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Hierarchy</q-item-label>
+            <q-item-label>Field Hierarchy</q-item-label>
           </q-item-section>
         </q-item>
         <q-expansion-item

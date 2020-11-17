@@ -12,7 +12,7 @@
         <q-select
           v-model="searchVal.hubCode"
           stack-label
-          label="Hub Code"
+          label="HUB NAME"
           color="purple-6"
           :options="hubCodeList"
           @input="getValueSelect()"
@@ -23,12 +23,14 @@
         <q-input
         v-model="searchVal.nodeCode"
         stack-label
-        label="Node Code"
+        label="Node Name"
+        oninput="this.value = this.value.toUpperCase()"
+        class="text-uppercase"
         color="purple-6"/>
       </div>
 
       <div class="col" style="width: 5%">
-        <q-btn round color="purple-10" @click="getNodeCodeList()">
+        <q-btn round color="purple-10" @click="doSearchByFilter()">
           <q-icon name="search"/>
           <q-tooltip>Search</q-tooltip>
         </q-btn>
@@ -45,6 +47,7 @@
         :columns="tableColumns"
         :pagination.sync="pagination"
         :rows-per-page-options="[10, 20, 50, 100]"
+         @request="doMainEquipmentChangePage"
         table-header-class="text-white bg-indigo-8"
         row-key="id"
         dense>
@@ -105,19 +108,22 @@
           <div class="row">
             <div class="col">
                <q-input v-model="formData.equipmentName"
-                readonly stack-label label="Node Code"/>
+                readonly stack-label label="Node Name"/>
               <q-input v-model="formData.itCode"
                 readonly stack-label label="IT Code"/>
               <q-input v-model="formData.description"
-                readonly stack-label label="Node Name"/>
+                readonly stack-label label="Description"
+                type="textarea" style="max-height: 112px"/>
               <q-input v-model="formData.psCode"
                 readonly stack-label label="PS Code"/>
               <q-input v-model="formData.hubCode"
                 readonly stack-label label="Hub Code"/>
+              <q-input v-model="formData.homepassed"
+                readonly stack-label label="Homepassed"/>
               <q-input v-model="formData.technology"
                 readonly stack-label label="Technology"/>
-              <q-input v-model="formData.itCode"
-                readonly stack-label label="IT Code"/>
+              <q-input v-model="formData.customerType"
+                readonly stack-label label="Customer Type"/>
               <q-input v-model="formData.buildingName"
                 readonly stack-label label="Building Name"/>
               <q-input v-model="formData.tower"
@@ -126,10 +132,11 @@
                 readonly stack-label label="Floor"/>
               <q-input v-model="formData.complexName"
                 readonly stack-label label="Complex Name"/>
-              <q-input v-model="formData.streetName"
-                readonly stack-label label="Street Name"/>
             </div>
             <div class="col" style="margin-left:20px">
+              <q-input v-model="formData.streetName"
+                readonly stack-label label="Street Name"
+                type="textarea" style="max-height: 112px"/>
               <q-input v-model="formData.streetNumber"
                 readonly stack-label label="Street Number"/>
               <q-input v-model="formData.kelurahan"
@@ -146,8 +153,6 @@
                 readonly stack-label label="Normal Distance"/>
               <q-input v-model="formData.updateDistanceDate"
                 readonly stack-label label="Update Distance Date"/>
-              <q-input v-model="formData.homepassed"
-                readonly stack-label label="Homepassed"/>
               <q-input v-model="formData.internetAccount"
                 readonly stack-label label="Internet Account"/>
               <q-input v-model="formData.remarks"

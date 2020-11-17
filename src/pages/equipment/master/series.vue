@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div style="max-width: 800px">
+    <div style="max-width: 1000px">
       <q-table
         :data="dataList"
         :columns="tableColumns"
@@ -96,11 +96,13 @@
 
         <q-card-section>
           <div>
-            <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
-              label="Series Code"/>
+            <q-input readonly v-show="formData.createdBy !== undefined" v-model="formData.pid"
+              stack-label label="Series Code"/>
+             <q-input v-model="formData.series"
+              stack-label label="Series"/>
             <q-input v-model="formData.description"
-              label="Description"/>
-            <q-select v-model="formData.manufacturerId"
+              stack-label label="Description"/>
+            <q-select v-model="formData.manufacturer"
                 stack-label
                 label="Manufacturer Code"
                 :options="manufacturerCodeList"

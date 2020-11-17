@@ -32,6 +32,8 @@
           v-model="searchVal.equipmentName"
           stack-label
           label="Equipment Name"
+          oninput="this.value = this.value.toUpperCase()"
+          class="text-uppercase"
           color="purple-6"/>
         </div>
 
@@ -90,6 +92,8 @@
             v-model="searchVal.nodeCode"
             label="Node Code"
             color="purple-6"
+            oninput="this.value = this.value.toUpperCase()"
+            class="text-uppercase"
             stack-label
           />
         </div>
@@ -678,7 +682,6 @@
               :columns="migrationColumns"
               :pagination.sync="pagination"
               table-header-class="text-white bg-indigo-8"
-              @request="getBuildingList"
               row-key="id"
               dense>
               <q-td slot="body-cell-historyDate" slot-scope="props">

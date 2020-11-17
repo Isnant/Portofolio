@@ -16,7 +16,7 @@ export default {
       tableColumns: [
         {
           name: 'equipmentName',
-          label: 'Node Code',
+          label: 'Node Name',
           field: 'equipmentName',
           align: 'left',
           style: 'width: 100px',
@@ -24,8 +24,16 @@ export default {
         },
         {
           name: 'description',
-          label: 'Node Name',
+          label: 'description',
           field: 'description',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'itCode',
+          label: 'Node IT Code',
+          field: 'itCode',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -40,16 +48,8 @@ export default {
         },
         {
           name: 'hubCode',
-          label: 'Hub Code',
+          label: 'Hub Name',
           field: 'hubCode',
-          align: 'left',
-          style: 'width: 200px',
-          sortable: true
-        },
-        {
-          name: 'itCode',
-          label: 'Node IT Code',
-          field: 'itCode',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -198,17 +198,10 @@ export default {
           })
         })
     },
-    getNodeCodeList () {
+    getNodeCodeList (params) {
       this.$q.loading.show()
       this.$axios.get(`${process.env.urlPrefix}getNodeList`, {
-        params: {
-          pageIndex: this.pagination.page - 1,
-          pageSize: this.pagination.rowsPerPage,
-          sortBy: this.pagination.sortBy,
-          descending: this.pagination.descending,
-          hubCode: this.searchVal.hubCode,
-          nodeCode: this.searchVal.nodeCode
-        }
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
@@ -229,6 +222,29 @@ export default {
       this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
       this.pagination.page = pagedEquipment.number + 1
     },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        hubCode: this.searchVal.hubCode,
+        nodeCode: this.searchVal.nodeCode
+      }
+      this.getNodeCodeList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        hubCode: this.searchVal.hubCode,
+        nodeCode: this.searchVal.nodeCode
+      }
+      this.getNodeCodeList(params)
+    },
     doOpenForm (cell) {
       this.formData = JSON.parse(JSON.stringify(cell.row))
       this.showForm = true
@@ -243,7 +259,7 @@ export default {
     },
     getRegion () {
       this.formData.area = this.formData.area.value
-      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(this.formData.area) > -1)[0].region
+      var region = this.listOfAreaForRegion.filter(v => v.areaName.toUpperCase().indexOf(this.formData.area.toUpperCase()) > -1)[0].region
       if (region !== null) {
         var RegionList = JSON.parse(region)
         this.filteredRegionList = RegionList.map(data => ({

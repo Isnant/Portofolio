@@ -13,16 +13,8 @@ export default {
       },
       tableColumns: [
         {
-          name: 'nodeCode',
-          label: 'Node Code',
-          field: 'nodeCode',
-          align: 'left',
-          style: 'width: 100px',
-          sortable: true
-        },
-        {
           name: 'equipmentName',
-          label: 'Amplifier Code',
+          label: 'Amplifier Name',
           field: 'equipmentName',
           align: 'left',
           style: 'width: 200px',
@@ -37,6 +29,14 @@ export default {
           sortable: true
         },
         {
+          name: 'nodeCode',
+          label: 'Node Code',
+          field: 'nodeCode',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
           name: 'psCode',
           label: 'PS Code',
           field: 'psCode',
@@ -46,7 +46,7 @@ export default {
         },
         {
           name: 'hubCode',
-          label: 'Hub Code',
+          label: 'Hub Name',
           field: 'hubCode',
           align: 'left',
           style: 'width: 200px',
@@ -66,6 +66,11 @@ export default {
           field: 'technology',
           align: 'left',
           sortable: true
+        },
+        {
+          name: 'action',
+          label: 'Action',
+          align: 'center'
         }
       ],
       regionColumns: [
@@ -100,23 +105,7 @@ export default {
         rowsNumber: 0
       },
       showForm: false,
-      formData: {
-        pid: '',
-        fidRegion: '',
-        buildingType: '',
-        buildingName: '',
-        itCode: '',
-        area: '',
-        region: '',
-        city: '',
-        locationName: '',
-        complexName: '',
-        streetName: '',
-        streetNumber: '',
-        postalCode: '',
-        phone: '',
-        fax: ''
-      }
+      formData: ''
     }
   },
 
@@ -196,6 +185,10 @@ export default {
     },
     getValueSelect () {
       this.searchVal.hubCode = this.searchVal.hubCode.value
+    },
+    doOpenForm (cell) {
+      this.formData = JSON.parse(JSON.stringify(cell.row))
+      this.showForm = true
     },
     downloadExcel (props) {
       this.$q.loading.show()

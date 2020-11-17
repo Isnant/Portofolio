@@ -35,9 +35,9 @@ export default {
           sortable: true
         },
         {
-          name: 'manufacturerId',
+          name: 'manufacturer',
           label: 'Manufacturer',
-          field: 'manufacturerId',
+          field: 'manufacturer',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -123,7 +123,7 @@ export default {
       formData: {
         pid: '',
         description: '',
-        manufacturerId: '',
+        manufacturer: '',
         brand: '',
         productTypeSubType: '',
         mode: 'create'
@@ -264,8 +264,8 @@ export default {
         })
     },
     getBrand () {
-      this.formData.manufacturerId = this.formData.manufacturerId.value
-      var brand = this.listOfManufacturer.filter(v => v.description.indexOf(this.formData.manufacturerId) > -1)[0].brand
+      this.formData.manufacturer = this.formData.manufacturer.value
+      var brand = this.listOfManufacturer.filter(v => v.description.indexOf(this.formData.manufacturer) > -1)[0].brand
       if (brand !== null) {
         var brandList = JSON.parse(brand)
         this.filteredBrandList = brandList.map(data => ({

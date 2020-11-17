@@ -9,33 +9,17 @@ export default {
       listOfAreaForRegion: [],
       tableColumns: [
         {
-          name: 'nodeCode',
-          label: 'Node Code',
-          field: 'nodeCode',
+          name: 'equipmentName',
+          label: 'PS Name',
+          field: 'equipmentName',
           align: 'left',
           style: 'width: 100px',
           sortable: true
         },
         {
-          name: 'psCode',
-          label: 'Power Supply Code',
-          field: 'psCode',
-          align: 'left',
-          style: 'width: 200px',
-          sortable: true
-        },
-        {
           name: 'description',
-          label: 'Power Supply Name',
+          label: 'Description',
           field: 'description',
-          align: 'left',
-          style: 'width: 200px',
-          sortable: true
-        },
-        {
-          name: 'hubCode',
-          label: 'Hub Code',
-          field: 'hubCode',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -49,34 +33,25 @@ export default {
           sortable: true
         },
         {
-          name: 'buildingName',
-          label: 'Building Name',
-          field: 'buildingName',
+          name: 'psCode',
+          label: 'Power Supply Code',
+          field: 'psCode',
           align: 'left',
           style: 'width: 200px',
           sortable: true
         },
         {
-          name: 'tower',
-          label: 'Tower',
-          field: 'tower',
+          name: 'hubCode',
+          label: 'Hub Code',
+          field: 'hubCode',
           align: 'left',
-          sortable: true
-        }
-      ],
-      regionColumns: [
-        {
-          name: 'id',
-          label: 'Region Id',
-          field: 'id',
-          align: 'left',
-          style: 'width: 100px',
+          style: 'width: 200px',
           sortable: true
         },
         {
-          name: 'region',
-          label: 'Region Name',
-          field: 'region',
+          name: 'nodeCode',
+          label: 'Node Code',
+          field: 'nodeCode',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -84,8 +59,7 @@ export default {
         {
           name: 'action',
           label: 'Action',
-          align: 'center',
-          style: 'width: 100px'
+          align: 'center'
         }
       ],
       pagination: {
@@ -201,6 +175,10 @@ export default {
     },
     getValueSelect () {
       this.searchVal.hubCode = this.searchVal.hubCode.value
+    },
+    doOpenForm (cell) {
+      this.formData = JSON.parse(JSON.stringify(cell.row))
+      this.showForm = true
     },
     downloadExcel (props) {
       this.$q.loading.show()

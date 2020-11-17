@@ -258,7 +258,7 @@ export default {
         sortBy: 'equipmentName',
         descending: false,
         page: 1,
-        rowsPerPage: 20,
+        rowsPerPage: 10,
         rowsNumber: 0
       },
       errorListColumn: [
@@ -671,7 +671,7 @@ export default {
       this.equipmentToMigrate.migrationListNew = []
       this.equipmentToMigrate.isNewNode = false
       this.equipmentToMigrate.newServiceNodeNumber = undefined
-      this.hubCodeName = this.hubCodeList.filter(v => v.value.indexOf(this.equipmentToMigrate.newHubCode) > -1)[0].label
+      this.hubCodeName = this.hubCodeList.filter(v => v.value.toUpperCase().indexOf(this.equipmentToMigrate.newHubCode.toUpperCase()) > -1)[0]
       this.equipmentToMigrate.selectedMoveNodeOption = this.moveNodeOptions[0].value
       this.equipmentToMigrate.date = this.getCurrentDate()
 
