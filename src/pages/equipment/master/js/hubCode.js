@@ -120,8 +120,8 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
-        id: '',
-        area: ''
+        hubCode: '',
+        hubName: ''
       },
       showForm: false,
       formData: {
@@ -147,14 +147,14 @@ export default {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
-          descending: this.pagination.descending
+          descending: this.pagination.descending,
+          hubCode: this.searchVal.hubCode,
+          hubName: this.searchVal.hubName
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.listOfHubCode.content
-          this.pagination.rowsNumber = response.data.listOfHubCode.totalElements
-          this.pagination.page = response.data.listOfHubCode.number + 1
+          this.doMainFillTableResult(response.data.listOfHubCode)
           this.areaList = response.data.listOfAreaDropdown
           this.listOfAreaForRegion = response.data.listOfArea
         })
@@ -167,25 +167,21 @@ export default {
           })
         })
     },
-    getBuildingList (props) {
+    doMainFillTableResult (pagedEquipment) {
+      this.dataList = pagedEquipment.content
+      this.pagination.rowsNumber = pagedEquipment.totalElements
+      this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
+      this.pagination.page = pagedEquipment.number + 1
+    },
+    getHubCodeList (params) {
       this.$q.loading.show()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
 
-      this.$axios.get(`${process.env.urlPrefix}getBuildingList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
+      this.$axios.get(`${process.env.urlPrefix}getHubCodeList`, {
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -195,6 +191,29 @@ export default {
             message: error
           })
         })
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        hubCode: this.searchVal.hubCode,
+        hubName: this.searchVal.hubName
+      }
+      this.getHubCodeList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        hubCode: this.searchVal.hubCode,
+        hubName: this.searchVal.hubName
+      }
+      this.getHubCodeList(params)
     },
     doOpenForm (cell) {
       if (cell !== undefined) {

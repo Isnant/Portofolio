@@ -219,13 +219,25 @@
                 :options="productTypeList"
                 @input="getSubType()"
                 tabindex="4"/>
-              <q-select v-model="input.productSubType" ref="fProductSubType"
-                :rules="[val => !! val || 'Product Sub Type is required']"
-                :stack-label="true"
-                :options="subTypeList"
-                 @input="getSubTypeValue()"
-                label="Product Sub Type*"
-                tabindex="5"/>
+
+              <div v-if="input.technology === 'FTTH'">
+                <q-select v-model="input.productSubType"
+                  :stack-label="true"
+                  :options="subTypeList"
+                  @input="getSubTypeValue()"
+                  label="Product Sub Type"
+                  style="margin-bottom:20px"
+                  tabindex="5"/>
+              </div>
+              <div v-else>
+                <q-select v-model="input.productSubType" ref="fProductSubType"
+                  :rules="[val => !! val || 'Product Sub Type is required']"
+                  :stack-label="true"
+                  :options="subTypeList"
+                  @input="getSubTypeValue()"
+                  label="Product Sub Type*"
+                  tabindex="5"/>
+              </div>
               <q-input v-model="input.productSeries" ref="fProductSeries"
                 :rules="[val => !! val || 'Product Series is required']"
                 :stack-label="true"
@@ -353,32 +365,43 @@
                   style="margin-top:20px">
                 </q-input>
               </div>
-              <div v-if="input.productType === 'POWER SUPPLY' || input.productType === 'POWER SUPPLY INDOOR'">
-                <q-input v-show="bluePsCode" v-model="input.psCode" ref="fPowerSupplyCodeBlue"
-                  :rules="[val => !! val || 'Power Supply Code is required']"
+
+              <div v-if="input.technology === 'FTTH'">
+                <q-input v-model="input.psCode"
                   :stack-label="true"
-                  label="Power Supply Code*"
-                  @input="changeColorPsCode"
+                  label="Power Supply Code"
+                  style="margin-bottom:20px"
                   tabindex="19"/>
-                <q-input v-show="orangePsCode" v-model="input.psCode" ref="fPowerSupplyCodeOrange"
-                  :rules="[val => !! val || 'Power Supply Code is required']"
-                  :stack-label="true"
-                  label="Power Supply Code*"
-                  color="orange"
-                  @input="changeColorPsCode"
-                  tabindex="19">
-                  <template v-slot:hint>
-                    <font class="text-orange">{{psCodeWarningText}}</font>
-                  </template>
-                </q-input>
               </div>
               <div v-else>
-                <q-input v-model="input.psCode" ref="fPowerSupplyCodeElse"
-                  :rules="[val => !! val || 'Power Supply Code is required']"
-                  :stack-label="true"
-                  label="Power Supply Code*"
-                  tabindex="19"/>
+                <div v-if="input.productType === 'POWER SUPPLY' || input.productType === 'POWER SUPPLY INDOOR'">
+                  <q-input v-show="bluePsCode" v-model="input.psCode" ref="fPowerSupplyCodeBlue"
+                    :rules="[val => !! val || 'Power Supply Code is required']"
+                    :stack-label="true"
+                    label="Power Supply Code*"
+                    @input="changeColorPsCode"
+                    tabindex="19"/>
+                  <q-input v-show="orangePsCode" v-model="input.psCode" ref="fPowerSupplyCodeOrange"
+                    :rules="[val => !! val || 'Power Supply Code is required']"
+                    :stack-label="true"
+                    label="Power Supply Code*"
+                    color="orange"
+                    @input="changeColorPsCode"
+                    tabindex="19">
+                    <template v-slot:hint>
+                      <font class="text-orange">{{psCodeWarningText}}</font>
+                    </template>
+                  </q-input>
+                </div>
+                <div v-else>
+                  <q-input v-model="input.psCode" ref="fPowerSupplyCodeElse"
+                    :rules="[val => !! val || 'Power Supply Code is required']"
+                    :stack-label="true"
+                    label="Power Supply Code*"
+                    tabindex="19"/>
+                </div>
               </div>
+
               <div v-if="input.productType === 'AMPLIFIER' || input.productType === 'AMPLIFIER INDOOR'">
                 <q-input v-show="blueAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCodeBlue"
                   :rules="[val => !! val || 'Amplifier Code is required']"
@@ -409,17 +432,29 @@
                   label="Amplifier Code / Splitter FTTH Code"
                   tabindex="20"/>
               </div>
+
               <q-input v-model="input.fatCode"
                 :stack-label="true"
                 label="FAT Code"
                 tabindex="14"
                 style="margin-top:20px"/>
-              <q-input v-model="input.predecessor" ref="fPredecessor"
+
+              <div v-if="input.technology === 'FTTH'">
+                <q-input v-model="input.predecessor"
+                  :stack-label="true"
+                  label="Predecessor"
+                  tabindex="43"
+                  style="margin-top:20px;margin-bottom:20px"/>
+              </div>
+              <div v-else>
+                <q-input v-model="input.predecessor" ref="fPredecessor"
                 :rules="[val => !! val || 'Predecessor is required']"
                 :stack-label="true"
                 label="Predecessor*"
                 tabindex="43"
                 style="margin-top:20px"/>
+              </div>
+
               <q-input v-model="input.itCode" ref="fItCode"
                 :rules="[val => !! val || 'IT Code is required']"
                 :stack-label="true"
@@ -507,19 +542,41 @@
                 style="margin-top:20px"/>
             </div>
             <div class="col">
-              <q-input v-model="input.capacity" ref="fCapacity"
-                :rules="[val => !! val || 'Capacity is required']"
-                :stack-label="true"
-                label="Capacity*"
-                tabindex="25"
-                style="margin-top:20px"/>
-              <q-select v-model="input.capacityUnits" ref="fCapacityUnits"
-                :rules="[val => !! val || 'Capacity Units is required']"
-                :stack-label="true"
-                label="Capacity Units*"
-                tabindex="26"
-                :options="capacityUnitsList"
-                 @input="getDropdownValue('capacityUnits')"/>
+              <div v-if="input.technology === 'FTTH'">
+                <q-input v-model="input.capacity"
+                  :stack-label="true"
+                  label="Capacity"
+                  tabindex="25"
+                  style="margin-top:20px; margin-bottom:20px"/>
+              </div>
+              <div v-else>
+                <q-input v-model="input.capacity" ref="fCapacity"
+                  :rules="[val => !! val || 'Capacity is required']"
+                  :stack-label="true"
+                  label="Capacity*"
+                  tabindex="25"
+                  style="margin-top:20px"/>
+              </div>
+
+              <div v-if="input.technology === 'FTTH'">
+                <q-select v-model="input.capacityUnits"
+                  :stack-label="true"
+                  label="Capacity Units"
+                  tabindex="26"
+                  :options="capacityUnitsList"
+                  @input="getDropdownValue('capacityUnits')"
+                  style="margin-bottom:20px"/>
+              </div>
+              <div v-else>
+                <q-select v-model="input.capacityUnits" ref="fCapacityUnits"
+                  :rules="[val => !! val || 'Capacity Units is required']"
+                  :stack-label="true"
+                  label="Capacity Units*"
+                  tabindex="26"
+                  :options="capacityUnitsList"
+                  @input="getDropdownValue('capacityUnits')"/>
+              </div>
+
               <q-input v-model="input.usedCapacity"
                 :stack-label="true"
                 label="Used Capacity"

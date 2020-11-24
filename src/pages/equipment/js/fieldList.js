@@ -479,7 +479,6 @@ export default {
       // field
       this.$refs.fEquipmentName.validate()
       this.$refs.fProductType.validate()
-      this.$refs.fProductSubType.validate()
       this.$refs.fProductSeries.validate()
       this.$refs.fManufacturer.validate()
       this.$refs.fBrand.validate()
@@ -492,14 +491,12 @@ export default {
       this.$refs.fDescription.validate()
       this.$refs.fService.validate()
       this.$refs.fTechnology.validate()
-      this.$refs.fCapacity.validate()
-      this.$refs.fCapacityUnits.validate()
-      this.$refs.fPredecessor.validate()
+
       this.$refs.fItCode.validate()
 
       var f1 = this.$refs.fEquipmentName.hasError
       var f2 = this.$refs.fProductType.hasError
-      var f3 = this.$refs.fProductSubType.hasError
+      var f3 = false
       var f4 = this.$refs.fProductSeries.hasError
       var f5 = this.$refs.fManufacturer.hasError
       var f6 = this.$refs.fBrand.hasError
@@ -515,22 +512,36 @@ export default {
       var f16 = false
       var f17 = this.$refs.fService.hasError
       var f18 = this.$refs.fTechnology.hasError
-      var f19 = this.$refs.fCapacity.hasError
-      var f20 = this.$refs.fCapacityUnits.hasError
-      var f21 = this.$refs.fPredecessor.hasError
+      var f19 = false
+      var f20 = false
+      var f21 = false
       var f22 = this.$refs.fItCode.hasError
 
-      if (this.input.productType === 'POWER SUPPLY' || this.input.productType === 'POWER SUPPLY INDOOR') {
-        if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
-          this.$refs.fPowerSupplyCodeBlue.validate()
-          f15 = this.$refs.fPowerSupplyCodeBlue.hasError
+      if (this.input.technology !== 'FTTH') {
+        this.$refs.fCapacity.validate()
+        this.$refs.fCapacityUnits.validate()
+        this.$refs.fPredecessor.validate()
+        this.$refs.fProductSubType.validate()
+
+        f19 = this.$refs.fCapacity.hasError
+        f20 = this.$refs.fCapacityUnits.hasError
+        f21 = this.$refs.fPredecessor.hasError
+        f3 = this.$refs.fProductSubType.hasError
+      }
+
+      if (this.input.technology !== 'FTTH') {
+        if (this.input.productType === 'POWER SUPPLY' || this.input.productType === 'POWER SUPPLY INDOOR') {
+          if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
+            this.$refs.fPowerSupplyCodeBlue.validate()
+            f15 = this.$refs.fPowerSupplyCodeBlue.hasError
+          } else {
+            this.$refs.fPowerSupplyCodeOrange.validate()
+            f15 = this.$refs.fPowerSupplyCodeOrange.hasError
+          }
         } else {
-          this.$refs.fPowerSupplyCodeOrange.validate()
-          f15 = this.$refs.fPowerSupplyCodeOrange.hasError
+          this.$refs.fPowerSupplyCodeElse.validate()
+          f15 = this.$refs.fPowerSupplyCodeElse.hasError
         }
-      } else {
-        this.$refs.fPowerSupplyCodeElse.validate()
-        f15 = this.$refs.fPowerSupplyCodeElse.hasError
       }
 
       if (this.input.productType === 'AMPLIFIER' || this.input.productType === 'AMPLIFIER INDOOR') {
@@ -1193,13 +1204,6 @@ export default {
         f.productType !== 'FIBERNODE' && f.migrate === migrate && f.newName.substring(6, f.newName.length) !== '0000')
       let result = []
 
-      // if (rawChildren.length === 0 && hierarchy === 1) {
-      //   let newParent = list[0].newName
-      //   console.log(newParent)
-      //   rawChildren = list.filter(f => f.newPredecessor === newParent &&
-      //     f.productType !== 'FIBERNODE' && f.migrate === migrate)
-      //   console.log(rawChildren)
-      // }
       for (let i = 0; i < rawChildren.length; i++) {
         let original = rawChildren[i].equipmentName
 

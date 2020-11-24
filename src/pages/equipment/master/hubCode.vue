@@ -6,14 +6,39 @@
       <q-separator color="purple-10" />
       <q-separator color="purple-10" />
     </div>
-    <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Building</h4> -->
+
+     <div class="row" style="margin-buttom:20px">
+      <div class="col-15" style="margin-right: 10px; width: 22%">
+        <q-input
+          v-model="searchVal.hubCode"
+          stack-label
+          label="Hub Code"
+          color="purple-6"/>
+      </div>
+
+      <div class="col-15" style="margin-right: 10px; width: 22%">
+        <q-input
+        v-model="searchVal.hubName"
+        stack-label
+        label="Hub Name"
+        color="purple-6"/>
+      </div>
+
+      <div class="col" style="width: 5%">
+        <q-btn round color="purple-10" @click="doSearchByFilter()">
+          <q-icon name="search"/>
+          <q-tooltip>Search</q-tooltip>
+        </q-btn>
+      </div>
+    </div>
+
     <div style="max-width: 1200px">
       <q-table
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
         table-header-class="text-white bg-indigo-8"
-        @request="getBuildingList"
+        @request="doMainEquipmentChangePage"
         row-key="id"
         dense>
 
@@ -91,18 +116,22 @@
                 :options="filteredRegionList"/>
               <q-input v-model="formData.city"
                 stack-label label="City"/>
-            </div>
-            <div class="col" style="margin-left:20px">
-              <q-input style="max-height: 112px"
+               <q-input style="max-height: 112px"
                 v-model="formData.address"
                 type="textarea"
                 :max-height="10"
                 stack-label label="Address"
               />
+            </div>
+            <div class="col" style="margin-left:20px">
               <q-input v-model="formData.postalCode"
                 stack-label label="Postal Code"/>
               <q-input v-model="formData.phone"
                 stack-label label="Phone"/>
+              <q-input v-model="formData.fax"
+                stack-label label="fax"/>
+              <q-input v-model="formData.homePassed"
+                stack-label label="Home Passed"/>
               <q-input v-model="formData.remarks"
                 style="max-height: 112px"
                 type="textarea"
