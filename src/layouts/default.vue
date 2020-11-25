@@ -130,11 +130,11 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/mBuild"
+            to="/mHubCodeService"
             :inset-level="1"
             active-class="my-menu-link">
             <q-item-section>
-              <q-item-label>Master Building</q-item-label>
+              <q-item-label>Hub Code Service</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
