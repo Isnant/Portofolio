@@ -10,6 +10,7 @@ const routes = [
       { path: '/networkEq', component: () => import('pages/equipment/networkList.vue') },
       { path: '/migrationHistory', component: () => import('pages/equipment/migrationHistory.vue') },
       { path: '/hierarchy', component: () => import('pages/equipment/hierarchy.vue') },
+      { path: '/logBatch', component: () => import('pages/equipment/logBatch.vue') },
       { path: '/mAreaRegion', component: () => import('pages/equipment/master/area-region.vue') },
       { path: '/mReg', component: () => import('pages/equipment/master/region.vue') },
       { path: '/mBuild', component: () => import('pages/equipment/master/building.vue') },

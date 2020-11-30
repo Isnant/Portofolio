@@ -100,6 +100,14 @@
             <q-item-label>Field Hierarchy</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item to="/logBatch" active-class="my-menu-link">
+          <q-item-section avatar>
+            <q-icon name="app_settings_alt" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Equipment Upload Log</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-expansion-item
           icon="fas fa-database"
           label="Master Data"

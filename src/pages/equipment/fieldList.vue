@@ -12,8 +12,13 @@
         :data="chartDataX"
         :options="chartOptionsX"
     /> -->
-    <fieldset class="fieldset_search" style="width: 100%; margin-bottom:20px">
-      <legend class="legedn_search">Search</legend>
+    <q-expansion-item
+      label="SEARCH"
+      header-class="bg-indigo-5 text-white"
+      style="margin-bottom:10px"
+      icon="search">
+      <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+      <!-- <legend class="legedn_search">Search</legend> -->
 
       <div class="row" style="width: 100%">
         <div class="col-15" style="margin-right: 10px; width: 22%">
@@ -106,6 +111,7 @@
         </div>
       </div>
     </fieldset>
+    </q-expansion-item>
 
     <q-table
       :data="listOfEquipment"
@@ -114,6 +120,9 @@
       :rows-per-page-options="[10, 20, 50, 100]"
       table-header-class="text-white bg-indigo-8"
       @request="doMainEquipmentChangePage"
+      :selected-rows-label="getSelectedString"
+      selection="multiple"
+      :selected.sync="selected"
       row-key="id"
       dense>
 
@@ -165,10 +174,21 @@
         <q-icon name="backup" />
         <q-tooltip>Upload</q-tooltip>
       </q-btn> -->
-      <q-fab color="orange-4" glossy icon="keyboard_arrow_down" direction="down">
-        <q-btn round color="orange-3" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-btn>
-        <q-btn round color="orange-3" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-btn>
-        <q-btn round color="orange-3" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
+      <q-fab color="orange-6" glossy icon="keyboard_arrow_down" direction="down">
+        <q-btn round color="orange-5" text-color="white" @click.native="modalAddNewAsset=true" icon="add">
+          <q-tooltip>Add</q-tooltip>
+        </q-btn>
+        <q-btn round color="orange-5" text-color="white" @click.native="modalUpload=true" icon="backup">
+          <q-tooltip>Upload</q-tooltip>
+        </q-btn>
+        <q-btn round color="orange-5" text-color="white" @click.native="downloadExcel">
+          <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
+        </q-btn>
+        <q-btn round color="orange-5" text-color="white"
+          v-show="changeAssetStatusVisible()"
+          @click.native="modalChangeAssetStatus=true" icon="rule">
+          <q-tooltip>Change Status</q-tooltip>
+        </q-btn>
       </q-fab>
     </q-page-sticky>
 
@@ -179,13 +199,29 @@
         <q-space/>
         <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
-        <div class="row" style="width:45%; margin-right:20px; margin-left:20px; margin-top:10px; margin-bottom:40px">
-          <div class="col" style="width:50%">
+        <div class="row" style="margin-right:20px; margin-left:20px; margin-top:10px; margin-bottom:40px">
+          <div class="col" style="width:30%; margin-right:15px">
             <q-input  v-model="input.id"
               :stack-label="true"
               label="Equipment Id"
               disable
               tabindex="1"/>
+          </div>
+          <div class="col" style="width:30%; margin-right:15px">
+            <q-input  v-model="input.equipmentName"
+              :stack-label="true"
+              label="Equipment Name"
+              disable
+              tabindex="1"/>
+          </div>
+          <div class="col" style="width:30%">
+            <q-select
+              v-model="input.equipmentUploadStatus"
+              stack-label
+              label="Asset Status"
+              color="purple-6"
+              :options="assetStatusList"
+              @input="getValueSelect('assetStatusForm')"/>
           </div>
         </div>
         <q-expansion-item
@@ -207,10 +243,9 @@
                 label="Equipment Name*"
                 tabindex="2"
                 style="margin-top:20px"/>
-              <q-input v-model="input.description" ref="fDescription"
-                :rules="[val => !! val || 'Description Type is required']"
+              <q-input v-model="input.description"
                 :stack-label="true"
-                label="Description*"
+                label="Description"
                 tabindex="3"/>
               <q-select v-model="input.productType" ref="fProductType"
                 :rules="[val => !! val || 'Product Type is required']"
@@ -220,7 +255,7 @@
                 @input="getSubType()"
                 tabindex="4"/>
 
-              <div v-if="input.technology === 'FTTH'">
+              <!-- <div v-if="input.technology === 'FTTH'">
                 <q-select v-model="input.productSubType"
                   :stack-label="true"
                   :options="subTypeList"
@@ -228,16 +263,15 @@
                   label="Product Sub Type"
                   style="margin-bottom:20px"
                   tabindex="5"/>
-              </div>
-              <div v-else>
-                <q-select v-model="input.productSubType" ref="fProductSubType"
-                  :rules="[val => !! val || 'Product Sub Type is required']"
-                  :stack-label="true"
-                  :options="subTypeList"
-                  @input="getSubTypeValue()"
-                  label="Product Sub Type*"
-                  tabindex="5"/>
-              </div>
+              </div> -->
+              <!-- <div v-else> -->
+              <q-select v-model="input.productSubType"
+                :stack-label="true"
+                :options="subTypeList"
+                @input="getSubTypeValue()"
+                label="Product Sub Type"
+                tabindex="5"/>
+              <!-- </div> -->
               <q-input v-model="input.productSeries" ref="fProductSeries"
                 :rules="[val => !! val || 'Product Series is required']"
                 :stack-label="true"
@@ -259,10 +293,14 @@
                 tabindex="8"/>
             </div>
             <div class="col" style="margin-right:10px">
-              <q-input v-model="input.equipmentStatus"
-                :stack-label="true"
+              <q-select
+                v-model="input.equipmentStatus"
+                stack-label
                 label="Status"
-                tabindex="42"/>
+                color="purple-6"
+                :options="equipmentStatusList"
+                tabindex="42"
+                @input="getValueSelect('equipmentStatusForm')"/>
               <q-select v-model="input.statusReason" ref="fStatusReason"
                :rules="[val => !! val || 'Status Reason is required']"
                 :stack-label="true"
@@ -776,11 +814,9 @@
         </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
-            <input
-              id="excelFile"
+            <q-input
               type="file"
-              ref="fieldExcelFile"
-              @input="val => { doAttachFile(val) }"
+              @input="val => { doAttachFile(val[0]) }"
             />
             <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
               <q-icon name="fas fa-file-upload"/>
@@ -835,6 +871,34 @@
            <q-btn round color="primary" @click="doUploadAfterWarning()">
             <q-icon name="fas fa-file-upload"/>
             <q-tooltip>Upload Data</q-tooltip>
+          </q-btn>
+         </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="modalChangeAssetStatus" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-primary text-white">
+          <strong>Change Status</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+         <q-input v-model="selected.length"
+            :stack-label="true"
+            label="Selected Equipment"
+            readonly
+            style="margin-top:20px"/>
+          <q-select
+            v-model="groupSelect.assetStatus"
+            stack-label
+            label="Asset Status"
+            :options="assetStatusList"
+            @input="getValueSelect('assetStatusSelectForm')"/>
+         <div align="right" style="margin-top:20px">
+          <q-btn v-show="btnChangeStatus" round @click.native="changeSelectedStatus" color="orange-5" icon="save">
+            <q-tooltip>Submit</q-tooltip>
           </q-btn>
          </div>
         </q-card-section>
@@ -1093,21 +1157,29 @@
                     </q-td>
 
                     <q-td slot="body-cell-action" slot-scope="cell" align="center">
-                      <q-btn round color="primary" @click="doMigrationStayOrMove(cell.row)" size="sm" v-show="isMigrationStayOrMoveVisible(cell.row)"
-                        style="margin-right: 10px">
-                        <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
-                        <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
-                      </q-btn>
-                      <q-btn round icon="delete_outline" color="primary" @click="doRemove(cell)" size="sm" v-show="isMigrationRemoveVisible(cell.row)" style="margin-right: 10px">
-                        <q-tooltip>Romove</q-tooltip>
-                      </q-btn>
-                      <q-btn round color="primary" @click="doInactive(cell.row)" size="sm" v-show="isMigrationReplaceVisible(cell.row)" style="margin-right: 10px">
-                        <q-icon :name="cell.row.assetStatus === 'Inactive' ? 'done' : 'clear'"/>
-                        <q-tooltip>{{ cell.row.assetStatus === 'Inactive' ? 'Active' : 'Inactive' }}</q-tooltip>
-                      </q-btn>
-                      <q-btn round icon="compare_arrows" color="primary" @click="doReplace(cell.row)" size="sm" v-show="isMigrationReplaceVisible(cell.row)">
-                        <q-tooltip>Replace</q-tooltip>
-                      </q-btn>
+                      <q-btn-dropdown rounded size="sm" color="blue-10">
+                        <q-list>
+                          <q-item clickable v-close-popup>
+                            <q-item-section>
+                              <q-btn round color="primary" @click="doMigrationStayOrMove(cell.row)" size="sm" v-show="isMigrationStayOrMoveVisible(cell.row) "
+                                style="margin: 5px">
+                                <q-icon :name="cell.row.migrate ? 'fas fa-angle-double-down' : 'fas fa-angle-double-right'"/>
+                                <q-tooltip>{{ cell.row.migrate ? 'Stay' : 'Move' }}</q-tooltip>
+                              </q-btn>
+                              <q-btn round icon="delete_outline" color="primary" @click="doRemove(cell)" size="sm" v-show="isMigrationRemoveVisible(cell.row)" style="margin: 5px">
+                                <q-tooltip>Romove</q-tooltip>
+                              </q-btn>
+                              <q-btn round color="primary" @click="doInactive(cell.row)" size="sm" v-show="isMigrationInactiveVisible(cell.row)" style="margin: 5px">
+                                <q-icon :name="cell.row.assetStatus === 'Inactive' ? 'done' : 'clear'"/>
+                                <q-tooltip>{{ cell.row.assetStatus === 'Inactive' ? 'Active' : 'Inactive' }}</q-tooltip>
+                              </q-btn>
+                              <q-btn round icon="compare_arrows" color="primary" @click="doReplace(cell.row)" size="sm" v-show="isMigrationReplaceVisible(cell.row)" style="margin: 5px">
+                                <q-tooltip>Replace</q-tooltip>
+                              </q-btn>
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+                      </q-btn-dropdown>
                       <!-- <q-btn round color="primary" @click="doMigrationPromoteToFibernode(cell.row)" size="sm" v-show="isMigrationPromoteVisible(cell.row)">
                         <q-icon name="fas fa-medal"/>
                         <q-tooltip>Promote To Fibernode</q-tooltip>

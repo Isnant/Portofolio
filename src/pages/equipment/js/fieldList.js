@@ -5,6 +5,7 @@ export default {
       isActive: false,
       hubCodeName: '',
       migrationHistoryList: [],
+      selected: [],
       colorLabel: 'orange',
       bluePsCode: false,
       uploadButton: false,
@@ -16,6 +17,10 @@ export default {
       orangeAmplifierCode: true,
       amplifierCodeWarningText: '',
       file: undefined,
+      fileAttach: {
+        fileName: '',
+        file64: ''
+      },
       productTypeList: [],
       newProductTypeList: ['AMPLIFIER', 'POWER SUPPLY', 'FIBERNODE'],
       hubCodeList: [],
@@ -33,6 +38,7 @@ export default {
       brandList: [],
       equipmentStatusList: [],
       assetStatusList: [],
+      assetStatusFormList: [],
       migrationType: '',
       input: {
         id: '',
@@ -113,6 +119,10 @@ export default {
         nodeCode: '',
         assetStatus: 'All',
         equipmentStatus: 'All'
+      },
+      groupSelect: {
+        assetStatus: '',
+        assetId: []
       },
       equipmentListColumns: [
         {
@@ -275,6 +285,7 @@ export default {
       modalError: false,
       modalWarning: false,
       modalAddNewAsset: false,
+      modalChangeAssetStatus: false,
       addHub: true,
       modalAddField: false,
       modalAddNetwork: false,
@@ -488,7 +499,6 @@ export default {
       this.$refs.fDepartment.validate()
       this.$refs.fPropertyOf.validate()
       this.$refs.fStatusReason.validate()
-      this.$refs.fDescription.validate()
       this.$refs.fService.validate()
       this.$refs.fTechnology.validate()
 
@@ -496,7 +506,7 @@ export default {
 
       var f1 = this.$refs.fEquipmentName.hasError
       var f2 = this.$refs.fProductType.hasError
-      var f3 = false
+      // var f3 = false
       var f4 = this.$refs.fProductSeries.hasError
       var f5 = this.$refs.fManufacturer.hasError
       var f6 = this.$refs.fBrand.hasError
@@ -506,7 +516,6 @@ export default {
       var f10 = this.$refs.fDepartment.hasError
       var f11 = this.$refs.fPropertyOf.hasError
       var f12 = this.$refs.fStatusReason.hasError
-      var f13 = this.$refs.fDescription.hasError
       var f14 = false
       var f15 = false
       var f16 = false
@@ -521,12 +530,12 @@ export default {
         this.$refs.fCapacity.validate()
         this.$refs.fCapacityUnits.validate()
         this.$refs.fPredecessor.validate()
-        this.$refs.fProductSubType.validate()
+        // this.$refs.fProductSubType.validate()
 
         f19 = this.$refs.fCapacity.hasError
         f20 = this.$refs.fCapacityUnits.hasError
         f21 = this.$refs.fPredecessor.hasError
-        f3 = this.$refs.fProductSubType.hasError
+        // f3 = this.$refs.fProductSubType.hasError
       }
 
       if (this.input.technology !== 'FTTH') {
@@ -567,7 +576,7 @@ export default {
         f8 = this.$refs.fNodeCodeElse.hasError
       }
 
-      if (!f1 && !f2 && !f3 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f13 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22) {
+      if (!f1 && !f2 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22) {
         this.doSaveEquipment()
       }
     },
@@ -598,46 +607,48 @@ export default {
         })
     },
     doAttachFile (file) {
+      let fr = new FileReader()
       this.uploadButton = true
+      fr.onload = (e) => {
+        this.fileAttach.fileName = file.name
+        this.fileAttach.file64 = e.target.result
+      }
+      fr.readAsDataURL(file)
     },
     doHideButton () {
       this.uploadButton = false
     },
     doUploadFile (file) {
       this.$q.loading.show()
-      let fr = new FileReader()
-      fr.onload = (e) => {
-        this.$axios.post(`${process.env.urlPrefix}uploadField`, { file64: e.target.result })
-          .then((response) => {
-            this.$q.loading.hide()
-            this.listOfError = response.data
-            this.listOfError.sort(this.compare)
-            if (this.listOfError[0].messageStatus === 'error') {
-              this.modalError = true
-            } else if (this.listOfError[0].messageStatus === 'warning') {
-              this.modalWarning = true
-            } else {
-              this.$q.notify({
-                color: 'positive',
-                icon: 'info',
-                message: this.listOfError[0].message
-              })
-            }
-            this.modalUpload = false
-            this.doRefresh()
-            this.doMainInitPage()
-          })
-          .catch((error) => {
-            this.$q.loading.hide()
-
+      this.$axios.post(`${process.env.urlPrefix}uploadField`, this.fileAttach)
+        .then((response) => {
+          this.$q.loading.hide()
+          this.listOfError = response.data
+          this.listOfError.sort(this.compare)
+          if (this.listOfError[0].messageStatus === 'error') {
+            this.modalError = true
+          } else if (this.listOfError[0].messageStatus === 'warning') {
+            this.modalWarning = true
+          } else {
             this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
+              color: 'positive',
+              icon: 'info',
+              message: this.listOfError[0].message
             })
+          }
+          this.modalUpload = false
+          this.doRefresh()
+          this.doMainInitPage()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
           })
-      }
-      fr.readAsDataURL(this.$refs.fieldExcelFile.files[0])
+        })
     },
     doUploadAfterWarning () {
       this.$q.loading.show()
@@ -935,6 +946,7 @@ export default {
           } else {
             this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
             this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
+            this.$set(selectedElement, 'originalProductType', selectedElement.productType)
             this.$set(selectedElement, 'newName', '')
             this.$set(selectedElement, 'newPsCode', '')
             this.$set(selectedElement, 'newPredecessor', '')
@@ -945,6 +957,7 @@ export default {
         } else {
           this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
           this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
+          this.$set(selectedElement, 'originalProductType', selectedElement.productType)
           this.$set(selectedElement, 'newName', '')
           this.$set(selectedElement, 'newPsCode', '')
           this.$set(selectedElement, 'newPredecessor', '')
@@ -1041,7 +1054,16 @@ export default {
       }
     },
     doMigrationChangeProductType (cellRow) {
-      cellRow.newPredecessor = ''
+      if (cellRow.productType === 'FIBERNODE') {
+        cellRow.newName = cellRow.newName.substring(0, 6) + '00'
+        cellRow.newPredecessor = ''
+      } else if (cellRow.productType === 'AMPLIFIER') {
+        cellRow.newName = cellRow.newName.substring(0, 6)
+        cellRow.newPredecessor = cellRow.newName.substring(0, 6)
+      } else if (cellRow.productType === 'POWER SUPPLY') {
+        cellRow.newName = cellRow.newName.substring(0, 6)
+        cellRow.newPredecessor = ''
+      }
     },
     doMigrationChangeEquipmentName (cellRow) {
       cellRow.newName = this.getMigrationEquipmentPrefix(cellRow) + cellRow.newNumber
@@ -1116,6 +1138,11 @@ export default {
         return true
       }
     },
+    isMigrationInactiveVisible (row) {
+      // if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
+      return true
+      // }
+    },
     isMigrationRemoveVisible (row) {
       if (this.equipmentToMigrate.selectedMoveNodeOption !== 'C') {
         return true
@@ -1129,14 +1156,20 @@ export default {
       return true
       // return this.equipmentToMigrate.selectedMoveNodeOption !== 'C'
     },
+    changeAssetStatusVisible () {
+      if (this.selected.length > 0) {
+        return true
+      }
+    },
     doMigrationAddPowerSupply () {
       const newPowerSupply = {
         id: 'X' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
         productType: 'FIBERNODE',
+        originalProductType: '',
         hubCode: this.equipmentToMigrate.newHubCode,
         predecessor: this.equipmentToMigrate.newNodeCode + '00',
-        newName: this.equipmentToMigrate.newNodeCode.substring(0, 6),
+        newName: this.equipmentToMigrate.newNodeCode,
         newPredecessor: '',
         newPsCode: this.equipmentToMigrate.newNodeCode.substring(0, 6),
         amplifierCode: '',
@@ -1153,6 +1186,7 @@ export default {
         id: 'Y' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
         productType: 'AMPLIFIER',
+        originalProductType: '',
         hubCode: this.equipmentToMigrate.newHubCode,
         predecessor: this.equipmentToMigrate.newNodeCode + '00',
         newName: this.equipmentToMigrate.newNodeCode.substring(0, 6) + '####',
@@ -1235,12 +1269,6 @@ export default {
         let original
         let sourceNodeReference = fiberNode[0].equipmentName + '00'
 
-        // if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
-        //   original = fiberNode[0].equipmentName
-        //   source = this.equipmentToMigrate.hubCode + ' - ' + this.equipmentToMigrate.newNodeCode
-        //   sourceNodeReference = this.equipmentToMigrate.newNodeCode + '00'
-        // }
-
         let sourceTree = {
           label: source,
           original: original,
@@ -1249,6 +1277,24 @@ export default {
           children: []
         }
 
+        let sourceChildResult = []
+
+        // get Power Supply
+        let originalPSCode = this.equipmentToMigrate.migrationListNew.filter(f => f.originalProductType === 'POWER SUPPLY' && f.migrate === false)
+
+        for (let i = 0; i < originalPSCode.length; i++) {
+          let psCode = originalPSCode[i].newName
+          let psCodeChild = {
+            label: psCode + ' - ' + originalPSCode[i].assetStatus,
+            original: originalPSCode[i].equipmentName,
+            status: originalPSCode[i].assetStatus,
+            children: []
+          }
+
+          sourceChildResult.push(psCodeChild)
+        }
+
+        // get Virtual amplifier
         let originalVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === false)
 
         let sourceChild = {
@@ -1270,9 +1316,10 @@ export default {
         if (child.length > 0) {
           sourceChild.children = child
         }
+        if (sourceChild.length > 0) {
+          sourceChildResult.push(sourceChild)
+        }
 
-        let sourceChildResult = []
-        sourceChildResult.push(sourceChild)
         sourceTree.children = sourceChildResult
 
         this.$set(this.sourcePreview, 0, sourceTree)
@@ -1708,6 +1755,30 @@ export default {
           })
         })
     },
+    changeSelectedStatus () {
+      this.$q.loading.show()
+      this.groupSelect.assetId = []
+      for (let i = 0; i < this.selected.length; i++) {
+        this.groupSelect.assetId.push(this.selected[i].id)
+      }
+
+      this.$axios.post(`${process.env.urlPrefix}updateAssetStatus/`, this.groupSelect)
+        .then((response) => {
+          this.$q.loading.hide()
+          this.modalChangeAssetStatus = false
+          this.doRefresh()
+          this.doMainInitPage()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+
+          this.$q.loading.hide()
+        })
+    },
     compare (a, b) {
       const statusA = a.messageStatus.toUpperCase()
       const statusB = b.messageStatus.toUpperCase()
@@ -1731,6 +1802,9 @@ export default {
       if (type === 'equipmentStatus') {
         this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
       }
+      if (type === 'equipmentStatusForm') {
+        this.input.equipmentStatus = this.input.equipmentStatus.value
+      }
       if (type === 'assetStatus') {
         this.searchVal.assetStatus = this.searchVal.assetStatus.value
       }
@@ -1742,6 +1816,13 @@ export default {
       }
       if (type === 'bdfCode') {
         this.searchVal.bdfCode = this.searchVal.bdfCode.value
+      }
+      if (type === 'assetStatusForm') {
+        this.input.equipmentUploadStatus = this.input.equipmentUploadStatus.value
+      }
+      if (type === 'assetStatusSelectForm') {
+        this.groupSelect.assetStatus = this.groupSelect.assetStatus.value
+        this.btnChangeStatus = true
       }
     },
     doRefresh () {
@@ -1809,6 +1890,10 @@ export default {
         electricalStatus: '',
         lastModifiedByExcel: '',
         isComplete: ''
+      }
+      this.groupSelect = {
+        assetStatus: '',
+        assetId: []
       }
     }
   },
