@@ -3,10 +3,16 @@ export default {
     return {
       dataList: [],
       hubCodeList: [],
-      filteredRegionList: [],
-      listOfRegion: [],
-      listOfAreaForRegion: [],
+      serviceList: [],
       tableColumns: [
+        {
+          name: 'hubName',
+          label: 'Hub Name',
+          field: 'hubName',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
         {
           name: 'hubCode',
           label: 'Hub Code',
@@ -16,11 +22,19 @@ export default {
           sortable: true
         },
         {
-          name: 'hubCodeService',
-          label: 'Hub Code Servie',
-          field: 'hubCodeService',
+          name: 'ftax',
+          label: 'Ftax',
+          field: 'ftax',
           align: 'left',
-          style: 'width: 200px',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
+          name: 'service',
+          label: 'Service',
+          field: 'service',
+          align: 'left',
+          style: 'width: 100px',
           sortable: true
         },
         {
@@ -62,7 +76,7 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'hubCode',
+        sortBy: 'hubName',
         descending: false,
         page: 1,
         rowsPerPage: 10,
@@ -75,13 +89,15 @@ export default {
       },
       searchVal: {
         hubCode: '',
-        hubCodeService: ''
+        hubName: ''
       },
       showForm: false,
       formData: {
         id: '',
         hubCode: '',
-        hubName: ''
+        hubName: '',
+        service: '',
+        ftax: ''
       }
     }
   },
@@ -96,13 +112,13 @@ export default {
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
           hubCode: this.searchVal.hubCode,
-          hubCodeService: this.searchVal.hubCodeService
+          hubName: this.searchVal.hubName
         }
       })
         .then((response) => {
           this.$q.loading.hide()
           this.doMainFillTableResult(response.data.listOfHubCodeService)
-          this.hubCodeList = response.data.listOfHubCode
+          this.serviceList = response.data.listOfService
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -146,7 +162,7 @@ export default {
         sortBy: sortBy,
         descending: descending,
         hubCode: this.searchVal.hubCode,
-        hubCodeService: this.searchVal.hubCodeService
+        hubName: this.searchVal.hubName
       }
       this.getHubCodeList(params)
     },
@@ -157,7 +173,7 @@ export default {
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
         hubCode: this.searchVal.hubCode,
-        hubCodeService: this.searchVal.hubCodeService
+        hubName: this.searchVal.hubName
       }
       this.getHubCodeList(params)
     },
@@ -201,8 +217,8 @@ export default {
       this.formData = cell.row
       this.doSave()
     },
-    getValue () {
-      this.formData.hubCode = this.formData.hubCode.cascadeValue
+    getSelectValue () {
+      this.formData.service = this.formData.service.value
     },
     doRefresh () {
       this.clear()

@@ -291,6 +291,11 @@ export default {
     },
     doMainInitPage () {
       this.$q.loading.show()
+      const userToken = localStorage.getItem('user-token')
+      const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
+      if (authorities.findIndex(x => x === 'ROLE_05') === -1) {
+        this.$router.push('/')
+      }
       this.$axios.post(`${process.env.urlPrefix}getNetworkInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)

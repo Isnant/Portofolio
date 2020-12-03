@@ -78,7 +78,12 @@
         </q-bar>
         <q-card-section>
           <q-input v-model="instance.username" stack-label label="User Name" :readonly="instance.createdBy !== undefined" class="q-pr-sm" />
-          <q-input v-model="instance.department" stack-label label="Department" class="q-pr-sm"/>
+          <q-select v-model="instance.branch"
+            stack-label
+            label="Department"
+            class="q-pr-sm"
+            :options="departmentList"
+            @input="getSelectValue()"/>
           <q-input v-model="instance.fullName" stack-label label="Full Name" class="q-pr-sm"/>
           <q-input v-model="instance.email" stack-label label="Email" class="q-pr-sm"/>
           <br/>

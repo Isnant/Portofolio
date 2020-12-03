@@ -369,6 +369,11 @@
                 label="BDF Code"
                 tabindex="17"
                 style="margin-top:20px"/>
+              <q-input v-model="input.wdmCode"
+                :stack-label="true"
+                label="WDM Code"
+                tabindex="17"
+                style="margin-top:20px"/>
             </div>
             <div class="col" style="margin-right:10px">
               <div v-if="input.productType === 'FIBERNODE'">
@@ -918,7 +923,7 @@
           <q-stepper ref="stepper"
             v-model="migrationStep"
             color="primary"
-            style="max-width: 90%"
+            style="max-width: 100%"
             animated
             inactive-color="warning"
             done-color="positive"
@@ -928,7 +933,7 @@
               :name="1"
               :done="migrationStep > 1"
               title="Setup Destination">
-              <div class="row" style="margin-bottom:20px">
+              <div class="row" style="margin-bottom:10px">
                 <q-option-group
                     style="margin: 10px 0px 0px 0px"
                     v-model="equipmentToMigrate.selectedMoveNodeOption"
@@ -936,30 +941,21 @@
                     :options="moveNodeOptions"
                     inline />
               </div>
-              <div class="row">
-                <div style="margin-right: 20px">
+              <br/>
+              <div class="row" style="width:60%; margin-bottom:10px">
+                <div class="col" style="margin-right:20px;">
                   <q-input readonly v-model="equipmentToMigrate.hubCode"
                     label="Source Hub"/>
-                  <q-input readonly v-model="equipmentToMigrate.nodeCode"
-                    label="Source Node"/>
                 </div>
-
-                <div style="margin-right: 20px">
+                <div class="col" style="margin-right:20px;">
                   <q-select
                     v-model="hubCodeName"
                     @input="doMigrationChangeHub()"
                     label="Destination Hub"
                     :options="hubCodeList"
                   />
-                  <q-input v-model="equipmentToMigrate.selectedNewNode"
-                    :stack-label="true"
-                    ref="destinationNode"
-                    label="Destination Node"
-                    oninput="this.value = this.value.toUpperCase()"
-                    class="text-uppercase"
-                    :rules="[val => !!val || 'Destination Node is required']"/>
                 </div>
-                <div>
+                <div class="col" style="margin-right:20px;">
                   <q-input v-model="equipmentToMigrate.date"
                     :stack-label="true"
                     label="Migration Date"
@@ -972,6 +968,34 @@
                       </q-icon>
                     </template>
                   </q-input>
+                </div>
+              </div>
+              <div class="row" style="width:60%">
+                <div class="col" style="margin-right:20px;">
+                  <q-input readonly v-model="equipmentToMigrate.nodeCode"
+                    label="Source Node"/>
+                </div>
+                <div class="col" style="margin-right:20px">
+                  <q-select
+                    v-model="hubCodeService"
+                    @input="doMigrationChangeHubCode()"
+                    stack-label
+                    label="Hub Code"
+                    :options="hubCodeServiceSelected"
+                  />
+                </div>
+                <div class="col" style="margin-right:20px">
+                  <q-input v-model="equipmentToMigrate.newNodeNumber"
+                    :stack-label="true"
+                    :prefix="nodePrefixByHub"
+                    ref="destinationNode"
+                    label="Destination Node"
+                    oninput="this.value = this.value.toUpperCase()"
+                    class="text-uppercase"
+                    @input="doMergeSelectedNewNode"
+                    :rules="[val => !!val || 'Destination Node is required']"/>
+                </div>
+              </div>
                   <!-- <div class="row">
                     <q-select
                       style="margin-right: 20px"
@@ -1017,8 +1041,6 @@
                       v-model="equipmentToMigrate.isNewNode"
                       label="New Node" />
                   </div> -->
-                </div>
-              </div>
             </q-step>
 
             <q-step :name="2"

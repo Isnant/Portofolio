@@ -8,20 +8,21 @@
     </div>
 
      <div class="row" style="margin-buttom:20px; width:500px">
+
+      <div class="col-15" style="margin-right: 10px; width: 40%">
+        <q-input
+        v-model="searchVal.hubName"
+        stack-label
+        label="Hub Name"
+        color="purple-6"/>
+      </div>
+
       <div class="col-15" style="margin-right: 10px; width: 40%">
         <q-input
           v-model="searchVal.hubCode"
           stack-label
           label="Hub Code"
           color="purple-6"/>
-      </div>
-
-      <div class="col-15" style="margin-right: 10px; width: 40%">
-        <q-input
-        v-model="searchVal.hubCodeService"
-        stack-label
-        label="Hub Code Service"
-        color="purple-6"/>
       </div>
 
       <div class="col" style="width: 5%">
@@ -97,13 +98,17 @@
           <q-input v-model="formData.id"
             readonly
             stack-label label="Id"/>
-          <q-select v-model="formData.hubCode"
+          <q-input v-model="formData.hubCode"
             stack-label
-            label="Area Name"
-            :options="hubCodeList"
-            @input="getValue()"/>
-          <q-input v-model="formData.hubCodeService"
-            stack-label label="Hub Code Service"/>
+            label="Hub Code"/>
+          <q-input v-model="formData.hubName"
+            stack-label label="Hub Name"/>
+          <q-input v-model="formData.ftax"
+            stack-label label="Ftax"/>
+          <q-select v-model="formData.service"
+            :options="serviceList"
+            stack-label label="Service"
+            @input="getSelectValue()"/>
           <div style="text-align: right; margin-top:20px">
             <q-btn round color="primary" @click.native="doSave()" size="small">
               <q-icon name="fas fa-save"/>

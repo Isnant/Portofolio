@@ -103,6 +103,11 @@ export default {
   methods: {
     doInitPage () {
       this.$q.loading.show()
+      const userToken = localStorage.getItem('user-token')
+      const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
+      if (authorities.findIndex(x => x === 'ROLE_07') === -1) {
+        this.$router.push('/')
+      }
       this.$axios.get(`${process.env.urlPrefix}getHierarchyList`, {
         params: {
           pageIndex: this.pagination.page - 1,

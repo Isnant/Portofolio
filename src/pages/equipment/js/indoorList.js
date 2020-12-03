@@ -180,6 +180,11 @@ export default {
     },
     doMainInitPage () {
       this.$q.loading.show()
+      const userToken = localStorage.getItem('user-token')
+      const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
+      if (authorities.findIndex(x => x === 'ROLE_04') === -1) {
+        this.$router.push('/')
+      }
       this.$axios.post(`${process.env.urlPrefix}getIndoorInitPage/`, {
       })
         .then((response) => {

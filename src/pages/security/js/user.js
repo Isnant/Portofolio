@@ -5,6 +5,7 @@ export default {
   data () {
     return {
       dataList: [],
+      departmentList: [],
       columns: [
         {
           name: 'username',
@@ -21,9 +22,9 @@ export default {
           sortable: true
         },
         {
-          name: 'department',
+          name: 'branch',
           label: 'Department',
-          field: 'department',
+          field: 'branch',
           align: 'left',
           sortable: true
         },
@@ -110,7 +111,7 @@ export default {
           this.dataList = response.data.listOfUser.content
           this.pagination.rowsNumber = response.data.listOfUser.totalElements
           this.pagination.page = response.data.listOfUser.number + 1
-
+          this.departmentList = response.data.listOfDepartment
           this.roles = response.data.listOfRole
           this.rolesList = this.roles
           this.rolesList.sort(this.compare)
@@ -183,16 +184,8 @@ export default {
         })
           .then((response) => {
             this.$q.loading.hide()
-
             this.instance = response.data
             this.instance.roles = this.instance.roles.substr(1, this.instance.roles.length - 2).split(';')
-            if (this.instance.branch === '') {
-              this.branch = []
-            } else {
-              this.branch = JSON.parse(this.instance.branch)
-            }
-            this.doRoles()
-
             this.isFormVisible = true
           })
           .catch((error) => {
@@ -215,48 +208,8 @@ export default {
       }
       this.filteredBranchList = arrBranch
     },
-    doRoles () {
-      if (this.instance.roles.findIndex(x => x === '92') !== -1) { // inspector
-        this.constructBranchList(this.branchesInspector)
-        this.branchSelect = false
-      } else if (this.instance.roles.findIndex(x => x === '93') !== -1 || this.instance.roles.findIndex(x => x === '192') !== -1) {
-        this.constructBranchList(this.branchList)
-        this.branchSelect = false
-      } else if (this.instance.roles.findIndex(x => x === '1') !== -1) { // Requestor
-        this.constructBranchList(this.branchesRequestor)
-        this.branchSelect = false
-      } else if (this.instance.roles.findIndex(x => x === '2') !== -1) { // RH Sales
-        this.constructBranchList(this.branchesRequestor)
-        this.branchSelect = false
-      } else if (this.instance.roles.findIndex(x => x === '3') !== -1) { // TM Sales
-        this.constructBranchList(this.branchesTMSales)
-        this.branchSelect = false
-      } else if (this.instance.roles.findIndex(x => x === '4') !== -1) { // HPA
-        this.constructBranchList(this.branchesHPA)
-        this.branchSelect = false
-      } else if (this.instance.roles.length === 0) {
-        this.filteredBranchList = []
-        this.branchSelect = true
-        this.branch = []
-      } else {
-        this.constructBranchList(this.branchList)
-        this.branchSelect = false
-      }
-    },
-    doBranchAdminListFilter (val, update) {
-      update(() => {
-        const needle = val.toLowerCase()
-        this.filteredBranchList = this.branchList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
-      })
-    },
-    doBranchValue () {
-      this.formSearch.branch = this.formSearch.branch.value
-    },
-    doRolesValue () {
-      this.formSearch.roless = this.formSearch.roles.value
-      if (this.formSearch.roless !== 'All') {
-        this.formSearch.roless = ';' + this.formSearch.roless + ';'
-      }
+    getSelectValue () {
+      this.instance.branch = this.instance.branch.value
     },
 
     doBeforeFormClose () {
@@ -280,7 +233,6 @@ export default {
     },
     doSave () {
       this.$q.loading.show()
-
       if (this.instance.roles.length === 0) {
         this.$q.notify({
           color: 'negative',
@@ -299,7 +251,6 @@ export default {
       //   this.instance.branch = this.instance.branch.value
       // }
       this.instance.roles = ';' + this.instance.roles.join(';') + ';'
-      this.instance.branch = JSON.stringify(this.branch)
 
       this.$axios.post(`${process.env.urlPrefix}doSaveUser`, this.instance)
         .then((response) => {

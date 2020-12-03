@@ -39,6 +39,8 @@ export default {
       equipmentStatusList: [],
       assetStatusList: [],
       assetStatusFormList: [],
+      hubCodeServiceList: [],
+      hubCodeServiceSelected: [],
       migrationType: '',
       input: {
         id: '',
@@ -178,6 +180,13 @@ export default {
           name: 'bdfCode',
           label: 'BDF Code',
           field: 'bdfCode',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'department',
+          label: 'Department',
+          field: 'department',
           align: 'left',
           sortable: true
         },
@@ -413,12 +422,18 @@ export default {
     },
     doMainInitPage () {
       this.$q.loading.show()
+      const userToken = localStorage.getItem('user-token')
+      const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
+      if (authorities.findIndex(x => x === 'ROLE_03') === -1) {
+        this.$router.push('/')
+      }
       this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
           this.assetCategoryList = response.data.listOfAssetCategory
           this.productTypeList = response.data.listOfProductSubType
           this.hubCodeList = response.data.listOfHubCode
+          this.hubCodeList.sort(this.compareLabel)
           this.bdfCodeList = response.data.listOfBdf
           this.manufacturerList = response.data.listOfManufacturer
           this.technologyList = response.data.listOfTechnology
@@ -701,6 +716,13 @@ export default {
     },
     doMigrationChangeHub () {
       this.equipmentToMigrate.newHubCode = this.hubCodeName.value
+      this.hubCodeServiceSelected = this.hubCodeServiceList.filter(v => v.cascadeValue.toUpperCase().indexOf(this.hubCodeName.value.toUpperCase()) > -1)
+    },
+    doMigrationChangeHubCode () {
+      this.nodePrefixByHub = this.hubCodeService.value
+    },
+    doMergeSelectedNewNode () {
+      this.equipmentToMigrate.selectedNewNode = this.nodePrefixByHub + this.equipmentToMigrate.newNodeNumber
     },
     // doMigrationChangeHub () {
     //   this.$axios.get(`${process.env.urlPrefix}getNodeByHub/`,
@@ -791,7 +813,9 @@ export default {
       this.$q.loading.show()
       this.$axios.get(`${process.env.urlPrefix}getNodeChildMig`, { params: { nodeCode: nodeCodeParam } })
         .then((response) => {
-          this.migrationListOriginal = response.data
+          this.migrationListOriginal = response.data.listNodeChildMig
+          this.hubCodeServiceList = response.data.listOfHubCodeService
+          this.hubCodeServiceSelected = this.hubCodeServiceList.filter(v => v.cascadeValue.toUpperCase().indexOf(this.hubCodeName.value.toUpperCase()) > -1)
           // this.doMigrationChangeHub()
           this.$q.loading.hide()
         })
@@ -980,6 +1004,7 @@ export default {
       }
     },
     doMigrationSetupNewHierarchy () {
+      this.equipmentToMigrate.selectedNewNode = this.nodePrefixByHub + this.equipmentToMigrate.newNodeNumber
       if (!this.equipmentToMigrate.isNewNode) {
         this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode
       }
@@ -1260,7 +1285,12 @@ export default {
       return result
     },
     doMigrationPreview () {
-      // Source Preview
+      // ==== Source Preview ====
+      this.createSourceTree()
+      // ==== Targe Preview ====
+      this.createTagetTree()
+    },
+    createSourceTree () {
       const fiberNode = this.migrationListOriginal.filter(f => f.productType === 'FIBERNODE')
       if (fiberNode.length !== 1) {
         this.validationResults.push({ id: this.validationResults.length, message: 'Source have invlaid node. Please check' })
@@ -1276,12 +1306,42 @@ export default {
           header: 'root',
           children: []
         }
-
         let sourceChildResult = []
+
+        // get WDM Code
+        let sourceWDMCode = this.equipmentToMigrate.migrationListNew.filter(f => f.originalProductType === 'WDM' && f.migrate === false)
+        let sourceWDM = {
+          label: '',
+          original: '',
+          status: '',
+          children: []
+        }
+        if (sourceWDMCode.length > 0) {
+          sourceWDM = {
+            label: sourceWDMCode[0].newName,
+            original: sourceWDMCode[0].equipmentName,
+            children: []
+          }
+        }
+
+        // get Fibernode
+        let sourceFibernodeCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'FIBERNODE' && f.migrate === true)
+        let sourceFibernode = {
+          label: '',
+          original: '',
+          status: '',
+          children: []
+        }
+        if (sourceFibernodeCode.length > 0) {
+          sourceFibernode = {
+            label: '[NODE] ' + sourceFibernodeCode[0].newName,
+            original: sourceFibernodeCode[0].equipmentName,
+            children: []
+          }
+        }
 
         // get Power Supply
         let originalPSCode = this.equipmentToMigrate.migrationListNew.filter(f => f.originalProductType === 'POWER SUPPLY' && f.migrate === false)
-
         for (let i = 0; i < originalPSCode.length; i++) {
           let psCode = originalPSCode[i].newName
           let psCodeChild = {
@@ -1290,13 +1350,11 @@ export default {
             status: originalPSCode[i].assetStatus,
             children: []
           }
-
-          sourceChildResult.push(psCodeChild)
+          sourceFibernode.children.push(psCodeChild)
         }
 
         // get Virtual amplifier
         let originalVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === false)
-
         let sourceChild = {
           label: '',
           original: '',
@@ -1316,18 +1374,22 @@ export default {
         if (child.length > 0) {
           sourceChild.children = child
         }
+
         if (sourceChild.length > 0) {
-          sourceChildResult.push(sourceChild)
+          sourceFibernodeCode.children.push(sourceChild)
+          if (sourceWDMCode.length > 0) {
+            sourceWDM.children.push(sourceFibernode)
+            sourceChildResult.push(sourceWDM)
+          } else {
+            sourceChildResult.push(sourceFibernode)
+          }
         }
-
         sourceTree.children = sourceChildResult
-
         this.$set(this.sourcePreview, 0, sourceTree)
-
         this.$refs.sourcePreview.expandAll()
       }
-
-      // Targe Preview
+    },
+    createTagetTree () {
       let original
       if (this.equipmentToMigrate.isNewNode) {
         const promotedAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'FIBERNODE')
@@ -1340,15 +1402,62 @@ export default {
       }
 
       let targetTree = {
-        label: this.equipmentToMigrate.newHubCode + ' - ' + this.equipmentToMigrate.newNodeCode,
+        label: '[' + this.equipmentToMigrate.newHubCode + ']',
         original: original,
         header: 'root',
         status: '',
         children: []
       }
 
-      let newVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === true)
+      let targetChildResult = []
 
+      // get WDM Code
+      let targetWDMCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'WDM' && f.migrate === true)
+      let targetWDM = {
+        label: '',
+        original: '',
+        status: '',
+        children: []
+      }
+      if (targetWDMCode.length > 0) {
+        targetWDM = {
+          label: targetWDMCode[0].newName,
+          original: targetWDMCode[0].equipmentName,
+          children: []
+        }
+      }
+
+      // get Fibernode
+      let targetFibernodeCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'FIBERNODE' && f.migrate === true)
+      let targetFibernode = {
+        label: '',
+        original: '',
+        status: '',
+        children: []
+      }
+      if (targetFibernodeCode.length > 0) {
+        targetFibernode = {
+          label: '[NODE] ' + targetFibernodeCode[0].newName,
+          original: targetFibernodeCode[0].equipmentName,
+          children: []
+        }
+      }
+
+      // get Power Supply
+      let targetPSCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'POWER SUPPLY' && f.migrate === true)
+      for (let i = 0; i < targetPSCode.length; i++) {
+        let psCode = targetPSCode[i].newName
+        let psCodeChild = {
+          label: '[PS] ' + psCode + ' - ' + targetPSCode[i].assetStatus,
+          original: targetPSCode[i].equipmentName,
+          status: targetPSCode[i].assetStatus,
+          children: []
+        }
+        targetFibernode.children.push(psCodeChild)
+      }
+
+      // get Virtual amplifier
+      let newVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === true)
       let targetChild = {
         label: '[]',
         original: '',
@@ -1358,7 +1467,7 @@ export default {
 
       if (newVirtualAmpli.length > 0) {
         targetChild = {
-          label: newVirtualAmpli[0].newName + ' - ' + newVirtualAmpli[0].assetStatus,
+          label: '[VA] ' + newVirtualAmpli[0].newName + ' - ' + newVirtualAmpli[0].assetStatus,
           original: newVirtualAmpli[0].equipmentName,
           status: newVirtualAmpli[0].assetStatus,
           children: []
@@ -1413,12 +1522,17 @@ export default {
         }
       }
 
-      let targetChildResult = []
-      targetChildResult.push(targetChild)
+      targetFibernode.children.push(targetChild)
+
+      if (targetWDMCode.length > 0) {
+        targetWDM.children.push(targetFibernode)
+        targetChildResult.push(targetWDM)
+      } else {
+        targetChildResult.push(targetFibernode)
+      }
+
       targetTree.children = targetChildResult
-
       this.$set(this.targetPreview, 0, targetTree)
-
       this.$refs.targetPreview.expandAll()
     },
     doMigrationValidate () {
@@ -1786,6 +1900,17 @@ export default {
       if (statusA > statusB) {
         comparison = 1
       } else if (statusA < statusB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    compareLabel (a, b) {
+      const labelA = a.label.toUpperCase()
+      const labelB = b.label.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
         comparison = -1
       }
       return comparison
