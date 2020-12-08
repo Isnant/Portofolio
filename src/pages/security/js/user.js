@@ -22,6 +22,13 @@ export default {
           sortable: true
         },
         {
+          name: 'roleNames',
+          label: 'Roles',
+          field: 'roleNames',
+          align: 'left',
+          sortable: true
+        },
+        {
           name: 'branch',
           label: 'Department',
           field: 'branch',
@@ -112,9 +119,13 @@ export default {
           this.pagination.rowsNumber = response.data.listOfUser.totalElements
           this.pagination.page = response.data.listOfUser.number + 1
           this.departmentList = response.data.listOfDepartment
+          this.departmentList.sort(this.compare)
           this.roles = response.data.listOfRole
           this.rolesList = this.roles
           this.rolesList.sort(this.compare)
+          this.dataList.forEach((element, index) => {
+            this.dataList[index].roleNames = this.dataList[index].roles.substr(1, this.dataList[index].roles.length - 2).split(';')
+          })
           // this.rolesList.unshift({ label: 'All', value: 'All' })
         })
         .catch((error) => {

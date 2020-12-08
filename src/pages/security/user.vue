@@ -48,6 +48,17 @@
       <q-td slot="body-cell-department" slot-scope="props">
         {{ props.row.department || '---' }}
       </q-td>
+      <q-td slot="body-cell-roleNames" slot-scope="props">
+         <q-option-group
+            :options="roles"
+            label="Roles"
+            type="checkbox"
+            v-model="props.row.roleNames"
+            disable
+            dense
+          />
+      </q-td>
+
        <q-td slot="body-cell-recordStatus" align="center" slot-scope="props">
         <div v-if="props.row.recordStatus === 'A'">
           <q-icon name="done" color="primary"  style="font-size: 20px;"/>

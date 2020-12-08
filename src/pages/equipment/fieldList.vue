@@ -482,7 +482,7 @@
                 tabindex="14"
                 style="margin-top:20px"/>
 
-              <div v-if="input.technology === 'FTTH'">
+              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE'">
                 <q-input v-model="input.predecessor"
                   :stack-label="true"
                   label="Predecessor"

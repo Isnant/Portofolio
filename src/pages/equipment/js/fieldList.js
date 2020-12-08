@@ -516,83 +516,84 @@ export default {
       this.$refs.fStatusReason.validate()
       this.$refs.fService.validate()
       this.$refs.fTechnology.validate()
-
       this.$refs.fItCode.validate()
 
-      var f1 = this.$refs.fEquipmentName.hasError
-      var f2 = this.$refs.fProductType.hasError
-      // var f3 = false
-      var f4 = this.$refs.fProductSeries.hasError
-      var f5 = this.$refs.fManufacturer.hasError
-      var f6 = this.$refs.fBrand.hasError
-      var f7 = this.$refs.fQuantity.hasError
-      var f8 = this.$refs.fHubCode.hasError
-      var f9 = this.$refs.fDivision.hasError
-      var f10 = this.$refs.fDepartment.hasError
-      var f11 = this.$refs.fPropertyOf.hasError
-      var f12 = this.$refs.fStatusReason.hasError
-      var f14 = false
-      var f15 = false
-      var f16 = false
-      var f17 = this.$refs.fService.hasError
-      var f18 = this.$refs.fTechnology.hasError
-      var f19 = false
-      var f20 = false
-      var f21 = false
-      var f22 = this.$refs.fItCode.hasError
+      var vEquipmentName = this.$refs.fEquipmentName.hasError
+      var vProductType = this.$refs.fProductType.hasError
+      var vProductSeries = this.$refs.fProductSeries.hasError
+      var vManufacturer = this.$refs.fManufacturer.hasError
+      var vBrand = this.$refs.fBrand.hasError
+      var vQuantity = this.$refs.fQuantity.hasError
+      var vHubCode = this.$refs.fHubCode.hasError
+      var vDivision = this.$refs.fDivision.hasError
+      var vDepartment = this.$refs.fDepartment.hasError
+      var vPropertyOf = this.$refs.fPropertyOf.hasError
+      var vStatusReason = this.$refs.fStatusReason.hasError
+      var vService = this.$refs.fService.hasError
+      var vTechnology = this.$refs.fTechnology.hasError
+      var vItCode = this.$refs.fItCode.hasError
+      var vPowerSupplyCode = false
+      var vAmplifierCode = false
+      var vNodeCode = false
+      var vCapacity = false
+      var vCapacityUnits = false
+      var vPredecessor = false
 
       if (this.input.technology !== 'FTTH') {
         this.$refs.fCapacity.validate()
         this.$refs.fCapacityUnits.validate()
-        this.$refs.fPredecessor.validate()
-        // this.$refs.fProductSubType.validate()
 
-        f19 = this.$refs.fCapacity.hasError
-        f20 = this.$refs.fCapacityUnits.hasError
-        f21 = this.$refs.fPredecessor.hasError
-        // f3 = this.$refs.fProductSubType.hasError
+        vCapacity = this.$refs.fCapacity.hasError
+        vCapacityUnits = this.$refs.fCapacityUnits.hasError
+
+        if (this.input.productType !== 'FIBERNODE') {
+          vPredecessor = this.$refs.fPredecessor.hasError
+          this.$refs.fPredecessor.validate()
+        }
       }
 
       if (this.input.technology !== 'FTTH') {
         if (this.input.productType === 'POWER SUPPLY' || this.input.productType === 'POWER SUPPLY INDOOR') {
           if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
             this.$refs.fPowerSupplyCodeBlue.validate()
-            f15 = this.$refs.fPowerSupplyCodeBlue.hasError
+            vPowerSupplyCode = this.$refs.fPowerSupplyCodeBlue.hasError
           } else {
             this.$refs.fPowerSupplyCodeOrange.validate()
-            f15 = this.$refs.fPowerSupplyCodeOrange.hasError
+            vPowerSupplyCode = this.$refs.fPowerSupplyCodeOrange.hasError
           }
         } else {
           this.$refs.fPowerSupplyCodeElse.validate()
-          f15 = this.$refs.fPowerSupplyCodeElse.hasError
+          vPowerSupplyCode = this.$refs.fPowerSupplyCodeElse.hasError
         }
       }
 
       if (this.input.productType === 'AMPLIFIER' || this.input.productType === 'AMPLIFIER INDOOR') {
         if (this.input.amplifierCode.length === 10) {
           this.$refs.fAmplifierCodeBlue.validate()
-          f16 = this.$refs.fAmplifierCodeBlue.hasError
+          vAmplifierCode = this.$refs.fAmplifierCodeBlue.hasError
         } else {
           this.$refs.fAmplifierCodeOrange.validate()
-          f16 = this.$refs.fAmplifierCodeOrange.hasError
+          vAmplifierCode = this.$refs.fAmplifierCodeOrange.hasError
         }
       }
 
       if (this.input.productType === 'FIBERNODE') {
         if (this.input.nodeCode.length === 8) {
           this.$refs.fNodeCodeBlue.validate()
-          f8 = this.$refs.fNodeCodeBlue.hasError
+          vNodeCode = this.$refs.fNodeCodeBlue.hasError
         } else {
           this.$refs.fNodeCodeOrange.validate()
-          f8 = this.$refs.fNodeCodeOrange.hasError
+          vNodeCode = this.$refs.fNodeCodeOrange.hasError
         }
       } else {
         this.$refs.fNodeCodeElse.validate()
-        f8 = this.$refs.fNodeCodeElse.hasError
+        vNodeCode = this.$refs.fNodeCodeElse.hasError
       }
 
-      if (!f1 && !f2 && !f4 && !f5 && !f6 && !f7 && !f8 && !f9 && !f10 && !f11 && !f12 && !f14 && !f15 && !f16 && !f17 && !f18 && !f19 && !f20 && !f21 && !f22) {
-        this.doSaveEquipment()
+      if (!vEquipmentName && !vProductType && !vProductSeries && !vManufacturer && !vBrand && !vQuantity && !vHubCode && !vDivision && !vDepartment) {
+        if (!vPropertyOf && !vStatusReason && !vService && !vTechnology && !vItCode && !vPowerSupplyCode && !vAmplifierCode && !vCapacity && !vCapacityUnits && !vPredecessor && !vNodeCode) {
+          this.doSaveEquipment()
+        }
       }
     },
     doSaveEquipment () {
