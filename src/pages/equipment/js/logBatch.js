@@ -25,8 +25,16 @@ export default {
           sortable: true
         },
         {
+          name: 'equipmentCategory',
+          label: 'Equipment Category',
+          field: 'equipmentCategory',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
           name: 'createdDate',
-          label: 'Created Date',
+          label: 'Upload Date',
           field: 'createdDate',
           align: 'left',
           style: 'width: 200px',
@@ -67,7 +75,7 @@ export default {
       ],
       pagination: {
         sortBy: 'createdDate',
-        descending: false,
+        descending: true,
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0

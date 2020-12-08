@@ -19,11 +19,14 @@ export default {
       file: undefined,
       fileAttach: {
         fileName: '',
-        file64: ''
+        file64: '',
+        equipmentCategory: 'Field'
       },
       productTypeList: [],
       newProductTypeList: ['AMPLIFIER', 'POWER SUPPLY', 'FIBERNODE'],
       hubCodeList: [],
+      productSeriesList: [],
+      filteredProductSeries: [],
       bdfCodeList: [],
       subTypeList: [],
       hubCodeRoomList: [],
@@ -39,6 +42,7 @@ export default {
       equipmentStatusList: [],
       assetStatusList: [],
       assetStatusFormList: [],
+      assetStatusListSearch: [],
       hubCodeServiceList: [],
       hubCodeServiceSelected: [],
       migrationType: '',
@@ -430,26 +434,7 @@ export default {
       this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
-          this.assetCategoryList = response.data.listOfAssetCategory
-          this.productTypeList = response.data.listOfProductSubType
-          this.hubCodeList = response.data.listOfHubCode
-          this.hubCodeList.sort(this.compareLabel)
-          this.bdfCodeList = response.data.listOfBdf
-          this.manufacturerList = response.data.listOfManufacturer
-          this.technologyList = response.data.listOfTechnology
-          this.serviceList = response.data.listOfService
-          this.statusReasonList = response.data.listOfStatusReason
-          this.departmentList = response.data.listOfDepartment
-          this.divisionList = response.data.listOfDivision
-          this.propertyOfList = response.data.listOfPropertyOf
-          this.capacityUnitsList = response.data.listOfCapacityUnits
-          this.hubCodeRoomList = response.data.listOfHubCodeRoom
-          this.assetStatusList = response.data.listAssetStatus
-          this.equipmentStatusList = response.data.listEquipmentStatus
-
-          this.assetStatusList.unshift({ label: 'All', value: 'All' })
-          this.equipmentStatusList.unshift({ label: 'All', value: 'All' })
-          this.productTypeList.unshift({ label: 'All', value: 'All' })
+          this.constructSelectList(response)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -501,6 +486,29 @@ export default {
 
       this.doMainRefresh(params)
     },
+    constructSelectList (response) {
+      this.assetCategoryList = response.data.listOfAssetStatus
+      this.productTypeList = response.data.listOfProductSubType.sort(this.compareValue)
+      this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
+      this.hubCodeList = response.data.listOfHubCode.sort(this.compareValue)
+      this.bdfCodeList = response.data.listOfBdf.sort(this.compareValue)
+      this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
+      this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
+      this.serviceList = response.data.listOfService.sort(this.compareValue)
+      this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
+      this.departmentList = response.data.listOfDepartment.sort(this.compareValue)
+      this.divisionList = response.data.listOfDivision.sort(this.compareValue)
+      this.propertyOfList = response.data.listOfPropertyOf.sort(this.compareValue)
+      this.capacityUnitsList = response.data.listOfCapacityUnits.sort(this.compareValue)
+      this.hubCodeRoomList = response.data.listOfHubCodeRoom.sort(this.compareValue)
+      this.assetStatusList = response.data.listAssetStatus
+      this.assetStatusListSearch = response.data.listAssetStatusSearch.sort(this.compareValue)
+      this.equipmentStatusList = response.data.listEquipmentStatus.sort(this.compareValue)
+
+      this.assetStatusListSearch.unshift({ label: 'All', value: 'All' })
+      this.equipmentStatusList.unshift({ label: 'All', value: 'All' })
+      this.productTypeList.unshift({ label: 'All', value: 'All' })
+    },
     saveEquipment () {
       // field
       this.$refs.fEquipmentName.validate()
@@ -539,20 +547,17 @@ export default {
       var vCapacityUnits = false
       var vPredecessor = false
 
-      if (this.input.technology !== 'FTTH') {
+      if (this.input.technology !== 'FTTH' && this.input.productType !== 'FIBERNODE' && this.input.productType !== 'WDM') {
         this.$refs.fCapacity.validate()
         this.$refs.fCapacityUnits.validate()
+        this.$refs.fPredecessor.validate()
 
         vCapacity = this.$refs.fCapacity.hasError
         vCapacityUnits = this.$refs.fCapacityUnits.hasError
-
-        if (this.input.productType !== 'FIBERNODE') {
-          vPredecessor = this.$refs.fPredecessor.hasError
-          this.$refs.fPredecessor.validate()
-        }
+        vPredecessor = this.$refs.fPredecessor.hasError
       }
 
-      if (this.input.technology !== 'FTTH') {
+      if (this.input.technology !== 'FTTH' && this.input.productType !== 'WDM') {
         if (this.input.productType === 'POWER SUPPLY' || this.input.productType === 'POWER SUPPLY INDOOR') {
           if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
             this.$refs.fPowerSupplyCodeBlue.validate()
@@ -1709,7 +1714,15 @@ export default {
         this.input.division = this.input.division.value
       } else if (type === 'department') {
         this.input.department = this.input.department.value
+      } else if (type === 'productSeries') {
+        this.input.productSeries = this.input.productSeries.value
       }
+    },
+    doDropdownFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredProductSeries = this.productSeriesList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
     },
     convertManufacturer () {
       this.input.manufacturer = this.input.manufacturer.value
@@ -1744,9 +1757,9 @@ export default {
     },
     doEdit (cell) {
       this.input = JSON.parse(JSON.stringify(cell.row))
-      this.input.purchasedDate = this.input.purchasedDate === null ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
-      this.input.updateDistanceDate = this.input.updateDistanceDate === null ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
-      this.input.installationDate = this.input.installationDate === null ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
+      this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
+      this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
+      this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
       var assetId = cell.row.id.toString()
       this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryByAssetId`, {
         params: {
@@ -1908,6 +1921,17 @@ export default {
     compareLabel (a, b) {
       const labelA = a.label.toUpperCase()
       const labelB = b.label.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    compareValue (a, b) {
+      const labelA = a.value.toUpperCase()
+      const labelB = b.value.toUpperCase()
       let comparison = 0
       if (labelA > labelB) {
         comparison = 1

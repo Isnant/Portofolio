@@ -58,6 +58,7 @@
             label="Product Series"
             color="purple-6"
             stack-label
+            productSeriesList
           />
         </div>
       </div>
@@ -68,7 +69,7 @@
             stack-label
             label="Asset Status"
             color="purple-6"
-            :options="assetStatusList"
+            :options="assetStatusListSearch"
             @input="getValueSelect('assetStatus')"
           />
         </div>
@@ -253,7 +254,8 @@
                 label="Product Type*"
                 :options="productTypeList"
                 @input="getSubType()"
-                tabindex="4"/>
+                tabindex="4"
+                style="margin-top:20px"/>
 
               <!-- <div v-if="input.technology === 'FTTH'">
                 <q-select v-model="input.productSubType"
@@ -272,11 +274,33 @@
                 label="Product Sub Type"
                 tabindex="5"/>
               <!-- </div> -->
-              <q-input v-model="input.productSeries" ref="fProductSeries"
+               <q-select v-model="input.productSeries" ref="fProductSeries"
+                :rules="[val => !! val || 'Product Series is required']"
+                :stack-label="true"
+                :options="filteredProductSeries"
+                @input="getDropdownValue('productSeries')"
+                @filter="doDropdownFilter"
+                label="Product Series"
+                tabindex="6"
+                style="margin-top:20px"
+                use-input
+                fill-input
+                hide-selected
+                input-debounce="500">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+               </q-select>
+              <!-- <q-input v-model="input.productSeries" ref="fProductSeries"
                 :rules="[val => !! val || 'Product Series is required']"
                 :stack-label="true"
                 label="Product Series*"
-                tabindex="6"/>
+                tabindex="6"
+                style="margin-top:20px"/> -->
               <q-select v-model="input.manufacturer" ref="fManufacturer"
                 :rules="[val => !! val || 'Manufacturer is required']"
                 :stack-label="true"
@@ -409,7 +433,7 @@
                 </q-input>
               </div>
 
-              <div v-if="input.technology === 'FTTH'">
+              <div v-if="input.technology === 'FTTH' || input.productType === 'WDM' ">
                 <q-input v-model="input.psCode"
                   :stack-label="true"
                   label="Power Supply Code"
@@ -482,7 +506,7 @@
                 tabindex="14"
                 style="margin-top:20px"/>
 
-              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE'">
+              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
                 <q-input v-model="input.predecessor"
                   :stack-label="true"
                   label="Predecessor"
@@ -585,7 +609,7 @@
                 style="margin-top:20px"/>
             </div>
             <div class="col">
-              <div v-if="input.technology === 'FTTH'">
+              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
                 <q-input v-model="input.capacity"
                   :stack-label="true"
                   label="Capacity"
@@ -601,7 +625,7 @@
                   style="margin-top:20px"/>
               </div>
 
-              <div v-if="input.technology === 'FTTH'">
+              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
                 <q-select v-model="input.capacityUnits"
                   :stack-label="true"
                   label="Capacity Units"
