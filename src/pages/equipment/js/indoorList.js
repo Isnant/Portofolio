@@ -9,6 +9,11 @@ export default {
       subTypeList: [],
       manufacturerList: [],
       brandList: [],
+      fileAttach: {
+        fileName: '',
+        file64: '',
+        equipmentCategory: 'Hub'
+      },
       input: {
         id: '',
         equipmentCategory: 'Hub',
@@ -166,8 +171,19 @@ export default {
         rowsPerPage: 20,
         rowsNumber: 0
       },
+      errorListColumn: [
+        {
+          name: 'message',
+          label: 'Error Message',
+          field: 'message',
+          align: 'left'
+        }
+      ],
       listOfEquipment: [],
       modalUpload: false,
+      listOfError: [],
+      modalError: false,
+      modalWarning: false,
       modalAddNewAsset: false
     }
   },
@@ -329,39 +345,48 @@ export default {
       this.doMainRefresh(params)
     },
     doAttachFile (file) {
+      let fr = new FileReader()
       this.uploadButton = true
+      fr.onload = (e) => {
+        this.fileAttach.fileName = file.name
+        this.fileAttach.file64 = e.target.result
+      }
+      fr.readAsDataURL(file)
     },
     doHideButton () {
       this.uploadButton = false
     },
     doUploadFile () {
       this.$q.loading.show()
-
-      let fr = new FileReader()
-      fr.onload = (e) => {
-        this.$axios.post(`${process.env.urlPrefix}uploadIndoor`, { file64: e.target.result })
-          .then((response) => {
-            this.$q.loading.hide()
-
+      this.$axios.post(`${process.env.urlPrefix}uploadIndoor`, this.fileAttach)
+        .then((response) => {
+          this.$q.loading.hide()
+          this.listOfError = response.data
+          this.listOfError.sort(this.compare)
+          if (this.listOfError[0].messageStatus === 'error') {
+            this.modalError = true
+          } else if (this.listOfError[0].messageStatus === 'warning') {
+            this.modalWarning = true
+          } else {
             this.$q.notify({
               color: 'positive',
               icon: 'info',
-              message: 'File successfully uploaded'
+              message: this.listOfError[0].message
             })
-            this.modalUpload = false
-            this.doMainInitPage()
-          })
-          .catch((error) => {
-            this.$q.loading.hide()
+          }
+          this.modalUpload = false
+          this.doRefresh()
+          this.doMainInitPage()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
 
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
           })
-      }
-      fr.readAsDataURL(this.$refs.excelFile.files[0])
+        })
     },
     getSubType () {
       this.$q.loading.show()

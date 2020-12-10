@@ -603,9 +603,9 @@ export default {
     },
     doSaveEquipment () {
       this.$q.loading.show()
-      this.input.purchasedDate = this.input.purchasedDate === '' ? '' : moment(String(this.input.purchasedDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
-      this.input.installationDate = this.input.installationDate === '' ? '' : moment(String(this.input.installationDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
-      this.input.updateDistanceDate = this.input.updateDistanceDate === '' ? '' : moment(String(this.input.updateDistanceDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(String(this.input.purchasedDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(String(this.input.installationDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(String(this.input.updateDistanceDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
           this.$q.notify({

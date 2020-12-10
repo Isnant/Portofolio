@@ -102,6 +102,56 @@
       </q-fab>
     </q-page-sticky>
 
+     <q-dialog v-model="modalError" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-negative text-white">
+          <strong>Error</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+         <q-table
+          :data="listOfError"
+          :columns="errorListColumn"
+          dense>
+          <q-td slot="body-cell-message" slot-scope="props">
+            <div class="text-red bg-white">
+              {{ props.row.message }}
+            </div>
+          </q-td>
+         </q-table>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="modalWarning" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-orange text-white">
+          <strong>Warning</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+         <q-table
+          :data="listOfError"
+          :columns="errorListColumn"
+          dense>
+          <q-td slot="body-cell-message" slot-scope="props">
+            <div class="text-orange bg-white">
+              {{ props.row.message }}
+            </div>
+          </q-td>
+         </q-table>
+         <div align="right" style="margin-top:20px">
+           <q-btn round color="primary" @click="doUploadAfterWarning()">
+            <q-icon name="fas fa-file-upload"/>
+            <q-tooltip>Upload Data</q-tooltip>
+          </q-btn>
+         </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
       <q-card class="bg-white">
         <q-bar class="bg-blue-7 text-white">
@@ -371,12 +421,9 @@
         </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
-            <input
-              id="excelFile"
+           <q-input
               type="file"
-              ref="excelFile"
-              @input="val => { doAttachFile(val) }"
-              clearable
+              @input="val => { doAttachFile(val[0]) }"
             />
             <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
               <q-icon name="fas fa-file-upload"/>
