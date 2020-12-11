@@ -4,6 +4,9 @@ export default {
       file: undefined,
       uploadButton: false,
       productTypeList: [],
+      productSeriesList: [],
+      equipmentStatusList: [],
+      filteredProductSeries: [],
       hubCodeList: [],
       bdfCodeList: [],
       subTypeList: [],
@@ -82,10 +85,13 @@ export default {
       searchVal: {
         equipmentCategory: 'Hub',
         productType: 'All',
-        subType: 'All',
         productSeries: '',
         hubCode: 'All',
-        bdfCode: 'All'
+        bdfCode: 'All',
+        nodeCode: '',
+        assetStatus: 'All',
+        equipmentStatus: 'All',
+        equipmentName: ''
       },
       equipmentListColumns: [
         {
@@ -205,12 +211,14 @@ export default {
       })
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
-
-          this.assetCategoryList = response.data.listOfAssetCategory
-          this.productTypeList = response.data.listOfProductSubType.map(productType => productType.value)
-          this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
-          this.bdfCodeList = response.data.listOfBdf
-          this.manufacturerList = response.data.listOfManufacturer
+          this.productTypeList = response.data.listOfProductSubType.sort(this.compareValue)
+          this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
+          this.equipmentStatusList = response.data.listEquipmentStatus.sort(this.compareValue)
+          // this.assetCategoryList = response.data.listOfAssetCategory
+          // this.productTypeList = response.data.listOfProductSubType.map(productType => productType.value)
+          // this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
+          // this.bdfCodeList = response.data.listOfBdf
+          // this.manufacturerList = response.data.listOfManufacturer
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -280,17 +288,6 @@ export default {
       }
     },
     doSaveEquipment () {
-      // this.$axios.get(`${process.env.urlPrefix}checkrack`)
-      //   .then((response) => {
-      //     this.$q.notify({
-      //       color: 'positive',
-      //       icon: 'report_problem',
-      //       message: `successfully submitted`
-      //     })
-      //     console.log(response)
-      //   })
-
-      this.$q.loading.hide()
       this.$q.loading.show()
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
@@ -459,6 +456,96 @@ export default {
             message: error
           })
         })
+    },
+    compare (a, b) {
+      const statusA = a.messageStatus.toUpperCase()
+      const statusB = b.messageStatus.toUpperCase()
+      let comparison = 0
+      if (statusA > statusB) {
+        comparison = 1
+      } else if (statusA < statusB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    compareLabel (a, b) {
+      const labelA = a.label.toUpperCase()
+      const labelB = b.label.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    compareValue (a, b) {
+      const labelA = a.value.toUpperCase()
+      const labelB = b.value.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    getDropdownValue (type) {
+      if (type === 'equipmentStatusSearch') {
+        this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
+      }
+      if (type === 'productTypeSearch') {
+        this.searchVal.productType = this.searchVal.productType.value
+      }
+      if (type === 'productSeriesSearch') {
+        this.searchVal.productSeries = this.searchVal.productSeries.value
+      }
+      if (type === 'assetStatusSearch') {
+        this.searchVal.assetStatus = this.searchVal.assetStatus.value
+      }
+      if (type === 'hubCodeSearch') {
+        this.searchVal.hubCode = this.searchVal.hubCode.value
+      }
+      if (type === 'bdfCodeSearch') {
+        this.searchVal.bdfCode = this.searchVal.bdfCode.value
+      }
+
+      // form
+      if (type === 'equipmentStatusForm') {
+        this.input.equipmentStatus = this.input.equipmentStatus.value
+      }
+      if (type === 'assetStatusForm') {
+        this.input.equipmentUploadStatus = this.input.equipmentUploadStatus.value
+      }
+      if (type === 'assetStatusSelectForm') {
+        this.groupSelect.assetStatus = this.groupSelect.assetStatus.value
+        this.btnChangeStatus = true
+      }
+      if (type === 'statusReasonForm') {
+        this.input.statusReason = this.input.statusReason.value
+      } else if (type === 'hubCodeForm') {
+        this.input.hubCode = this.input.hubCode.value
+      } else if (type === 'hubCodeRoomForm') {
+        this.input.hubCodeRoom = this.input.hubCodeRoom.value
+      } else if (type === 'serviceForm') {
+        this.input.service = this.input.service.value
+      } else if (type === 'technologyForm') {
+        this.input.technology = this.input.technology.value
+      } else if (type === 'capacityUnitsForm') {
+        this.input.capacityUnits = this.input.capacityUnits.value
+      } else if (type === 'divisionForm') {
+        this.input.division = this.input.division.value
+      } else if (type === 'departmentForm') {
+        this.input.department = this.input.department.value
+      } else if (type === 'productSeriesForm') {
+        this.input.productSeries = this.input.productSeries.value
+      }
+    },
+    doDropdownFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredProductSeries = this.productSeriesList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
     },
     doRefresh () {
       this.input = {

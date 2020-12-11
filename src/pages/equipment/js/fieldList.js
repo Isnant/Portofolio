@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { QSpinnerDots } from 'quasar'
 export default {
   data () {
     return {
@@ -124,7 +125,8 @@ export default {
         bdfCode: 'All',
         nodeCode: '',
         assetStatus: 'All',
-        equipmentStatus: 'All'
+        equipmentStatus: 'All',
+        equipmentName: ''
       },
       groupSelect: {
         assetStatus: '',
@@ -425,7 +427,8 @@ export default {
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       const userToken = localStorage.getItem('user-token')
       const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
       if (authorities.findIndex(x => x === 'ROLE_03') === -1) {
@@ -446,7 +449,8 @@ export default {
         })
     },
     doMainRefresh (params) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getFieldPagedEquipment/`, {
         params: params
       })
@@ -1698,23 +1702,53 @@ export default {
       this.input.productSubType = this.input.productSubType.value
     },
     getDropdownValue (type) {
-      if (type === 'statusReason') {
+      if (type === 'equipmentStatusSearch') {
+        this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
+      }
+      if (type === 'productTypeSearch') {
+        this.searchVal.productType = this.searchVal.productType.value
+      }
+      if (type === 'productSeriesSearch') {
+        this.searchVal.productSeries = this.searchVal.productSeries.value
+      }
+      if (type === 'assetStatusSearch') {
+        this.searchVal.assetStatus = this.searchVal.assetStatus.value
+      }
+      if (type === 'hubCodeSearch') {
+        this.searchVal.hubCode = this.searchVal.hubCode.value
+      }
+      if (type === 'bdfCodeSearch') {
+        this.searchVal.bdfCode = this.searchVal.bdfCode.value
+      }
+
+      // form
+      if (type === 'equipmentStatusForm') {
+        this.input.equipmentStatus = this.input.equipmentStatus.value
+      }
+      if (type === 'assetStatusForm') {
+        this.input.equipmentUploadStatus = this.input.equipmentUploadStatus.value
+      }
+      if (type === 'assetStatusSelectForm') {
+        this.groupSelect.assetStatus = this.groupSelect.assetStatus.value
+        this.btnChangeStatus = true
+      }
+      if (type === 'statusReasonForm') {
         this.input.statusReason = this.input.statusReason.value
-      } else if (type === 'hubCode') {
+      } else if (type === 'hubCodeForm') {
         this.input.hubCode = this.input.hubCode.value
-      } else if (type === 'hubCodeRoom') {
+      } else if (type === 'hubCodeRoomForm') {
         this.input.hubCodeRoom = this.input.hubCodeRoom.value
-      } else if (type === 'service') {
+      } else if (type === 'serviceForm') {
         this.input.service = this.input.service.value
-      } else if (type === 'technology') {
+      } else if (type === 'technologyForm') {
         this.input.technology = this.input.technology.value
-      } else if (type === 'capacityUnits') {
+      } else if (type === 'capacityUnitsForm') {
         this.input.capacityUnits = this.input.capacityUnits.value
-      } else if (type === 'division') {
+      } else if (type === 'divisionForm') {
         this.input.division = this.input.division.value
-      } else if (type === 'department') {
+      } else if (type === 'departmentForm') {
         this.input.department = this.input.department.value
-      } else if (type === 'productSeries') {
+      } else if (type === 'productSeriesForm') {
         this.input.productSeries = this.input.productSeries.value
       }
     },
@@ -1948,33 +1982,7 @@ export default {
       var currentDate = strDate + '/' + strMonth + '/' + today.getFullYear()
       return currentDate
     },
-    getValueSelect (type) {
-      if (type === 'equipmentStatus') {
-        this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
-      }
-      if (type === 'equipmentStatusForm') {
-        this.input.equipmentStatus = this.input.equipmentStatus.value
-      }
-      if (type === 'assetStatus') {
-        this.searchVal.assetStatus = this.searchVal.assetStatus.value
-      }
-      if (type === 'productType') {
-        this.searchVal.productType = this.searchVal.productType.value
-      }
-      if (type === 'hubCode') {
-        this.searchVal.hubCode = this.searchVal.hubCode.value
-      }
-      if (type === 'bdfCode') {
-        this.searchVal.bdfCode = this.searchVal.bdfCode.value
-      }
-      if (type === 'assetStatusForm') {
-        this.input.equipmentUploadStatus = this.input.equipmentUploadStatus.value
-      }
-      if (type === 'assetStatusSelectForm') {
-        this.groupSelect.assetStatus = this.groupSelect.assetStatus.value
-        this.btnChangeStatus = true
-      }
-    },
+
     doRefresh () {
       this.input = {
         id: '',
@@ -2045,6 +2053,15 @@ export default {
         assetStatus: '',
         assetId: []
       }
+    },
+    showLoading () {
+      this.$q.loading.show({
+        spinner: QSpinnerDots,
+        spinnerColor: 'orange-10',
+        spinnerSize: 140,
+        backgroundColor: 'purple',
+        messageColor: 'black'
+      })
     }
   },
   beforeMount () {

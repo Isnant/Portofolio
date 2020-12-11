@@ -1,5 +1,6 @@
 <template>
-  <q-page padding>
+  <q-page>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT/ INDOOR EQUIPMENT</font>
     <div align="left" style="margin-bottom:30px; width:230px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">INDOOR EQUIPMENT</font>
       <q-separator color="purple-10" />
@@ -12,63 +13,76 @@
         :data="chartDataX"
         :options="chartOptionsX"
     /> -->
-   <fieldset class="fieldset_search" style="width: 100%; margin-bottom:20px">
-      <legend class="legedn_search">Search</legend>
+   <q-expansion-item
+      label="SEARCH"
+      header-class="bg-indigo-5 text-white"
+      style="margin-bottom:10px"
+      icon="search">
+      <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
+        <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+          <div class="row" style="width: 100%">
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-select
+                v-model="searchVal.equipmentStatus"
+                stack-label
+                label="Equipment Status"
+                color="purple-6"
+                :options="equipmentStatusList"
+                @input="getDropdownValue('equipmentStatusSearch')"
+              />
+            </div>
 
-      <div class="row" style="width: 100%">
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-input
+              v-model="searchVal.equipmentName"
+              stack-label
+              label="Equipment Name"
+              oninput="this.value = this.value.toUpperCase()"
+              class="text-uppercase"
+              color="purple-6"/>
+            </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 25%">
-          <q-select
-          v-model="searchVal.productType"
-          label="Product Type"
-          color="purple-6"
-          :options="productTypeList"/>
-        </div>
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-select
+              v-model="searchVal.productType"
+              label="Product Type"
+              color="purple-6"
+              :options="productTypeList"
+              @input="getDropdownValue('productTypeSearch')"
+              />
+            </div>
 
-        <div class="col-20" style="margin-right: 10px; width: 15%">
-          <q-input
-            v-model="searchVal.productSeries"
-            label="Product Series"
-            color="purple-6"
-            stack-label
-          />
-        </div>
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-select v-model="searchVal.productSeries"
+                :stack-label="true"
+                :options="filteredProductSeries"
+                @input="getDropdownValue('productSeriesSearch')"
+                @filter="doDropdownFilter"
+                label="Product Series"
+                use-input
+                fill-input
+                hide-selected
+                color="purple-6">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
 
-        <div class="col-20" style="margin-right: 10px;width: 20%">
-          <q-select
-            v-model="searchVal.hubCode"
-            label="Hub Code"
-            color="purple-6"
-            :options="hubCodeList"
-          />
-        </div>
-
-        <div class="col-20" style="margin-right: 10px;width: 20%">
-          <q-select
-            v-model="searchVal.bdfCode"
-            label="BDF Code"
-            color="purple-6"
-            :options="bdfCodeList"
-          />
-        </div>
-
-        <div class="col-20" style="margin-right: 10px; width: 10%">
-          <q-input
-            v-model="searchVal.nodeCode"
-            label="Node Code"
-            color="purple-6"
-            stack-label
-          />
-        </div>
-
-        <div class="col" style="width: 5%">
-          <q-btn round color="purple-10" @click="doMainEquipmentRefreshList()">
-            <q-icon name="search"/>
-            <q-tooltip>Search</q-tooltip>
-          </q-btn>
-        </div>
+            <div class="col" style="width: 5%">
+              <q-btn round color="purple-10" @click="doMainEquipmentRefreshList()">
+                <q-icon name="search"/>
+                <q-tooltip>Search</q-tooltip>
+              </q-btn>
+            </div>
+          </div>
+        </fieldset>
       </div>
-    </fieldset>
+    </q-expansion-item>
 
     <q-table
       :data="listOfEquipment"
