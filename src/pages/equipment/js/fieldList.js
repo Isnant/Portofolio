@@ -1,9 +1,15 @@
 import moment from 'moment'
-import { QSpinnerDots } from 'quasar'
+import showLoading from './loading.js'
+// import { QSpinnerDots } from 'quasar'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       isActive: false,
+      equipmentStatusListSearch: [],
+      productTypeListSearch: [],
+      assetStatusListSearch: [],
+      hubCodeListSearch: [],
       hubCodeName: '',
       migrationHistoryList: [],
       selected: [],
@@ -43,7 +49,6 @@ export default {
       equipmentStatusList: [],
       assetStatusList: [],
       assetStatusFormList: [],
-      assetStatusListSearch: [],
       hubCodeServiceList: [],
       hubCodeServiceSelected: [],
       migrationType: '',
@@ -120,7 +125,7 @@ export default {
       searchVal: {
         equipmentCategory: 'Field',
         productType: 'All',
-        productSeries: '',
+        productSeries: 'All',
         hubCode: 'All',
         bdfCode: 'All',
         nodeCode: '',
@@ -427,7 +432,6 @@ export default {
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
-      // this.$q.loading.show()
       this.showLoading()
       const userToken = localStorage.getItem('user-token')
       const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
@@ -437,7 +441,7 @@ export default {
       this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
-          this.constructSelectList(response)
+          this.constructSelectList(response, 'main')
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -490,28 +494,249 @@ export default {
 
       this.doMainRefresh(params)
     },
-    constructSelectList (response) {
-      this.assetCategoryList = response.data.listOfAssetStatus
-      this.productTypeList = response.data.listOfProductSubType.sort(this.compareValue)
-      this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
-      this.hubCodeList = response.data.listOfHubCode.sort(this.compareValue)
-      this.bdfCodeList = response.data.listOfBdf.sort(this.compareValue)
-      this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
-      this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
-      this.serviceList = response.data.listOfService.sort(this.compareValue)
-      this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
-      this.departmentList = response.data.listOfDepartment.sort(this.compareValue)
-      this.divisionList = response.data.listOfDivision.sort(this.compareValue)
-      this.propertyOfList = response.data.listOfPropertyOf.sort(this.compareValue)
-      this.capacityUnitsList = response.data.listOfCapacityUnits.sort(this.compareValue)
-      this.hubCodeRoomList = response.data.listOfHubCodeRoom.sort(this.compareValue)
-      this.assetStatusList = response.data.listAssetStatus
-      this.assetStatusListSearch = response.data.listAssetStatusSearch.sort(this.compareValue)
-      this.equipmentStatusList = response.data.listEquipmentStatus.sort(this.compareValue)
+    constructSelectList (response, type) {
+      if (type === 'main') {
+        this.equipmentStatusListSearch = response.data.listOfEquipmentStatusSearch.sort(this.compareValue)
+        this.productTypeListSearch = response.data.listOfProductTypeSearch.sort(this.compareValue)
+        this.assetStatusListSearch = response.data.listOfAssetStatusSearch.sort(this.compareValue)
+        this.hubCodeListSearch = response.data.listOfHubCodeSearch.sort(this.compareValue)
+        this.productSeriesList = response.data.listOfProductSeriesSearch.sort(this.compareValue)
+        this.assetStatusListSearch.unshift({ label: 'All', value: 'All' })
+        this.equipmentStatusListSearch.unshift({ label: 'All', value: 'All' })
+        this.productTypeListSearch.unshift({ label: 'All', value: 'All' })
+        this.productSeriesList.unshift({ label: 'All', value: 'All' })
+      } else if (type === 'detail') {
+        this.productTypeList = this.productTypeListSearch.filter(a => a.value !== 'All')
+        // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
+        this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'All')
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
+        this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
+        this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
+        this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
+        this.serviceList = response.data.listOfService.sort(this.compareValue)
+        this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
+        this.departmentList = response.data.listOfDepartment.sort(this.compareValue)
+        this.divisionList = response.data.listOfDivision.sort(this.compareValue)
+        this.propertyOfList = response.data.listOfPropertyOf.sort(this.compareValue)
+        this.capacityUnitsList = response.data.listOfCapacityUnits.sort(this.compareValue)
+        this.hubCodeRoomList = response.data.listOfHubCodeRoom.sort(this.compareValue)
+      }
+    },
 
-      this.assetStatusListSearch.unshift({ label: 'All', value: 'All' })
-      this.equipmentStatusList.unshift({ label: 'All', value: 'All' })
-      this.productTypeList.unshift({ label: 'All', value: 'All' })
+    // == Start Form Detail ==
+    doEdit (cell) {
+      this.showLoading()
+      this.input = JSON.parse(JSON.stringify(cell.row))
+      this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
+      this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
+      this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
+      var assetId = cell.row.id.toString()
+      this.$axios.get(`${process.env.urlPrefix}getFieldEquipmentDetail`, {
+        params: {
+          assetId: assetId
+        }
+      })
+        .then((response) => {
+          this.constructSelectList(response, 'detail')
+          this.migrationHistoryList = response.data.listOfMigrationHistory
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+      this.$q.loading.hide()
+      this.modalAddNewAsset = true
+    },
+    getDropdownValue (type) {
+      // search bar
+      if (type === 'equipmentStatusSearch') {
+        this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
+      }
+      if (type === 'productTypeSearch') {
+        this.searchVal.productType = this.searchVal.productType.value
+      }
+      if (type === 'productSeriesSearch') {
+        this.searchVal.productSeries = this.searchVal.productSeries.value
+      }
+      if (type === 'assetStatusSearch') {
+        this.searchVal.assetStatus = this.searchVal.assetStatus.value
+      }
+      if (type === 'hubCodeSearch') {
+        this.searchVal.hubCode = this.searchVal.hubCode.value
+      }
+      if (type === 'bdfCodeSearch') {
+        this.searchVal.bdfCode = this.searchVal.bdfCode.value
+      }
+
+      // form detail
+      if (type === 'equipmentStatusForm') {
+        this.input.equipmentStatus = this.input.equipmentStatus.value
+      }
+      if (type === 'assetStatusForm') {
+        this.input.equipmentUploadStatus = this.input.equipmentUploadStatus.value
+      }
+      if (type === 'assetStatusSelectForm') {
+        this.groupSelect.assetStatus = this.groupSelect.assetStatus.value
+        this.btnChangeStatus = true
+      }
+      if (type === 'statusReasonForm') {
+        this.input.statusReason = this.input.statusReason.value
+      } else if (type === 'hubCodeForm') {
+        this.input.hubCode = this.input.hubCode.value
+      } else if (type === 'hubCodeRoomForm') {
+        this.input.hubCodeRoom = this.input.hubCodeRoom.value
+      } else if (type === 'serviceForm') {
+        this.input.service = this.input.service.value
+      } else if (type === 'technologyForm') {
+        this.input.technology = this.input.technology.value
+      } else if (type === 'capacityUnitsForm') {
+        this.input.capacityUnits = this.input.capacityUnits.value
+      } else if (type === 'divisionForm') {
+        this.input.division = this.input.division.value
+      } else if (type === 'departmentForm') {
+        this.input.department = this.input.department.value
+      } else if (type === 'productSeriesForm') {
+        this.input.productSeries = this.input.productSeries.value
+      } else if (type === 'brand') {
+        this.input.brand = this.input.brand.value
+      } else if (type === 'productSubType') {
+        this.input.productSubType = this.input.productSubType.value
+      }
+    },
+    doDropdownFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredProductSeries = this.productSeriesList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    getSubType () {
+      this.$q.loading.show()
+      this.input.productType = this.input.productType.value
+      this.$axios.get(`${process.env.urlPrefix}getSubType`, {
+        params: {
+          pid: this.input.productType
+        }
+      })
+        .then((response) => {
+          this.subTypeList = response.data.map(data => ({
+            label: data.id.toUpperCase(),
+            value: data.id.toUpperCase()
+          }))
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
+    getBrand () {
+      this.$q.loading.show()
+      this.input.manufacturer = this.input.manufacturer.value
+      this.$axios.get(`${process.env.urlPrefix}getBrand`, {
+        params: {
+          description: this.input.manufacturer
+        }
+      })
+        .then((response) => {
+          this.brandList = response.data.map(data => ({
+            label: data.brand.toUpperCase(),
+            value: data.brand.toUpperCase()
+          }))
+          // this.brandList = response.data.map(brand => brand.brand)
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
+    changeColorNodeCode () {
+      if (this.input.nodeCode.length === 6) {
+        this.psCodeValidation()
+        this.amplifierCodeValidation()
+      }
+      if (this.input.nodeCode.length === 8) {
+        this.blueNodeCode = true
+        this.orangeNodeCode = false
+      } else {
+        this.blueNodeCode = false
+        this.orangeNodeCode = true
+      }
+    },
+    nodeInput () {
+      this.psCodeValidation()
+      this.amplifierCodeValidation()
+    },
+    changeColorPsCode () {
+      if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
+        this.psCodeValidation()
+      } else {
+        this.psCodeWarningText = 'Input Power Suply Code in 6/7 characters'
+        this.bluePsCode = false
+        this.orangePsCode = true
+      }
+    },
+    psCodeValidation () {
+      if (this.input.nodeCode.length >= 6) {
+        this.psCodeWarningText = ''
+        var node = this.input.nodeCode.substring(0, 6)
+        if (this.input.psCode.length >= 6) {
+          var ps = this.input.psCode.substring(0, 6)
+          if (node !== ps) {
+            this.psCodeWarningText = '6 digit pertama harus sama dengan Node Code'
+            this.bluePsCode = false
+            this.orangePsCode = true
+          } else {
+            this.bluePsCode = true
+            this.orangePsCode = false
+          }
+        }
+      } else {
+        this.psCodeWarningText = 'Node Code Belum lengkap'
+        this.bluePsCode = false
+        this.orangePsCode = true
+      }
+    },
+    changeColorAmplifierCode () {
+      if (this.input.amplifierCode.length === 10) {
+        this.amplifierCodeValidation()
+      } else {
+        this.amplifierCodeWarningText = 'Input Amplifier Code in 10 characters'
+        this.blueAmplifierCode = false
+        this.orangeAmplifierCode = true
+      }
+    },
+    amplifierCodeValidation () {
+      if (this.input.nodeCode.length >= 6) {
+        this.amplifierCodeWarningText = ''
+        var node = this.input.nodeCode.substring(0, 6)
+        if (this.input.amplifierCode.length >= 6) {
+          var ps = this.input.amplifierCode.substring(0, 6)
+          if (node !== ps) {
+            this.amplifierCodeWarningText = '6 digit pertama harus sama dengan Node Code'
+            this.blueAmplifierCode = false
+            this.orangeAmplifierCode = true
+          } else {
+            this.blueAmplifierCode = true
+            this.orangeAmplifierCode = false
+          }
+        }
+      } else {
+        this.amplifierCodeWarningText = 'Node Code Belum lengkap'
+        this.blueAmplifierCode = false
+        this.orangeAmplifierCode = true
+      }
     },
     saveEquipment () {
       // field
@@ -631,6 +856,8 @@ export default {
           this.$q.loading.hide()
         })
     },
+    // == End Form Detail ==
+
     doAttachFile (file) {
       let fr = new FileReader()
       this.uploadButton = true
@@ -1674,222 +1901,6 @@ export default {
         this.input.amplifierCode = ''
       }
     },
-    getSubType () {
-      this.$q.loading.show()
-      this.input.productType = this.input.productType.value
-      this.$axios.get(`${process.env.urlPrefix}getSubType`, {
-        params: {
-          pid: this.input.productType
-        }
-      })
-        .then((response) => {
-          this.subTypeList = response.data.map(data => ({
-            label: data.id.toUpperCase(),
-            value: data.id.toUpperCase()
-          }))
-          this.$q.loading.hide()
-        })
-        .catch((error) => {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.$q.loading.hide()
-        })
-    },
-    getSubTypeValue () {
-      this.input.productSubType = this.input.productSubType.value
-    },
-    getDropdownValue (type) {
-      if (type === 'equipmentStatusSearch') {
-        this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
-      }
-      if (type === 'productTypeSearch') {
-        this.searchVal.productType = this.searchVal.productType.value
-      }
-      if (type === 'productSeriesSearch') {
-        this.searchVal.productSeries = this.searchVal.productSeries.value
-      }
-      if (type === 'assetStatusSearch') {
-        this.searchVal.assetStatus = this.searchVal.assetStatus.value
-      }
-      if (type === 'hubCodeSearch') {
-        this.searchVal.hubCode = this.searchVal.hubCode.value
-      }
-      if (type === 'bdfCodeSearch') {
-        this.searchVal.bdfCode = this.searchVal.bdfCode.value
-      }
-
-      // form
-      if (type === 'equipmentStatusForm') {
-        this.input.equipmentStatus = this.input.equipmentStatus.value
-      }
-      if (type === 'assetStatusForm') {
-        this.input.equipmentUploadStatus = this.input.equipmentUploadStatus.value
-      }
-      if (type === 'assetStatusSelectForm') {
-        this.groupSelect.assetStatus = this.groupSelect.assetStatus.value
-        this.btnChangeStatus = true
-      }
-      if (type === 'statusReasonForm') {
-        this.input.statusReason = this.input.statusReason.value
-      } else if (type === 'hubCodeForm') {
-        this.input.hubCode = this.input.hubCode.value
-      } else if (type === 'hubCodeRoomForm') {
-        this.input.hubCodeRoom = this.input.hubCodeRoom.value
-      } else if (type === 'serviceForm') {
-        this.input.service = this.input.service.value
-      } else if (type === 'technologyForm') {
-        this.input.technology = this.input.technology.value
-      } else if (type === 'capacityUnitsForm') {
-        this.input.capacityUnits = this.input.capacityUnits.value
-      } else if (type === 'divisionForm') {
-        this.input.division = this.input.division.value
-      } else if (type === 'departmentForm') {
-        this.input.department = this.input.department.value
-      } else if (type === 'productSeriesForm') {
-        this.input.productSeries = this.input.productSeries.value
-      }
-    },
-    doDropdownFilter (val, update) {
-      update(() => {
-        const needle = val.toLowerCase()
-        this.filteredProductSeries = this.productSeriesList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
-      })
-    },
-    convertManufacturer () {
-      this.input.manufacturer = this.input.manufacturer.value
-    },
-    getBrand () {
-      this.$q.loading.show()
-      this.input.manufacturer = this.input.manufacturer.value
-      this.$axios.get(`${process.env.urlPrefix}getBrand`, {
-        params: {
-          description: this.input.manufacturer
-        }
-      })
-        .then((response) => {
-          this.brandList = response.data.map(data => ({
-            label: data.brand.toUpperCase(),
-            value: data.brand.toUpperCase()
-          }))
-          // this.brandList = response.data.map(brand => brand.brand)
-          this.$q.loading.hide()
-        })
-        .catch((error) => {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-          this.$q.loading.hide()
-        })
-    },
-    convertBrand () {
-      this.input.brand = this.input.brand.value
-    },
-    doEdit (cell) {
-      this.input = JSON.parse(JSON.stringify(cell.row))
-      this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
-      this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
-      this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
-      var assetId = cell.row.id.toString()
-      this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryByAssetId`, {
-        params: {
-          assetId: assetId
-        }
-      })
-        .then((response) => {
-          this.migrationHistoryList = response.data
-        })
-        .catch((error) => {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-        })
-      this.$q.loading.hide()
-      this.modalAddNewAsset = true
-    },
-    changeColorNodeCode () {
-      if (this.input.nodeCode.length === 6) {
-        this.psCodeValidation()
-        this.amplifierCodeValidation()
-      }
-      if (this.input.nodeCode.length === 8) {
-        this.blueNodeCode = true
-        this.orangeNodeCode = false
-      } else {
-        this.blueNodeCode = false
-        this.orangeNodeCode = true
-      }
-    },
-    nodeInput () {
-      this.psCodeValidation()
-      this.amplifierCodeValidation()
-    },
-    changeColorPsCode () {
-      if (this.input.psCode.length === 6 || this.input.psCode.length === 7) {
-        this.psCodeValidation()
-      } else {
-        this.psCodeWarningText = 'Input Power Suply Code in 6/7 characters'
-        this.bluePsCode = false
-        this.orangePsCode = true
-      }
-    },
-    psCodeValidation () {
-      if (this.input.nodeCode.length >= 6) {
-        this.psCodeWarningText = ''
-        var node = this.input.nodeCode.substring(0, 6)
-        if (this.input.psCode.length >= 6) {
-          var ps = this.input.psCode.substring(0, 6)
-          if (node !== ps) {
-            this.psCodeWarningText = '6 digit pertama harus sama dengan Node Code'
-            this.bluePsCode = false
-            this.orangePsCode = true
-          } else {
-            this.bluePsCode = true
-            this.orangePsCode = false
-          }
-        }
-      } else {
-        this.psCodeWarningText = 'Node Code Belum lengkap'
-        this.bluePsCode = false
-        this.orangePsCode = true
-      }
-    },
-    changeColorAmplifierCode () {
-      if (this.input.amplifierCode.length === 10) {
-        this.amplifierCodeValidation()
-      } else {
-        this.amplifierCodeWarningText = 'Input Amplifier Code in 10 characters'
-        this.blueAmplifierCode = false
-        this.orangeAmplifierCode = true
-      }
-    },
-    amplifierCodeValidation () {
-      if (this.input.nodeCode.length >= 6) {
-        this.amplifierCodeWarningText = ''
-        var node = this.input.nodeCode.substring(0, 6)
-        if (this.input.amplifierCode.length >= 6) {
-          var ps = this.input.amplifierCode.substring(0, 6)
-          if (node !== ps) {
-            this.amplifierCodeWarningText = '6 digit pertama harus sama dengan Node Code'
-            this.blueAmplifierCode = false
-            this.orangeAmplifierCode = true
-          } else {
-            this.blueAmplifierCode = true
-            this.orangeAmplifierCode = false
-          }
-        }
-      } else {
-        this.amplifierCodeWarningText = 'Node Code Belum lengkap'
-        this.blueAmplifierCode = false
-        this.orangeAmplifierCode = true
-      }
-    },
     downloadExcel (props) {
       this.$q.loading.show()
       this.$axios.get(`${process.env.urlPrefix}fieldExcelDownload`, {
@@ -2053,15 +2064,6 @@ export default {
         assetStatus: '',
         assetId: []
       }
-    },
-    showLoading () {
-      this.$q.loading.show({
-        spinner: QSpinnerDots,
-        spinnerColor: 'orange-10',
-        spinnerSize: 140,
-        backgroundColor: 'purple',
-        messageColor: 'black'
-      })
     }
   },
   beforeMount () {

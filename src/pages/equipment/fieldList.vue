@@ -29,7 +29,7 @@
                 stack-label
                 label="Equipment Status"
                 color="purple-6"
-                :options="equipmentStatusList"
+                :options="equipmentStatusListSearch"
                 @input="getDropdownValue('equipmentStatusSearch')"
               />
             </div>
@@ -49,7 +49,7 @@
               v-model="searchVal.productType"
               label="Product Type"
               color="purple-6"
-              :options="productTypeList"
+              :options="productTypeListSearch"
               @input="getDropdownValue('productTypeSearch')"
               />
             </div>
@@ -98,7 +98,7 @@
                 v-model="searchVal.hubCode"
                 label="Hub Code"
                 color="purple-6"
-                :options="hubCodeList"
+                :options="hubCodeListSearch"
                 @input="getDropdownValue('hubCodeSearch')"
               />
             </div>
@@ -291,7 +291,7 @@
               <q-select v-model="input.productSubType"
                 :stack-label="true"
                 :options="subTypeList"
-                @input="getSubTypeValue()"
+                @input="getDropdownValue('productSubType')"
                 label="Product Sub Type"
                 tabindex="5"/>
               <!-- </div> -->
@@ -333,7 +333,7 @@
                 :rules="[val => !! val || 'Brand is required']"
                 :stack-label="true"
                 label="Brand*"
-                @input="convertBrand()"
+                @input="getDropdownValue('brand')"
                 :options="brandList"
                 tabindex="8"/>
             </div>
