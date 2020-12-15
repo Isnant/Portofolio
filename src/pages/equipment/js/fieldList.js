@@ -501,6 +501,7 @@ export default {
         this.assetStatusListSearch = response.data.listOfAssetStatusSearch.sort(this.compareValue)
         this.hubCodeListSearch = response.data.listOfHubCodeSearch.sort(this.compareValue)
         this.productSeriesList = response.data.listOfProductSeriesSearch.sort(this.compareValue)
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
         this.assetStatusListSearch.unshift({ label: 'All', value: 'All' })
         this.equipmentStatusListSearch.unshift({ label: 'All', value: 'All' })
         this.productTypeListSearch.unshift({ label: 'All', value: 'All' })
