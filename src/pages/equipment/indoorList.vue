@@ -27,7 +27,7 @@
                 stack-label
                 label="Equipment Status"
                 color="purple-6"
-                :options="equipmentStatusList"
+                :options="equipmentStatusListSearch"
                 @input="getDropdownValue('equipmentStatusSearch')"
               />
             </div>
@@ -47,7 +47,7 @@
               v-model="searchVal.productType"
               label="Product Type"
               color="purple-6"
-              :options="productTypeList"
+              :options="productTypeListSearch"
               @input="getDropdownValue('productTypeSearch')"
               />
             </div>
@@ -168,7 +168,7 @@
 
     <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
       <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+        <q-bar class="bg-indigo-10 text-white">
         <strong>Indoor Equipment Form</strong>
         <q-space/>
         <q-btn dense flat icon="close" v-close-popup/>
@@ -205,11 +205,24 @@
                 :options="subTypeList"
                 label="Product Sub Type*"
                 tabindex="5"/>
-              <q-input v-model="input.productSeries" ref="hProductSeries"
-                :rules="[val => !! val || 'Product Series is required']"
+              <q-select v-model="searchVal.productSeries"
                 :stack-label="true"
-                label="Product Series*"
-                tabindex="6"/>
+                :options="filteredProductSeries"
+                @input="getDropdownValue('productSeriesSearch')"
+                @filter="doDropdownFilter"
+                label="Product Series"
+                use-input
+                fill-input
+                hide-selected
+                input-debounce="500">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
               <q-select v-model="input.manufacturer" ref="hManufacturer"
                 :rules="[val => !! val || 'Manufacturer is required']"
                 :stack-label="true"
@@ -254,11 +267,13 @@
                 :stack-label="true"
                 label="Slot*"
                 tabindex="14"/>
-              <q-input v-model="input.hubCode" ref="hHubCode"
+              <q-select v-model="input.hubCode" ref="fHubCode"
                 :rules="[val => !! val || 'Hub Code is required']"
                 :stack-label="true"
                 label="Hub Code*"
-                tabindex="15"/>
+                tabindex="15"
+                :options="hubCodeList"
+                 @input="getDropdownValue('hubCodeForm')"/>
               <q-input v-model="input.hubAddress" ref="hHubAddress"
                 :rules="[val => !! val || 'Hub Address is required']"
                 :stack-label="true"
@@ -283,20 +298,24 @@
                 label="Amplifier Code"
                 tabindex="20"
                 style="margin-top:20px"/> -->
-              <q-input v-model="input.service"
+              <q-select v-model="input.service" ref="fService"
+                :rules="[val => !! val || 'Service is required']"
                 :stack-label="true"
-                label="Service"
-                tabindex="21"/>
-              <q-input v-model="input.technology"
+                label="Service*"
+                tabindex="21"
+                :options="serviceList"
+                 @input="getDropdownValue('serviceForm')"/>
+              <q-select v-model="input.technology" ref="fTechnology"
+                :rules="[val => !! val || 'Technology is required']"
                 :stack-label="true"
-                label="Technology"
+                label="Technology*"
                 tabindex="22"
-                style="margin-top:20px"/>
+                :options="technologyList"
+                 @input="getDropdownValue('technologyForm')"/>
               <q-input v-model="input.ipAddress"
                 :stack-label="true"
                 label="IP Address"
-                tabindex="23"
-                style="margin-top:20px"/>
+                tabindex="23"/>
               <q-input v-model="input.macAddress"
                 :stack-label="true"
                 label="MAC Address"
@@ -304,14 +323,25 @@
                 style="margin-top:20px"/>
             </div>
             <div class="col">
+              <q-select
+                v-model="input.equipmentStatus"
+                stack-label
+                label="Status"
+                color="purple-6"
+                :options="equipmentStatusList"
+                tabindex="42"
+                @input="getDropdownValue('equipmentStatusForm')"/>
               <q-input v-model="input.capacity"
                 :stack-label="true"
                 label="Capacity"
-                tabindex="25"/>
-              <q-input v-model="input.capacityUnits"
+                tabindex="25"
+                style="margin-top:20px"/>
+              <q-select v-model="input.capacityUnits"
                 :stack-label="true"
                 label="Capacity Units"
                 tabindex="26"
+                :options="capacityUnitsList"
+                @input="getDropdownValue('capacityUnitsForm')"
                 style="margin-top:20px"/>
               <q-input v-model="input.usedCapacity"
                 :stack-label="true"
@@ -395,21 +425,25 @@
                 label="Division*"
                 tabindex="39"
                 style="margin-top:20px"/>
-              <q-input v-model="input.department" ref="hDepartment"
+               <q-select v-model="input.department" ref="fDepartment"
                 :rules="[val => !! val || 'Department is required']"
                 :stack-label="true"
                 label="Department*"
-                tabindex="40"/>
+                tabindex="40"
+                :options="departmentList"
+                 @input="getDropdownValue('departmentForm')"/>
               <q-input v-model="input.propertyOf" ref="hPropertyOf"
                 :rules="[val => !! val || 'Property Of is required']"
                 :stack-label="true"
                 label="Property Of*"
                 tabindex="41"/>
-              <q-input v-model="input.equipmentStatus" ref="hEquipmentStatus"
-                :rules="[val => !! val || 'Status Reason is required']"
+              <q-select v-model="input.statusReason" ref="fStatusReason"
+               :rules="[val => !! val || 'Status Reason is required']"
                 :stack-label="true"
                 label="Status Reason*"
-                tabindex="42"/>
+                tabindex="42"
+                :options="statusReasonList"
+                 @input="getDropdownValue('statusReasonForm')"/>
               <q-input v-model="input.remarks"
                 :stack-label="true"
                 label="Remarks"

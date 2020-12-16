@@ -1,3 +1,4 @@
+import moment from 'moment'
 export default {
   data () {
     return {
@@ -85,7 +86,7 @@ export default {
       searchVal: {
         equipmentCategory: 'Hub',
         productType: 'All',
-        productSeries: '',
+        productSeries: 'All',
         hubCode: 'All',
         bdfCode: 'All',
         nodeCode: '',
@@ -211,14 +212,7 @@ export default {
       })
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
-          this.productTypeList = response.data.listOfProductSubType.sort(this.compareValue)
-          this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
-          this.equipmentStatusList = response.data.listEquipmentStatus.sort(this.compareValue)
-          // this.assetCategoryList = response.data.listOfAssetCategory
-          // this.productTypeList = response.data.listOfProductSubType.map(productType => productType.value)
-          // this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
-          // this.bdfCodeList = response.data.listOfBdf
-          // this.manufacturerList = response.data.listOfManufacturer
+          this.constructSelectList(response, 'main')
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -247,6 +241,78 @@ export default {
             message: error
           })
         })
+    },
+    constructSelectList (response, type) {
+      if (type === 'main') {
+        this.equipmentStatusListSearch = response.data.listOfEquipmentStatusSearch.sort(this.compareValue)
+        this.productTypeListSearch = response.data.listOfProductTypeSearch.sort(this.compareValue)
+        this.productSeriesList = response.data.listOfProductSeriesSearch.sort(this.compareValue)
+        this.equipmentStatusListSearch.unshift({ label: 'All', value: 'All' })
+        this.productTypeListSearch.unshift({ label: 'All', value: 'All' })
+        this.productSeriesList.unshift({ label: 'All', value: 'All' })
+      } else if (type === 'detail') {
+        this.productTypeList = this.productTypeListSearch.filter(a => a.value !== 'All')
+        // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
+        this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
+        this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
+        this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
+        this.serviceList = response.data.listOfService.sort(this.compareValue)
+        this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
+        this.departmentList = response.data.listOfDepartment.sort(this.compareValue)
+        this.divisionList = response.data.listOfDivision.sort(this.compareValue)
+        this.propertyOfList = response.data.listOfPropertyOf.sort(this.compareValue)
+        this.capacityUnitsList = response.data.listOfCapacityUnits.sort(this.compareValue)
+        this.hubCodeRoomList = response.data.listOfHubCodeRoom.sort(this.compareValue)
+      }
+    },
+    doMainEquipmentRefreshList () {
+      const params = {
+        pageIndex: 0,
+        pageSize: this.equipmentPagination.rowsPerPage,
+        searchVal: this.searchVal,
+        sortBy: this.equipmentPagination.sortBy,
+        descending: this.equipmentPagination.descending
+      }
+
+      this.doMainRefresh(params)
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        searchVal: this.searchVal,
+        sortBy: sortBy,
+        descending: descending
+      }
+
+      this.doMainRefresh(params)
+    },
+    getSelectOptionForDetail () {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getHubEquipmentDetailSelectOption`, {})
+        .then((response) => {
+          console.log(response.data)
+          this.constructSelectList(response, 'detail')
+          this.modalAddNewAsset = true
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
+    doEdit (cell) {
+      this.$q.loading.show()
+      this.input = JSON.parse(JSON.stringify(cell.row))
+      this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
+      this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
+      this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
+      this.getSelectOptionForDetail()
     },
     saveEquipment () {
       this.$refs.hEquipmentName.validate()
@@ -317,29 +383,6 @@ export default {
           })
           this.$q.loading.hide()
         })
-    },
-    doMainEquipmentRefreshList () {
-      const params = {
-        pageIndex: 0,
-        pageSize: this.equipmentPagination.rowsPerPage,
-        searchVal: this.searchVal,
-        sortBy: this.equipmentPagination.sortBy,
-        descending: this.equipmentPagination.descending
-      }
-
-      this.doMainRefresh(params)
-    },
-    doMainEquipmentChangePage (props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination
-      const params = {
-        pageIndex: page - 1,
-        pageSize: rowsPerPage,
-        searchVal: this.searchVal,
-        sortBy: sortBy,
-        descending: descending
-      }
-
-      this.doMainRefresh(params)
     },
     doAttachFile (file) {
       let fr = new FileReader()
@@ -425,10 +468,6 @@ export default {
           })
           this.$q.loading.hide()
         })
-    },
-    doEdit (cell) {
-      this.input = JSON.parse(JSON.stringify(cell.row))
-      this.modalAddNewAsset = true
     },
     downloadExcel (props) {
       this.$q.loading.show()

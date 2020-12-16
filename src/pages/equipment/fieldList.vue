@@ -197,7 +197,7 @@
         <q-tooltip>Upload</q-tooltip>
       </q-btn> -->
       <q-fab color="orange-6" glossy icon="keyboard_arrow_down" direction="down">
-        <q-btn round color="orange-5" text-color="white" @click.native="modalAddNewAsset=true" icon="add">
+        <q-btn round color="orange-5" text-color="white" @click.native="getSelectOptionForDetail" icon="add">
           <q-tooltip>Add</q-tooltip>
         </q-btn>
         <q-btn round color="orange-5" text-color="white" @click.native="modalUpload=true" icon="backup">
@@ -944,7 +944,7 @@
             v-model="groupSelect.assetStatus"
             stack-label
             label="Asset Status"
-            :options="assetStatusList"
+            :options="assetStatusListSe"
             @input="getDropdownValue('assetStatusSelectForm')"/>
          <div align="right" style="margin-top:20px">
           <q-btn v-show="btnChangeStatus" round @click.native="changeSelectedStatus" color="orange-5" icon="save">

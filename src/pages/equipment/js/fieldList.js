@@ -506,10 +506,10 @@ export default {
         this.equipmentStatusListSearch.unshift({ label: 'All', value: 'All' })
         this.productTypeListSearch.unshift({ label: 'All', value: 'All' })
         this.productSeriesList.unshift({ label: 'All', value: 'All' })
+        this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'All')
       } else if (type === 'detail') {
         this.productTypeList = this.productTypeListSearch.filter(a => a.value !== 'All')
         // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
-        this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'All')
         this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
         this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
         this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
@@ -531,15 +531,15 @@ export default {
       this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
       this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
       this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
-      var assetId = cell.row.id.toString()
-      this.$axios.get(`${process.env.urlPrefix}getFieldEquipmentDetail`, {
-        params: {
-          assetId: assetId
-        }
-      })
+      this.getMigrationHistory(cell)
+      this.getSelectOptionForDetail()
+      this.modalAddNewAsset = true
+    },
+    getSelectOptionForDetail () {
+      this.$axios.get(`${process.env.urlPrefix}getFieldEquipmentDetailSelectOption`, {})
         .then((response) => {
           this.constructSelectList(response, 'detail')
-          this.migrationHistoryList = response.data.listOfMigrationHistory
+          this.modalAddNewAsset = true
         })
         .catch((error) => {
           this.$q.notify({
@@ -549,7 +549,25 @@ export default {
           })
         })
       this.$q.loading.hide()
-      this.modalAddNewAsset = true
+    },
+    getMigrationHistory (cell) {
+      var assetId = cell.row.id.toString()
+      this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryByAssetId`, {
+        params: {
+          assetId: assetId
+        }
+      })
+        .then((response) => {
+          this.migrationHistoryList = response.data
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+      this.$q.loading.hide()
     },
     getDropdownValue (type) {
       // search bar
