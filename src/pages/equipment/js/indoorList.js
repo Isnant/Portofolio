@@ -292,7 +292,6 @@ export default {
       this.$q.loading.show()
       this.$axios.get(`${process.env.urlPrefix}getHubEquipmentDetailSelectOption`, {})
         .then((response) => {
-          console.log(response.data)
           this.constructSelectList(response, 'detail')
           this.modalAddNewAsset = true
           this.$q.loading.hide()
