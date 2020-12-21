@@ -1,9 +1,18 @@
 <template>
   <q-page>
-     <div align="left" style="margin-bottom:30px; margin-top:20px;width:290px">
-      <font size="5" class="text-bold" style="margin-bottom: 10px">EQUIPMENT UPLOAD LOG</font>
-      <q-separator color="purple-10" />
-      <q-separator color="purple-10" />
+    <font size="1" class="text-bold" color="grey">EQUIPMENT/ UPLOAD LOG BATCH</font>
+    <div align="left" style="margin-bottom:30px;width:230px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">UPLOAD LOG BATCH</font>
+      <div class="row">
+        <div class="col-20" style="width: 32%">
+          <q-separator color="orange-10" />
+          <q-separator color="orange-10" />
+        </div>
+        <div class="col">
+          <q-separator color="purple-10" />
+          <q-separator color="purple-10" />
+        </div>
+      </div>
     </div>
 
      <!-- <div class="row" style="margin-buttom:20px">
@@ -36,7 +45,7 @@
         :data="dataList"
         :columns="tableColumns"
         :pagination.sync="pagination"
-        table-header-class="text-white bg-indigo-8"
+        table-header-class="text-indigo-10 bg-indigo-2"
         @request="doMainEquipmentChangePage"
         row-key="id"
         dense>

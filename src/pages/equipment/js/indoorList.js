@@ -1,5 +1,7 @@
 import moment from 'moment'
+import showLoading from './loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       file: undefined,
@@ -199,10 +201,12 @@ export default {
     doMainFillTableResult (pagedEquipment) {
       this.listOfEquipment = pagedEquipment.content
       this.equipmentPagination.rowsNumber = pagedEquipment.totalElements
+      this.equipmentPagination.rowsPerPage = pagedEquipment.pageable.pageSize
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       const userToken = localStorage.getItem('user-token')
       const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
       if (authorities.findIndex(x => x === 'ROLE_04') === -1) {
@@ -221,11 +225,12 @@ export default {
             icon: 'report_problem',
             message: error
           })
+          this.$q.loading.hide()
         })
     },
     doMainRefresh (params) {
-      this.$q.loading.show()
-
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getIndoorPagedEquipment/`, {
         params: params
       })
@@ -289,7 +294,8 @@ export default {
       this.doMainRefresh(params)
     },
     getSelectOptionForDetail () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getHubEquipmentDetailSelectOption`, {})
         .then((response) => {
           this.constructSelectList(response, 'detail')
@@ -306,7 +312,8 @@ export default {
         })
     },
     doEdit (cell) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.input = JSON.parse(JSON.stringify(cell.row))
       this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
       this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
@@ -353,7 +360,8 @@ export default {
       }
     },
     doSaveEquipment () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
           if (response.data === 'success') {
@@ -396,7 +404,8 @@ export default {
       this.uploadButton = false
     },
     doUploadFile () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}uploadIndoor`, this.fileAttach)
         .then((response) => {
           this.$q.loading.hide()
@@ -428,7 +437,8 @@ export default {
         })
     },
     getSubType () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
           pid: this.input.productType
@@ -448,7 +458,8 @@ export default {
         })
     },
     getBrand () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
@@ -469,7 +480,8 @@ export default {
         })
     },
     downloadExcel (props) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}fieldExcelDownload`, {
         responseType: 'arraybuffer',
         params: {

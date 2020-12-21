@@ -105,7 +105,7 @@
             <q-icon name="app_settings_alt" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Equipment Upload Log</q-item-label>
+            <q-item-label>Upload Log Batch</q-item-label>
           </q-item-section>
         </q-item>
         <q-expansion-item

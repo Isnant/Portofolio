@@ -552,6 +552,7 @@ export default {
     },
     getMigrationHistory (cell) {
       var assetId = cell.row.id.toString()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryByAssetId`, {
         params: {
           assetId: assetId
@@ -632,7 +633,8 @@ export default {
       })
     },
     getSubType () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.input.productType = this.input.productType.value
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
@@ -656,7 +658,8 @@ export default {
         })
     },
     getBrand () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
@@ -850,7 +853,8 @@ export default {
       }
     },
     doSaveEquipment () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(String(this.input.purchasedDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(String(this.input.installationDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(String(this.input.updateDistanceDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
@@ -890,7 +894,8 @@ export default {
       this.uploadButton = false
     },
     doUploadFile (file) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}uploadField`, this.fileAttach)
         .then((response) => {
           this.$q.loading.hide()
@@ -922,7 +927,8 @@ export default {
         })
     },
     doUploadAfterWarning () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}uploadFieldAfterWarning`)
         .then((response) => {
           this.$q.loading.hide()
@@ -1066,7 +1072,8 @@ export default {
       }
     },
     getMigrationEquipment (nodeCodeParam) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getNodeChildMig`, { params: { nodeCode: nodeCodeParam } })
         .then((response) => {
           this.migrationListOriginal = response.data.listNodeChildMig
@@ -1278,7 +1285,8 @@ export default {
 
           this.doMigrationInitializeList()
         } else {
-          this.$q.loading.show()
+          // this.$q.loading.show()
+          this.showLoading()
           this.$axios.get(`${process.env.urlPrefix}getLastAmpliPs/`, { params: { nodeCode: this.equipmentToMigrate.newNodeCode } })
             .then((response) => {
               this.lastCodes = response.data
@@ -1446,7 +1454,7 @@ export default {
       const newPowerSupply = {
         id: 'X' + this.equipmentToMigrate.migrationListNew.length,
         equipmentName: '',
-        productType: 'FIBERNODE',
+        productType: '',
         originalProductType: '',
         hubCode: this.equipmentToMigrate.newHubCode,
         predecessor: this.equipmentToMigrate.newNodeCode + '00',
@@ -1792,8 +1800,8 @@ export default {
       this.$refs.targetPreview.expandAll()
     },
     doMigrationValidate () {
-      this.$q.loading.show()
-
+      // this.$q.loading.show()
+      this.showLoading()
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         if (this.equipmentToMigrate.migrationListNew[i].productType !== 'POWER SUPPLY') {
           this.equipmentToMigrate.migrationListNew[i].amplifierCode = (this.equipmentToMigrate.migrationListNew[i].newName +
@@ -1860,8 +1868,8 @@ export default {
       }
     },
     doMigrationExecute () {
-      this.$q.loading.show()
-
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}doExecuteMigration/`, this.equipmentToMigrate)
         .then((response) => {
           if (response.data.length === 0) {
@@ -1921,7 +1929,8 @@ export default {
       }
     },
     downloadExcel (props) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}fieldExcelDownload`, {
         responseType: 'arraybuffer',
         params: {
@@ -1948,7 +1957,8 @@ export default {
         })
     },
     changeSelectedStatus () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.groupSelect.assetId = []
       for (let i = 0; i < this.selected.length; i++) {
         this.groupSelect.assetId.push(this.selected[i].id)

@@ -3,8 +3,16 @@
     <font size="1" class="text-bold" color="grey">EQUIPMENT/ INDOOR EQUIPMENT</font>
     <div align="left" style="margin-bottom:30px; width:230px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">INDOOR EQUIPMENT</font>
-      <q-separator color="purple-10" />
-      <q-separator color="purple-10" />
+      <div class="row">
+        <div class="col-20" style="width: 32%">
+          <q-separator color="orange-10" />
+          <q-separator color="orange-10" />
+        </div>
+        <div class="col">
+          <q-separator color="purple-10" />
+          <q-separator color="purple-10" />
+        </div>
+      </div>
     </div>
     <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Indoor Equipment</h4> -->
     <!-- <GChart
@@ -13,95 +21,99 @@
         :data="chartDataX"
         :options="chartOptionsX"
     /> -->
-   <q-expansion-item
-      label="SEARCH"
-      header-class="bg-indigo-5 text-white"
-      style="margin-bottom:10px"
-      icon="search">
-      <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
-        <fieldset class="fieldset_search" style="width: 100%; margin:10px">
-          <div class="row" style="width: 100%">
-            <div class="col-15" style="margin-right: 10px; width: 22%">
-              <q-select
-                v-model="searchVal.equipmentStatus"
-                stack-label
-                label="Equipment Status"
-                color="purple-6"
-                :options="equipmentStatusListSearch"
-                @input="getDropdownValue('equipmentStatusSearch')"
-              />
-            </div>
+    <q-card>
+      <q-card-section>
+        <q-expansion-item
+          label="SEARCH"
+          header-class="bg-indigo-2 text-indigo-7"
+          style="margin-bottom:10px"
+          icon="search">
+          <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
+            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+              <div class="row" style="width: 100%">
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-select
+                    v-model="searchVal.equipmentStatus"
+                    stack-label
+                    label="Equipment Status"
+                    color="purple-6"
+                    :options="equipmentStatusListSearch"
+                    @input="getDropdownValue('equipmentStatusSearch')"
+                  />
+                </div>
 
-            <div class="col-15" style="margin-right: 10px; width: 22%">
-              <q-input
-              v-model="searchVal.equipmentName"
-              stack-label
-              label="Equipment Name"
-              oninput="this.value = this.value.toUpperCase()"
-              class="text-uppercase"
-              color="purple-6"/>
-            </div>
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-input
+                  v-model="searchVal.equipmentName"
+                  stack-label
+                  label="Equipment Name"
+                  oninput="this.value = this.value.toUpperCase()"
+                  class="text-uppercase"
+                  color="purple-6"/>
+                </div>
 
-            <div class="col-15" style="margin-right: 10px; width: 22%">
-              <q-select
-              v-model="searchVal.productType"
-              label="Product Type"
-              color="purple-6"
-              :options="productTypeListSearch"
-              @input="getDropdownValue('productTypeSearch')"
-              />
-            </div>
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-select
+                  v-model="searchVal.productType"
+                  label="Product Type"
+                  color="purple-6"
+                  :options="productTypeListSearch"
+                  @input="getDropdownValue('productTypeSearch')"
+                  />
+                </div>
 
-            <div class="col-15" style="margin-right: 10px; width: 22%">
-              <q-select v-model="searchVal.productSeries"
-                :stack-label="true"
-                :options="filteredProductSeries"
-                @input="getDropdownValue('productSeriesSearch')"
-                @filter="doDropdownFilter"
-                label="Product Series"
-                use-input
-                fill-input
-                hide-selected
-                color="purple-6">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      No results
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </div>
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-select v-model="searchVal.productSeries"
+                    :stack-label="true"
+                    :options="filteredProductSeries"
+                    @input="getDropdownValue('productSeriesSearch')"
+                    @filter="doDropdownFilter"
+                    label="Product Series"
+                    use-input
+                    fill-input
+                    hide-selected
+                    color="purple-6">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
 
-            <div class="col" style="width: 5%">
-              <q-btn round color="purple-10" @click="doMainEquipmentRefreshList()">
-                <q-icon name="search"/>
-                <q-tooltip>Search</q-tooltip>
-              </q-btn>
-            </div>
+                <div class="col" style="width: 5%">
+                  <q-btn round color="indigo-10" @click="doMainEquipmentRefreshList()">
+                    <q-icon name="search"/>
+                    <q-tooltip>Search</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </fieldset>
           </div>
-        </fieldset>
-      </div>
-    </q-expansion-item>
+        </q-expansion-item>
 
-    <q-table
-      :data="listOfEquipment"
-      :columns="equipmentListColumns"
-      :pagination.sync="equipmentPagination"
-      :rows-per-page-options="[10, 20, 50]"
-      table-header-class="text-white bg-indigo-8"
-      @request="doMainEquipmentChangePage"
-      row-key="id"
-      dense>
+        <q-table
+          :data="listOfEquipment"
+          :columns="equipmentListColumns"
+          :pagination.sync="equipmentPagination"
+          :rows-per-page-options="[10, 20, 50]"
+          table-header-class="text-indigo-7 bg-indigo-2"
+          @request="doMainEquipmentChangePage"
+          row-key="id"
+          dense>
 
-      <q-td slot="body-cell-action" slot-scope="cell">
-        <q-btn color="indigo-6" round size="sm" @click="doEdit(cell)">
-          <q-icon name="fas fa-edit" />
-          <q-tooltip>Edit</q-tooltip>
-        </q-btn>
-      </q-td>
+          <q-td slot="body-cell-action" slot-scope="cell">
+            <q-btn color="indigo-6" round size="sm" @click="doEdit(cell)">
+              <q-icon name="fas fa-edit" />
+              <q-tooltip>Edit</q-tooltip>
+            </q-btn>
+          </q-td>
 
-    </q-table>
+        </q-table>
+      </q-card-section>
+    </q-card>
 
     <q-page-sticky position="top-right" :offset="[15, 30]">
       <!-- <q-btn round color="primary" @click.native="modalUpload=true">
@@ -109,10 +121,10 @@
         <q-tooltip>Upload</q-tooltip>
       </q-btn> -->
 
-      <q-fab color="orange-4" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="orange-3" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
-        <q-fab-action color="orange-3" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
-        <q-btn round color="orange-3" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
+      <q-fab color="orange-6" glossy icon="keyboard_arrow_down" direction="down">
+        <q-fab-action color="orange-5" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-5" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
+        <q-btn round color="orange-5" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
       </q-fab>
     </q-page-sticky>
 

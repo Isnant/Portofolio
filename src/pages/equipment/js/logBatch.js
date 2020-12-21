@@ -1,4 +1,6 @@
+import showLoading from './loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       dataList: [],
@@ -122,7 +124,8 @@ export default {
       this.pagination.page = pagedEquipment.number + 1
     },
     getLogBatchList (params) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       const userToken = localStorage.getItem('user-token')
       const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
       if (authorities.findIndex(x => x === 'ROLE_08') === -1) {
@@ -177,7 +180,7 @@ export default {
       this.showForm = true
     },
     doSave () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
 
       this.$axios.post(`${process.env.urlPrefix}saveHubCode`, this.formData)
         .then((response) => {

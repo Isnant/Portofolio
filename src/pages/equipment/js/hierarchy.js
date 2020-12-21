@@ -1,4 +1,6 @@
+import showLoading from './loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       dataList: [],
@@ -102,7 +104,8 @@ export default {
 
   methods: {
     doInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       const userToken = localStorage.getItem('user-token')
       const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
       if (authorities.findIndex(x => x === 'ROLE_07') === -1) {
@@ -136,7 +139,8 @@ export default {
         })
     },
     getHierarchyList (params) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getHierarchyList`, {
         params: params
       })
@@ -199,7 +203,8 @@ export default {
       this.doSearchByFilter()
     },
     doOpenForm (row) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getHierarchyByParent`, {
         params: {
           equipmentName: row.equipmentName

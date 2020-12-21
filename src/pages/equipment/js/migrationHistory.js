@@ -1,4 +1,6 @@
+import showLoading from './loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       dataList: [],
@@ -79,6 +81,14 @@ export default {
           sortable: true
         },
         {
+          name: 'createdBy',
+          label: 'Created By',
+          field: 'createdBy',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
           name: 'migrationType',
           label: 'Migration Type',
           field: 'migrationType',
@@ -88,7 +98,7 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'historyDate',
+        sortBy: 'createdDate',
         descending: true,
         page: 1,
         rowsPerPage: 10,
@@ -101,7 +111,8 @@ export default {
       },
       searchVal: {
         reqStartDate: '',
-        reqEndDate: ''
+        reqEndDate: '',
+        createdBy: ''
       },
       showForm: false,
       formData: {
@@ -126,7 +137,8 @@ export default {
 
   methods: {
     doInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       const userToken = localStorage.getItem('user-token')
       const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
       if (authorities.findIndex(x => x === 'ROLE_06') === -1) {
@@ -139,7 +151,8 @@ export default {
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
           startDate: this.searchVal.reqStartDate,
-          endDate: this.searchVal.reqEndDate
+          endDate: this.searchVal.reqEndDate,
+          createdBy: this.searchVal.createdBy
         }
       })
         .then((response) => {
@@ -158,7 +171,8 @@ export default {
         })
     },
     getMigrationHistoryList (params) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryList`, {
         params: params
       })
@@ -189,7 +203,8 @@ export default {
         sortBy: sortBy,
         descending: descending,
         startDate: this.searchVal.reqStartDate,
-        endDate: this.searchVal.reqEndDate
+        endDate: this.searchVal.reqEndDate,
+        createdBy: this.searchVal.createdBy
       }
       this.getMigrationHistoryList(params)
     },
@@ -200,7 +215,8 @@ export default {
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
         startDate: this.searchVal.reqStartDate,
-        endDate: this.searchVal.reqEndDate
+        endDate: this.searchVal.reqEndDate,
+        createdBy: this.searchVal.createdBy
       }
       this.getMigrationHistoryList(params)
     },
@@ -208,13 +224,49 @@ export default {
       if (type === 'start') {
         if (this.searchVal.reqStartDate === null) {
           this.searchVal.reqStartDate = ''
+          this.doSearchByFilter()
+        }
+      } else if (type === 'createdBy') {
+        if (this.searchVal.createdBy === null) {
+          this.searchVal.createdBy = ''
+          this.doSearchByFilter()
         }
       } else {
         if (this.searchVal.reqEndDate === null) {
           this.searchVal.reqEndDate = ''
+          this.doSearchByFilter()
         }
       }
-      this.doSearchByFilter()
+    },
+    downloadExcel (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}migrationHistoryExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          startDate: this.searchVal.reqStartDate,
+          endDate: this.searchVal.reqEndDate,
+          createdBy: this.searchVal.createdBy
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'migration_history.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     }
   },
   beforeMount () {
