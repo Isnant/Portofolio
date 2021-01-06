@@ -745,11 +745,13 @@
                     tabindex="40"
                     :options="departmentList"
                     @input="getDropdownValue('departmentForm')"/>
-                  <q-input v-model="input.propertyOf" ref="fPropertyOf"
+                  <q-select v-model="input.propertyOf" ref="fPropertyOf"
                     :rules="[val => !! val || 'Property Of is required']"
                     :stack-label="true"
                     label="Property Of*"
-                    tabindex="41"/>
+                    tabindex="41"
+                    :options="propertyOfList"
+                    @input="getDropdownValue('propertyOf')"/>
                 </div>
               </div>
             </q-expansion-item>
@@ -1401,7 +1403,7 @@ fieldset legend{
 <script src="./js/fieldList.js"></script>
 <style>
 .fieldset_search {
-  border-color:  #8f1869;
+  border-color:  #1d0f50;
   border-style: solid;
 }
 .legedn_search {

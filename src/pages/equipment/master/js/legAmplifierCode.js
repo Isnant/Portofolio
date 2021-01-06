@@ -1,56 +1,60 @@
-import showLoading from '../../js/loading.js'
 export default {
-  mixins: [showLoading],
   data () {
     return {
       dataList: [],
-      hubCodeList: [],
-      serviceList: [],
+      areaList: [],
+      regionList: [],
+      filteredRegionList: [],
+      listOfRegion: [],
+      listOfAreaForRegion: [],
+      searchVal: {
+        hubCode: 'All',
+        amplifier: ''
+      },
       tableColumns: [
         {
-          name: 'hubName',
-          label: 'Hub Name',
-          field: 'hubName',
+          name: 'equipmentName',
+          label: 'Amplifier Name',
+          field: 'equipmentName',
           align: 'left',
           style: 'width: 200px',
           sortable: true
         },
         {
+          name: 'nodeCode',
+          label: 'Node Code',
+          field: 'nodeCode',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
           name: 'hubCode',
-          label: 'Hub Code',
+          label: 'Hub Name',
           field: 'hubCode',
           align: 'left',
-          style: 'width: 100px',
+          style: 'width: 200px',
           sortable: true
         },
         {
-          name: 'ftax',
-          label: 'Ftax',
-          field: 'ftax',
+          name: 'itCode',
+          label: 'IT Code',
+          field: 'itCode',
           align: 'left',
-          style: 'width: 100px',
+          style: 'width: 200px',
           sortable: true
         },
         {
-          name: 'service',
-          label: 'Service',
-          field: 'service',
-          align: 'left',
-          style: 'width: 100px',
-          sortable: true
-        },
-        {
-          name: 'recordStatus',
-          label: 'Status',
-          field: 'recordStatus',
+          name: 'technology',
+          label: 'Technology',
+          field: 'technology',
           align: 'left',
           sortable: true
         },
         {
           name: 'action',
           label: 'Action',
-          align: 'center',
-          style: 'width: 100px'
+          align: 'center'
         }
       ],
       regionColumns: [
@@ -63,9 +67,9 @@ export default {
           sortable: true
         },
         {
-          name: 'regioName',
+          name: 'region',
           label: 'Region Name',
-          field: 'regioName',
+          field: 'region',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -78,50 +82,52 @@ export default {
         }
       ],
       pagination: {
-        sortBy: 'hubName',
+        sortBy: 'id',
         descending: false,
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0
       },
-      regionPagination: {
-        sortBy: 'region',
-        descending: false,
-        rowsPerPage: 0
-      },
-      searchVal: {
-        hubCode: '',
-        hubName: ''
-      },
       showForm: false,
-      formData: {
-        id: '',
-        hubCode: '',
-        hubName: '',
-        service: '',
-        ftax: ''
-      }
+      formData: ''
     }
   },
 
   methods: {
     doInitPage () {
-      // this.$q.loading.show()
-      this.showLoading()
-      this.$axios.get(`${process.env.urlPrefix}getHubCodeServiceInitPage`, {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getLegAmplifierInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
           hubCode: this.searchVal.hubCode,
-          hubName: this.searchVal.hubName
+          amplifier: this.searchVal.amplifier
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.doMainFillTableResult(response.data.listOfHubCodeService)
-          this.serviceList = response.data.listOfService
+          this.doMainFillTableResult(response.data.listOfNode)
+          this.hubCodeList = response.data.listOfHub
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    getAmplifierList (params) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}getLegAmplifierList`, {
+        params: params
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -138,26 +144,6 @@ export default {
       this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
       this.pagination.page = pagedEquipment.number + 1
     },
-    getHubCodeList (params) {
-      // this.$q.loading.show()
-      this.showLoading()
-
-      this.$axios.get(`${process.env.urlPrefix}getHubCodeServiceList`, {
-        params: params
-      })
-        .then((response) => {
-          this.$q.loading.hide()
-          this.doMainFillTableResult(response.data)
-        })
-        .catch((error) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-        })
-    },
     doMainEquipmentChangePage (props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const params = {
@@ -166,9 +152,9 @@ export default {
         sortBy: sortBy,
         descending: descending,
         hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        amplifier: this.searchVal.amplifier
       }
-      this.getHubCodeList(params)
+      this.getAmplifierList(params)
     },
     doSearchByFilter () {
       const params = {
@@ -177,65 +163,44 @@ export default {
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
         hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        amplifier: this.searchVal.amplifier
       }
-      this.getHubCodeList(params)
+      this.getAmplifierList(params)
+    },
+    getValueSelect () {
+      this.searchVal.hubCode = this.searchVal.hubCode.value
     },
     doOpenForm (cell) {
-      if (cell !== undefined) {
-        this.formData = JSON.parse(JSON.stringify(cell.row))
-        this.vDisable = true
-      } else {
-        this.clear()
-      }
+      this.formData = JSON.parse(JSON.stringify(cell.row))
       this.showForm = true
     },
-    doSave () {
-      // this.$q.loading.show()
-      this.showLoading()
-
-      this.$axios.post(`${process.env.urlPrefix}saveHubCodeService`, this.formData)
+    downloadExcel (props) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}amplifierExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          hubCode: this.searchVal.hubCode,
+          amplifier: this.searchVal.amplifier
+        }
+      })
         .then((response) => {
           this.$q.loading.hide()
-          this.$q.notify({
-            color: 'positive',
-            icon: 'info',
-            message: 'Record successfully saved'
-          })
-
-          this.showForm = false
-          this.doRefresh()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'amplifier_excel_download.xlsx'
+          document.body.appendChild(link)
+          link.click()
         })
         .catch((error) => {
           this.$q.loading.hide()
-          this.$q.notify({
+          this.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error
           })
-          this.showForm = false
-          this.doRefresh()
         })
-    },
-    doToggleStatus (cell) {
-      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
-      this.formData = cell.row
-      this.doSave()
-    },
-    getSelectValue () {
-      this.formData.service = this.formData.service.value
-    },
-    doRefresh () {
-      this.clear()
-      this.doInitPage()
-    },
-    clear () {
-      this.formData = {
-        id: '',
-        hubCode: '',
-        hubCodeService: ''
-      }
-      this.vDisable = false
     }
   },
   beforeMount () {

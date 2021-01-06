@@ -235,6 +235,17 @@
             </q-item-section>
           </q-item>
           <q-item
+            to="/mLegAmplifierCode"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section avatar>
+              <q-icon name="sticky_note_2" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Master Leg Amplifier</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
             to="/mOthers"
             :inset-level="1"
             active-class="my-menu-link">

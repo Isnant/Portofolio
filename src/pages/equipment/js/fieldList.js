@@ -624,6 +624,8 @@ export default {
         this.input.brand = this.input.brand.value
       } else if (type === 'productSubType') {
         this.input.productSubType = this.input.productSubType.value
+      } else if (type === 'propertyOf') {
+        this.input.propertyOf = this.input.propertyOf.value
       }
     },
     doDropdownFilter (val, update) {

@@ -24,6 +24,7 @@ const routes = [
       { path: '/mNodeCode', component: () => import('pages/equipment/master/nodeCode.vue') },
       { path: '/mPsCode', component: () => import('pages/equipment/master/psCode.vue') },
       { path: '/mAmplifierCode', component: () => import('pages/equipment/master/amplifierCode.vue') },
+      { path: '/mLegAmplifierCode', component: () => import('pages/equipment/master/legAmplifierCode.vue') },
       { path: '/mOthers', component: () => import('pages/equipment/master/others.vue') },
       { path: '/secRole', name: 'securityRole', component: () => import('pages/security/role.vue') },
       { path: '/secUser', name: 'securityUser', component: () => import('pages/security/user.vue') }

@@ -1,10 +1,18 @@
 <template>
   <q-page >
-     <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER AREA</font>
-     <div align="left" style="margin-bottom:30px; margin-top:20px;width:170px">
+    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER AREA</font>
+    <div align="left" style="margin-bottom:30px;width:170px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER AREA</font>
-      <q-separator color="purple-10" />
-      <q-separator color="purple-10" />
+      <div class="row">
+        <div class="col-20" style="width: 32%">
+          <q-separator color="orange-10" />
+          <q-separator color="orange-10" />
+        </div>
+        <div class="col">
+          <q-separator color="purple-10" />
+          <q-separator color="purple-10" />
+        </div>
+      </div>
     </div>
     <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Area</h4> -->
     <div style="max-width: 400px">
@@ -12,7 +20,7 @@
         :data="list"
         :columns="tableColumns"
         :pagination.sync="pagination"
-        table-header-class="text-white bg-indigo-8"
+        table-header-class="text-indigo-10 bg-indigo-2"
         @request="doRefresh"
         row-key="id"
         dense>
@@ -61,7 +69,7 @@
     <q-dialog v-model="showForm" persistent @before-hide="clear()">
 
       <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+        <q-bar class="bg-indigo-10 text-white">
           <strong>Area Form</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>
