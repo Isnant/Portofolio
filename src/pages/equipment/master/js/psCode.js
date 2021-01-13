@@ -1,4 +1,6 @@
+import showLoading from '../../js/loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       dataList: [],
@@ -101,7 +103,8 @@ export default {
 
   methods: {
     doInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getPowerSupplyInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
@@ -127,7 +130,8 @@ export default {
         })
     },
     getAmplifierList (params) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getPowerSupplyList`, {
         params: params
       })
@@ -181,7 +185,8 @@ export default {
       this.showForm = true
     },
     downloadExcel (props) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}psExcelDownload`, {
         responseType: 'arraybuffer',
         params: {

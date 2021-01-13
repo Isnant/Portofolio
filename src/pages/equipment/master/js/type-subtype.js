@@ -1,4 +1,6 @@
+import showLoading from '../../js/loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       dataList: [],
@@ -93,7 +95,8 @@ export default {
 
   methods: {
     doInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
@@ -118,7 +121,8 @@ export default {
         })
     },
     getProductTypeSubTypeList (props) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.pagination.sortBy = props.pagination.sortBy
       this.pagination.descending = props.pagination.descending
 
@@ -150,7 +154,8 @@ export default {
       if (pid === false) {
         this.showForm = true
       } else {
-        this.$q.loading.show()
+        // this.$q.loading.show()
+        this.showLoading()
         this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeDetail`, {
           params: {
             pid: pid
@@ -174,7 +179,8 @@ export default {
       }
     },
     doSave (deactivate) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       if (!deactivate) {
         this.formData.subType = JSON.stringify(this.listOfSubType)
       }

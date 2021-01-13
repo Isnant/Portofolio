@@ -1,4 +1,6 @@
+import showLoading from '../../js/loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       dataList: [],
@@ -123,7 +125,8 @@ export default {
 
   methods: {
     doInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getBdfInitPage`, {
         params: {
           pageIndex: this.pagination.page - 1,
@@ -150,7 +153,8 @@ export default {
         })
     },
     getBuildingList (props) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.pagination.sortBy = props.pagination.sortBy
       this.pagination.descending = props.pagination.descending
 
@@ -187,7 +191,8 @@ export default {
       this.showForm = true
     },
     doSave () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}saveBdf`, this.formData)
         .then((response) => {
           this.$q.loading.hide()

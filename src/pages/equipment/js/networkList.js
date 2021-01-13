@@ -1,4 +1,6 @@
+import showLoading from './loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       file: undefined,
@@ -97,8 +99,7 @@ export default {
           label: 'Equipment Name',
           field: 'equipmentName',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'description',
@@ -112,8 +113,7 @@ export default {
           label: 'Product Type',
           field: 'productType',
           align: 'left',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'productSeries',
@@ -164,7 +164,9 @@ export default {
         rowsNumber: 0
       },
       listOfEquipment: [],
-      modalUpload: false,
+      modalUploadExcel: false,
+      modalUploadTxt: false,
+      modalUploadPreviewTxt: false,
       modalAddNewAsset: false,
       addHub: true,
       modalAddField: false,
@@ -208,6 +210,11 @@ export default {
       lastCodes: {},
       lastNodeCode: undefined,
       migrationListOriginal: [],
+      fileAttach: {
+        fileName: '',
+        file64: '',
+        equipmentCategory: 'Network'
+      },
       migrationOriginalColumns: [
         {
           name: 'equipmentName',
@@ -277,6 +284,51 @@ export default {
       migrationNewPagination: {
         rowsPerPage: 0
       },
+      dataNotesList: [],
+      paginationNotes: {
+        descending: false,
+        page: 1,
+        rowsPerPage: 10,
+        sortBy: 'createdDate'
+      },
+      listColumnNotes: [
+        {
+          name: 'equipmentName',
+          label: 'Equipment Name',
+          field: 'equipmentName',
+          align: 'left',
+          style: 'width: 700px',
+          sortable: true
+        },
+        {
+          name: 'description',
+          label: 'Description',
+          field: 'description',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'productSeries',
+          label: 'Product Series',
+          field: 'productSeries',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'serialNumberInternal',
+          label: 'Serial Number',
+          field: 'serialNumberInternal',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'capacity3',
+          label: 'VID',
+          field: 'capacity3',
+          align: 'left',
+          sortable: true
+        }
+      ],
       validationResults: [],
       sourcePreview: [],
       targetPreview: []
@@ -290,7 +342,8 @@ export default {
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       const userToken = localStorage.getItem('user-token')
       const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
       if (authorities.findIndex(x => x === 'ROLE_05') === -1) {
@@ -317,8 +370,8 @@ export default {
         })
     },
     doMainRefresh (params) {
-      this.$q.loading.show()
-
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getFieldPagedEquipment/`, {
         params: params
       })
@@ -391,7 +444,8 @@ export default {
       }
     },
     doSaveEquipment () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
           this.$q.notify({
@@ -425,32 +479,58 @@ export default {
 
       this.doMainRefresh(params)
     },
-    doUploadFile (file) {
-      this.$q.loading.show()
-
+    doAttachFile (file) {
       let fr = new FileReader()
+      this.uploadButton = true
       fr.onload = (e) => {
-        this.$axios.post(`${process.env.urlPrefix}uploadField`, { file64: e.target.result })
-          .then((response) => {
-            this.$q.loading.hide()
-
-            this.$q.notify({
-              color: 'positive',
-              icon: 'info',
-              message: 'File successfully uploaded'
-            })
-          })
-          .catch((error) => {
-            this.$q.loading.hide()
-
-            this.$q.notify({
-              color: 'negative',
-              icon: 'report_problem',
-              message: error
-            })
-          })
+        this.fileAttach.fileName = file.name
+        this.fileAttach.file64 = e.target.result
       }
-      fr.readAsDataURL(this.$refs.fieldExcelFile.files[0])
+      fr.readAsDataURL(file)
+    },
+    uploadTxtEquipment (file) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.post(`${process.env.urlPrefix}uploadTxtEquipment`, this.fileAttach)
+        .then((response) => {
+          this.dataNotesList = response.data
+          this.modalUploadTxt = false
+          this.modalUploadPreviewTxt = true
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    convertTxtToExcel (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}networkFromTxtExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'network_equipment.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     doMainOpenMigrationForm (cell) {
       this.showMigrationForm = true

@@ -206,14 +206,14 @@
             <q-icon name="backup" />
             <q-tooltip>Upload</q-tooltip>
           </q-btn> -->
-          <q-fab color="orange-6" glossy icon="keyboard_arrow_down" direction="down">
-            <q-btn round color="orange-5" text-color="white" @click.native="getSelectOptionForDetail" icon="add">
+          <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
+            <q-btn round color="orange-6" text-color="white" @click.native="getSelectOptionForDetail" icon="add">
               <q-tooltip>Add</q-tooltip>
             </q-btn>
-            <q-btn round color="orange-5" text-color="white" @click.native="modalUpload=true" icon="backup">
+            <q-btn round color="orange-6" text-color="white" @click.native="modalUpload=true" icon="backup">
               <q-tooltip>Upload</q-tooltip>
             </q-btn>
-            <q-btn round color="orange-5" text-color="white" @click.native="downloadExcel">
+            <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel">
               <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
             </q-btn>
             <q-btn round color="orange-5" text-color="white"

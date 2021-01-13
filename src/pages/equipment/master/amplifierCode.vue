@@ -1,92 +1,111 @@
 <template>
   <q-page>
     <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER AMPLIFIER</font>
-     <div align="left" style="margin-bottom:30px; margin-top:20px;width:230px">
+    <div align="left" style="margin-bottom:30px;margin-top:10px;width:230px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER AMPLIFIER</font>
-      <q-separator color="purple-10" />
-      <q-separator color="purple-10" />
-    </div>
-
-    <div class="row" style="margin-buttom:20px">
-      <div class="col-15" style="margin-right: 10px; width: 22%">
-        <q-select
-          v-model="searchVal.hubCode"
-          stack-label
-          label="Hub Name"
-          color="purple-6"
-          :options="hubCodeList"
-          @input="getValueSelect()"
-        />
-      </div>
-
-      <div class="col-15" style="margin-right: 10px; width: 22%">
-        <q-input
-        v-model="searchVal.amplifier"
-        stack-label
-        label="Amplifier Code"
-        oninput="this.value = this.value.toUpperCase()"
-        class="text-uppercase"
-        color="purple-6"/>
-      </div>
-
-      <div class="col" style="width: 5%">
-        <q-btn round color="purple-10" @click="doSearchByFilter()">
-          <q-icon name="search"/>
-          <q-tooltip>Search</q-tooltip>
-        </q-btn>
+      <div class="row">
+        <div class="col-20" style="width: 32%">
+          <q-separator color="orange-10" />
+          <q-separator color="orange-10" />
+        </div>
+        <div class="col">
+          <q-separator color="purple-10" />
+          <q-separator color="purple-10" />
+        </div>
       </div>
     </div>
+    <q-card>
+      <q-card-section>
+        <q-expansion-item
+          label="SEARCH"
+          header-class="bg-indigo-2 text-indigo-10"
+          style="margin-bottom:10px"
+          icon="search">
+          <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
+            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+
+              <div class="row" style="margin-buttom:20px">
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-select
+                    v-model="searchVal.hubCode"
+                    stack-label
+                    label="Hub Name"
+                    color="indigo-10"
+                    :options="hubCodeList"
+                    @input="getValueSelect()"
+                  />
+                </div>
+
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-input
+                  v-model="searchVal.amplifier"
+                  stack-label
+                  label="Amplifier Code"
+                  oninput="this.value = this.value.toUpperCase()"
+                  class="text-uppercase"
+                  color="indigo-10"/>
+                </div>
+
+                <div class="col" style="width: 5%">
+                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                    <q-icon name="search"/>
+                    <q-tooltip>Search</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </q-expansion-item>
+        <q-table
+          :data="dataList"
+          :columns="tableColumns"
+          :pagination.sync="pagination"
+          table-header-class="bg-indigo-2 text-indigo-10"
+          :rows-per-page-options="[10, 20, 50, 100]"
+          @request="doMainEquipmentChangePage"
+          row-key="id"
+          dense>
+
+          <!-- <q-td slot="body-cell-action" slot-scope="props">
+            <q-btn color="primary" round size="sm" @click="doOpenForm(props.row.pid)" style="margin-right: 10px">
+              <q-icon name="fas fa-edit" />
+              <q-tooltip>Edit</q-tooltip>
+            </q-btn>
+            <q-btn color="primary" round size="sm" @click="doToggleStatus(props)">
+              <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
+              <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+            </q-btn>
+          </q-td> -->
+          <q-td slot="body-cell-action" slot-scope="cell">
+            <q-btn-dropdown rounded size="sm" color="indigo-10">
+              <q-list>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-btn color="indigo-6" round size="sm" @click="doOpenForm(cell)">
+                      <q-icon name="fas fa-edit" />
+                      <q-tooltip>Detail</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-td>
+          <q-td slot="body-cell-recordStatus" slot-scope="props">
+            <div v-if="props.row.recordStatus === 'A'">
+              <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+            </div>
+            <div v-else>
+              <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
+            </div>
+          </q-td>
+
+        </q-table>
+      </q-card-section>
+    </q-card>
 
     <q-page-sticky position="top-right" :offset="[15, 30]">
      <q-btn round color="green" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
     </q-page-sticky>
-
-    <div style="width: 80%; margin-top:20px">
-      <q-table
-        :data="dataList"
-        :columns="tableColumns"
-        :pagination.sync="pagination"
-        table-header-class="text-white bg-indigo-8"
-        :rows-per-page-options="[10, 20, 50, 100]"
-        @request="doMainEquipmentChangePage"
-        row-key="id"
-        dense>
-
-        <!-- <q-td slot="body-cell-action" slot-scope="props">
-          <q-btn color="primary" round size="sm" @click="doOpenForm(props.row.pid)" style="margin-right: 10px">
-            <q-icon name="fas fa-edit" />
-            <q-tooltip>Edit</q-tooltip>
-          </q-btn>
-          <q-btn color="primary" round size="sm" @click="doToggleStatus(props)">
-            <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-            <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
-          </q-btn>
-        </q-td> -->
-        <q-td slot="body-cell-action" slot-scope="cell">
-          <q-btn-dropdown rounded size="sm" color="indigo-10">
-            <q-list>
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-btn color="indigo-6" round size="sm" @click="doOpenForm(cell)">
-                    <q-icon name="fas fa-edit" />
-                    <q-tooltip>Detail</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </q-td>
-        <q-td slot="body-cell-recordStatus" slot-scope="props">
-          <div v-if="props.row.recordStatus === 'A'">
-            <q-icon name="done" color="primary"  style="font-size: 20px;"/>
-          </div>
-          <div v-else>
-            <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
-          </div>
-        </q-td>
-
-      </q-table>
-    </div>
 
     <!-- <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="orange-4" @click.native="doOpenForm(false)">

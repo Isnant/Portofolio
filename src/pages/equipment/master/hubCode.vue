@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER HUB CODE</font>
-    <div align="left" style="margin-bottom:30px;width:220px">
+    <div align="left" style="margin-bottom:30px;margin-top:10px;width:220px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER HUB CODE</font>
       <div class="row">
         <div class="col-20" style="width: 32%">
@@ -15,42 +15,42 @@
       </div>
     </div>
     <q-card>
-    <q-card-section>
-      <q-expansion-item
-        label="SEARCH"
-        header-class="bg-indigo-2 text-indigo-10"
-        style="margin-bottom:10px"
-        icon="search">
-        <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-          <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+      <q-card-section>
+        <q-expansion-item
+          label="SEARCH"
+          header-class="bg-indigo-2 text-indigo-10"
+          style="margin-bottom:10px"
+          icon="search">
+          <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
+            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
 
-            <div class="row" style="margin-bottom:20px">
-              <div class="col-15" style="margin-right: 10px; width: 22%">
-                <q-input
-                  v-model="searchVal.hubCode"
+              <div class="row" style="margin-bottom:20px">
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-input
+                    v-model="searchVal.hubCode"
+                    stack-label
+                    label="Hub Code"
+                    color="purple-6"/>
+                </div>
+
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-input
+                  v-model="searchVal.hubName"
                   stack-label
-                  label="Hub Code"
+                  label="Hub Name"
                   color="purple-6"/>
-              </div>
+                </div>
 
-              <div class="col-15" style="margin-right: 10px; width: 22%">
-                <q-input
-                v-model="searchVal.hubName"
-                stack-label
-                label="Hub Name"
-                color="purple-6"/>
+                <div class="col" style="width: 5%">
+                  <q-btn round size="small" color="indigo-10" @click="doSearchByFilter()">
+                    <q-icon name="search"/>
+                    <q-tooltip>Search</q-tooltip>
+                  </q-btn>
+                </div>
               </div>
-
-              <div class="col" style="width: 5%">
-                <q-btn round size="small" color="indigo-10" @click="doSearchByFilter()">
-                  <q-icon name="search"/>
-                  <q-tooltip>Search</q-tooltip>
-                </q-btn>
-              </div>
-            </div>
-          </fieldset>
-        </div>
-      </q-expansion-item>
+            </fieldset>
+          </div>
+        </q-expansion-item>
 
         <div style="max-width: 1200px">
           <q-table

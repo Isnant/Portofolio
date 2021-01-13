@@ -1,93 +1,118 @@
 <template>
   <q-page >
-     <font size="1" class="text-bold" color="grey">MASTER DATA / OTHERS</font>
-     <div align="left" style="margin-bottom:30px; margin-top:20px;width:210px">
+    <font size="1" class="text-bold" color="grey">MASTER DATA / OTHERS</font>
+    <div align="left" style="margin-bottom:30px;margin-top:10px;width:210px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">OTHERS MASTER</font>
-      <q-separator color="purple-10" />
-      <q-separator color="purple-10" />
-    </div>
-    <div class="row" style="margin-bottom:20px; width:60%">
-      <div class="col" style="margin-right: 10px;width:10%;" align="right">
-        <q-input v-model="formSearch.jobstatusName"
-        :label=columnName
-        clearable
-        @input="clearSearch"
-        @keydown.enter.prevent="getContent()"
-        :stack-label="true"/>
-      </div>
-      <div class="col" style="margin-right: 10px">
-        <q-btn size="sm" round color="primary" @click="getContent(t)" style="margin-top:20px">
-          <q-icon name="search"><q-tooltip>Search</q-tooltip></q-icon>
-        </q-btn>
+      <div class="row">
+        <div class="col-20" style="width: 32%">
+          <q-separator color="orange-10" />
+          <q-separator color="orange-10" />
+        </div>
+        <div class="col">
+          <q-separator color="purple-10" />
+          <q-separator color="purple-10" />
+        </div>
       </div>
     </div>
-    <div >
-      <fieldset class="fieldset_search" style="width: 100%; margin-bottom:20px">
-        <legend class="legedn_search">Master Name</legend>
-        <q-radio v-model="input.attributename" val="division" @input="getInitPage" label="Division" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="department" @input="getInitPage" label="Department" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="assetCategory" @input="getInitPage" label="Asset Category" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="propertyOf" @input="getInitPage" label="Property Of" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="statusReason" @input="getInitPage" label="Status Reason" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="technology" @input="getInitPage" label="Technology" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="service" @input="getInitPage" label="Service" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="capacityUnits" @input="getInitPage" label="Capacity Units" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="equipmentStatus" @input="getInitPage" label="Equipment Status" style="margin-right:10px"/>
-        <q-radio v-model="input.attributename" val="assetStatus" @input="getInitPage" label="Asset Status"/>
-      </fieldset>
-    </div>
+    <q-card style="width:100%;margin-bottom:10px">
+      <q-card-section>
+        <div >
+          <fieldset class="fieldset_search" style="width: 100%; margin-bottom:5px">
+            <legend class="legedn_search">Master Name</legend>
+            <q-radio v-model="input.attributename" val="division" @input="getInitPage" label="Division" color="indigo-7" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="department" @input="getInitPage" label="Department" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="assetCategory" @input="getInitPage" label="Asset Category" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="propertyOf" @input="getInitPage" label="Property Of" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="statusReason" @input="getInitPage" label="Status Reason" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="technology" @input="getInitPage" label="Technology" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="service" @input="getInitPage" label="Service" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="capacityUnits" @input="getInitPage" label="Capacity Units" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="equipmentStatus" @input="getInitPage" label="Equipment Status" style="margin-right:10px"/>
+            <q-radio v-model="input.attributename" val="assetStatus" @input="getInitPage" label="Asset Status"/>
+          </fieldset>
+        </div>
+      </q-card-section>
+    </q-card>
 
-    <q-table
-      :data="dataList"
-      :columns="columns"
-      :pagination.sync="pagination"
-      table-header-class="text-white bg-indigo-8"
-      row-key="id"
-      @request="getContent"
-      style="margin-bottom:100px"
-      dense>
-      <q-td slot="body-cell-createdDate" slot-scope="props" style="text-align: center">
-        {{ props.row.createdDate | formatDateTime }}
-      </q-td>
-      <q-td slot="body-cell-recordStatus" align="center" slot-scope="props">
-        <div v-if="props.row.recordStatus === 'A'">
-          <q-icon name="done" color="primary"  style="font-size: 20px;"/>
-        </div>
-        <div v-else>
-          <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
-        </div>
-      </q-td>
-      <q-td  align="center" slot="body-cell-action" slot-scope="props">
-        <q-btn-dropdown rounded size="sm" color="indigo-10">
-          <q-list>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-btn color="indigo-6" round size="sm" @click="doOpenForm(props.row.attributeid)">
-                  <q-icon name="fas fa-edit" />
-                  <q-tooltip>Edit</q-tooltip>
+    <q-card style="width: 100%">
+      <q-card-section>
+        <q-expansion-item
+          label="SEARCH"
+          header-class="bg-indigo-2 text-indigo-10"
+          style="margin-bottom:10px"
+          icon="search">
+          <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
+            <div class="row" style="margin-bottom:20px; width:60%">
+              <div class="col" style="margin-right: 10px;width:10%;" align="right">
+                <q-input v-model="formSearch.jobstatusName"
+                :label=columnName
+                color="indigo-10"
+                clearable
+                @input="clearSearch"
+                @keydown.enter.prevent="getContent()"
+                :stack-label="true"/>
+              </div>
+              <div class="col" style="margin-right: 10px">
+                <q-btn size="sm" round color="indigo-10" @click="getContent(t)" style="margin-top:20px">
+                  <q-icon name="search"><q-tooltip>Search</q-tooltip></q-icon>
                 </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
-                  <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-                  <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-btn color="indigo-6" round size="sm" @click="doShowHistory(props)">
-                  <q-icon name="fas fa-history" />
-                  <q-tooltip>History</q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </q-td>
-    </q-table>
+              </div>
+            </div>
+          </div>
+        </q-expansion-item>
+        <q-table
+          :data="dataList"
+          :columns="columns"
+          :pagination.sync="pagination"
+          table-header-class="text-indigo-10 bg-indigo-2"
+          row-key="id"
+          @request="getContent"
+          style="margin-bottom:10px"
+          dense>
+          <q-td slot="body-cell-createdDate" slot-scope="props" style="text-align: center">
+            {{ props.row.createdDate | formatDateTime }}
+          </q-td>
+          <q-td slot="body-cell-recordStatus" align="center" slot-scope="props">
+            <div v-if="props.row.recordStatus === 'A'">
+              <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+            </div>
+            <div v-else>
+              <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
+            </div>
+          </q-td>
+          <q-td  align="center" slot="body-cell-action" slot-scope="props">
+            <q-btn-dropdown rounded size="sm" color="indigo-10">
+              <q-list>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-btn color="indigo-6" round size="sm" @click="doOpenForm(props.row.attributeid)">
+                      <q-icon name="fas fa-edit" />
+                      <q-tooltip>Edit</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
+                      <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
+                      <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-btn color="indigo-6" round size="sm" @click="doShowHistory(props)">
+                      <q-icon name="fas fa-history" />
+                      <q-tooltip>History</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-td>
+        </q-table>
+      </q-card-section>
+    </q-card>
 
      <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="orange-4" @click.native="doOpenForm(false)">
@@ -166,17 +191,13 @@
 
 <script src="./js/others.js"></script>
 <style>
-.legedn_search {
-  border-color:  #8f1869;
-  border-style: solid;
-}
 .fieldset_search {
-  border-color:  #8f1869;
+  border-color:  #1d0f50;
   border-style: solid;
 }
 
   .red{
-    color:red;
+    color:1d#0f50;
   }
 
 .preview-tree-card {

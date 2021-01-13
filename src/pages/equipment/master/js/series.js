@@ -1,4 +1,6 @@
+import showLoading from '../../js/loading.js'
 export default {
+  mixins: [showLoading],
   data () {
     return {
       dataList: [],
@@ -14,8 +16,7 @@ export default {
           field: 'pid',
           align: 'left',
           style: 'width: 100px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'series',
@@ -23,8 +24,7 @@ export default {
           field: 'series',
           align: 'left',
           style: 'width: 100px',
-          sortable: true,
-          headerClasses: 'bg-indigo-8 text-white'
+          sortable: true
         },
         {
           name: 'description',
@@ -135,7 +135,8 @@ export default {
   },
   methods: {
     doInitPage () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getProductSeriesInitPage`, {
         params: {
           pageIndex: 0,
@@ -162,7 +163,8 @@ export default {
         })
     },
     getProductSeriesList (params) {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getProductSeriesList`, {
         params: params
       })
@@ -210,7 +212,8 @@ export default {
       if (pid === false) {
         this.showForm = true
       } else {
-        this.$q.loading.show()
+        // this.$q.loading.show()
+        this.showLoading()
         this.$axios.get(`${process.env.urlPrefix}getProductSeriesDetail`, {
           params: {
             pid: pid
@@ -233,7 +236,8 @@ export default {
       }
     },
     doSave () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}saveProductSeries`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
