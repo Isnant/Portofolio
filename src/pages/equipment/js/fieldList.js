@@ -1,6 +1,5 @@
 import moment from 'moment'
 import showLoading from './loading.js'
-// import { QSpinnerDots } from 'quasar'
 export default {
   mixins: [showLoading],
   data () {

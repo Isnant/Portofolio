@@ -13,7 +13,11 @@
           <q-icon name="menu" />
         </q-btn>
         <q-toolbar-title>
-          <font color="white" size=3 class="text-bold">ENGINEERING ASSET MANAGEMENT SYSTEM</font>
+          <div align="left">
+            <img src="statics/eel.png"  class="responsive"  width="30px">
+            <font color="white" size=4 class="text-bold"> | ENGINEERING EQUIPMENT LIST</font>
+          </div>
+
         </q-toolbar-title>
         <q-toolbar-title shrink>
           <font size=2 style="margin-right:10px">{{userInfo.fullName}}</font>
@@ -121,7 +125,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Area</q-item-label>
+              <q-item-label>Master Area - Region</q-item-label>
             </q-item-section>
           </q-item>
           <q-item

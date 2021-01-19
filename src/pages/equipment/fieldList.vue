@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">EQUIPMENT/ FIELD EQUIPMENT</font>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT > FIELD EQUIPMENT</font>
     <div align="left" style="margin-bottom:30px; width:210px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">FIELD EQUIPMENT</font>
       <div class="row">

@@ -7,8 +7,14 @@ export default {
       listOfBrand: [],
       listOfManufacturer: [],
       manufacturerCodeList: [],
+      modalUploadExcel: false,
       productTypeList: [],
       filteredBrandList: [],
+      fileAttach: {
+        fileName: '',
+        file64: '',
+        equipmentCategory: 'Network'
+      },
       tableColumns: [
         {
           name: 'pid',
@@ -292,6 +298,32 @@ export default {
       this.formData = cell.row
       this.formData.mode = 'update'
       this.doSave()
+    },
+    doAttachFile (file) {
+      let fr = new FileReader()
+      this.uploadButton = true
+      fr.onload = (e) => {
+        this.fileAttach.fileName = file.name
+        this.fileAttach.file64 = e.target.result
+      }
+      fr.readAsDataURL(file)
+    },
+    uploadField (file) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.post(`${process.env.urlPrefix}uploadSeries`, this.fileAttach)
+        .then((response) => {
+          this.modalUploadExcel = false
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     clear () {
       this.formData = {

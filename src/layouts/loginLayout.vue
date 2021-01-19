@@ -4,7 +4,8 @@
       <q-toolbar
         color="indigo-5">
         <q-toolbar-title align="center">
-          <font color="white" size=3 class="text-bold">ENGINEERING ASSET MANAGEMENT SYSTEM</font>
+            <img src="statics/eel.png"  class="responsive"  width="30px">
+            <font color="white" size=4 class="text-bold" style="margin-bottom:50px"> | ENGINEERING EQUIPMENT LIST</font>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
