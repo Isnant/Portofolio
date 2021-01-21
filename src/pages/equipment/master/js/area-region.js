@@ -130,7 +130,6 @@ export default {
     doOpenForm (cell) {
       if (cell !== undefined) {
         this.formData = JSON.parse(JSON.stringify(cell.row))
-        console.log(this.formData)
         if (this.formData.region !== null) {
           this.listOfRegion = JSON.parse(this.formData.region)
         } else {

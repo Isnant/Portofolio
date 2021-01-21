@@ -257,6 +257,34 @@ export default {
           })
         })
     },
+    downloadExcel (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}hubServiceDownloadExcel`, {
+        responseType: 'arraybuffer',
+        params: {
+          searchVal: this.searchVal
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_hub_service.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
     doRefresh () {
       this.clear()
       this.doInitPage()
