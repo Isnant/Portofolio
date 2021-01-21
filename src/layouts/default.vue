@@ -125,7 +125,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Area - Region</q-item-label>
+              <q-item-label>Area - Region</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -136,7 +136,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Hub Code</q-item-label>
+              <q-item-label>Hub Code</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -147,7 +147,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Hub Room</q-item-label>
+              <q-item-label>Hub Room</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -191,7 +191,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master BDF</q-item-label>
+              <q-item-label>BDF</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -202,7 +202,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Product Series</q-item-label>
+              <q-item-label>Product Series</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -213,7 +213,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Node</q-item-label>
+              <q-item-label>Node</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -224,7 +224,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Power Supply</q-item-label>
+              <q-item-label>Power Supply</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -235,7 +235,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Amplifier</q-item-label>
+              <q-item-label>Amplifier</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -246,7 +246,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Master Leg Amplifier</q-item-label>
+              <q-item-label>Leg Amplifier</q-item-label>
             </q-item-section>
           </q-item>
           <q-item

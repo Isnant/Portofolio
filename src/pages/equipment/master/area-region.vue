@@ -1,8 +1,8 @@
 <template>
   <q-page >
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER AREA</font>
-    <div align="left" style="margin-bottom:30px;width:170px">
-      <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER AREA</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA > AREA - REGION LIST</font>
+    <div align="left" style="margin-bottom:30px;margin-top:10px;width:225px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">AREA - REGION LIST</font>
       <div class="row">
         <div class="col-20" style="width: 32%">
           <q-separator color="orange-10" />
@@ -68,6 +68,9 @@
       <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
         <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm()" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
         <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
+        <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel">
+              <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
+            </q-btn>
       </q-fab>
     </q-page-sticky>
 

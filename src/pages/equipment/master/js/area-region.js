@@ -130,6 +130,7 @@ export default {
     doOpenForm (cell) {
       if (cell !== undefined) {
         this.formData = JSON.parse(JSON.stringify(cell.row))
+        console.log(this.formData)
         if (this.formData.region !== null) {
           this.listOfRegion = JSON.parse(this.formData.region)
         } else {
@@ -227,6 +228,34 @@ export default {
         .catch((error) => {
           this.$q.loading.hide()
           this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    downloadExcel (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}areaExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          searchVal: this.searchVal
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_area.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error

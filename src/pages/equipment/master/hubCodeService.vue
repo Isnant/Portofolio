@@ -1,7 +1,7 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / HUB COD SERVICEE</font>
-    <div align="left" style="margin-bottom:30px;width:220px">
+    <font size="1" class="text-bold" color="grey">MASTER DATA > HUB COD SERVICEE</font>
+    <div align="left" style="margin-bottom:30px;margin-top:10px;width:220px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">HUB CODE SERVICE</font>
       <div class="row">
         <div class="col-20" style="width: 32%">

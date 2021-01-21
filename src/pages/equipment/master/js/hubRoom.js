@@ -9,6 +9,12 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      modalUploadExcel: false,
+      fileAttach: {
+        fileName: '',
+        file64: '',
+        equipmentCategory: 'Network'
+      },
       tableColumns: [
         {
           name: 'hubCodeRoom',
@@ -221,6 +227,60 @@ export default {
     },
     doRegion () {
       this.formData.regionName = this.formData.regionName.value
+    },
+    doAttachFile (file) {
+      let fr = new FileReader()
+      this.uploadButton = true
+      fr.onload = (e) => {
+        this.fileAttach.fileName = file.name
+        this.fileAttach.file64 = e.target.result
+      }
+      fr.readAsDataURL(file)
+    },
+    uploadField (file) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.post(`${process.env.urlPrefix}uploadHubRoom`, this.fileAttach)
+        .then((response) => {
+          this.modalUploadExcel = false
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    downloadExcel (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}hubRoomExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          searchVal: this.searchVal
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_hub_room.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     doRefresh () {
       this.clear()

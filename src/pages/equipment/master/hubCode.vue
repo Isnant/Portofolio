@@ -1,8 +1,8 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER HUB CODE</font>
-    <div align="left" style="margin-bottom:30px;margin-top:10px;width:220px">
-      <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER HUB CODE</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA > HUB CODE LIST</font>
+    <div align="left" style="margin-bottom:30px;margin-top:10px;width:175px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">HUB CODE LIST</font>
       <div class="row">
         <div class="col-20" style="width: 32%">
           <q-separator color="orange-10" />
@@ -100,12 +100,45 @@
       </q-card-section>
     </q-card>
 
-    <q-page-sticky position="top-right" :offset="[15, 30]">
+    <!-- <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="orange-4" @click.native="doOpenForm()">
         <q-icon name="fas fa-plus" />
         <q-tooltip>Add New Record</q-tooltip>
       </q-btn>
+    </q-page-sticky> -->
+    <q-page-sticky position="top-right" :offset="[15, 30]">
+      <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
+        <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm(false)" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
+        <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel">
+          <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
+        </q-btn>
+      </q-fab>
     </q-page-sticky>
+
+    <q-dialog v-model="modalUploadExcel" persistent @before-hide="doHideButton()">
+      <q-card class="bg-white">
+        <q-bar class="bg-indigo-10 text-white">
+          <strong>Upload Excel File</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+          <!-- <q-field style="padding-bottom: 20px;"> -->
+            <q-input
+              type="file"
+              @input="val => { doAttachFile(val[0]) }"
+            />
+             <div align="right" style="margin-top:20px">
+              <q-btn round color="orange-6" @click="uploadField()">
+                <q-icon name="fas fa-file-upload"/>
+                <q-tooltip>Upload</q-tooltip>
+              </q-btn>
+             </div>
+          <!-- </q-field> -->
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
     <q-dialog v-model="showForm" persistent  @before-hide="clear()">
       <q-card class="bg-white" style="width: 500px">
