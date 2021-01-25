@@ -57,9 +57,9 @@ export default {
           sortable: true
         },
         {
-          name: 'productTypeSubType',
+          name: 'productType',
           label: 'Product Type',
-          field: 'productTypeSubType',
+          field: 'productType',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -131,7 +131,7 @@ export default {
         description: '',
         manufacturer: '',
         brand: '',
-        productTypeSubType: '',
+        productType: '',
         mode: 'create'
       }
     }
@@ -291,7 +291,7 @@ export default {
       this.formData.brand = this.formData.brand.value
     },
     getProductTypeValue () {
-      this.formData.productTypeSubType = this.formData.productTypeSubType.value
+      this.formData.productType = this.formData.productType.value
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'

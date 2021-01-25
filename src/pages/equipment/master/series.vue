@@ -138,7 +138,7 @@
                 label="Brand"
                 :options="filteredBrandList"
                  @input="getBrandValue()"/>
-            <q-select v-model="formData.productTypeSubType"
+            <q-select v-model="formData.productType"
                 stack-label
                 label="Product Type"
                 :options="productTypeList"
