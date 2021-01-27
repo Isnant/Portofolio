@@ -10,6 +10,7 @@ export default {
       modalUploadExcel: false,
       productTypeList: [],
       filteredBrandList: [],
+      subTypeList: [],
       fileAttach: {
         fileName: '',
         file64: '',
@@ -60,6 +61,14 @@ export default {
           name: 'productType',
           label: 'Product Type',
           field: 'productType',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'productTypeSubType',
+          label: 'Sub Type',
+          field: 'productTypeSubType',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -132,7 +141,8 @@ export default {
         manufacturer: '',
         brand: '',
         productType: '',
-        mode: 'create'
+        mode: 'create',
+        productTypeSubType: ''
       }
     }
   },
@@ -287,11 +297,43 @@ export default {
         this.formData.brand = ''
       }
     },
+    getSubType () {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}getSubType`, {
+        params: {
+          pid: this.formData.productType
+        }
+      })
+        .then((response) => {
+          if (response.data !== '') {
+            this.subTypeList = response.data.map(data => ({
+              label: data.id.toUpperCase(),
+              value: data.id.toUpperCase()
+            }))
+          } else {
+            this.subTypeList = []
+          }
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
+    },
     getBrandValue () {
       this.formData.brand = this.formData.brand.value
     },
     getProductTypeValue () {
       this.formData.productType = this.formData.productType.value
+      this.getSubType()
+    },
+    getSubTypeValue () {
+      this.formData.productTypeSubType = this.formData.productTypeSubType.value
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
