@@ -69,11 +69,20 @@
       </q-table>
     </div>
 
-    <q-page-sticky position="top-right" :offset="[15, 30]">
+    <!-- <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="orange-4" @click.native="doOpenForm(false)">
         <q-icon name="fas fa-plus" />
         <q-tooltip>Add New Record</q-tooltip>
       </q-btn>
+    </q-page-sticky> -->
+    <q-page-sticky position="top-right" :offset="[15, 30]">
+      <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
+        <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm(false)" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
+        <q-btn round color="orange-6" text-color="white" @click.native="modalDownloadExcel=true">
+          <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
+        </q-btn>
+      </q-fab>
     </q-page-sticky>
 
     <q-dialog v-model="showForm" persistent @before-hide="clear()">
@@ -150,6 +159,53 @@
         </q-card-section>
       </q-card>
 
+    </q-dialog>
+
+    <q-dialog v-model="modalUploadExcel" persistent @before-hide="doHideButton()">
+      <q-card class="bg-white">
+        <q-bar class="bg-indigo-10 text-white">
+          <strong>Upload Excel File</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+          <!-- <q-field style="padding-bottom: 20px;"> -->
+            <q-radio v-model="fileAttach.equipmentCategory" val="manufacturer" @input="getInitPage" label="Manufacturer" color="indigo-7" style="margin-right:10px"/>
+            <q-radio v-model="fileAttach.equipmentCategory" val="brand" @input="getInitPage" label="Brand" color="indigo-7" style="margin-right:10px"/>
+            <q-input
+              type="file"
+              @input="val => { doAttachFile(val[0]) }"
+            />
+             <div align="right" style="margin-top:20px">
+              <q-btn round color="orange-6" @click="uploadManufacturerBrand()">
+                <q-icon name="fas fa-file-upload"/>
+                <q-tooltip>Upload</q-tooltip>
+              </q-btn>
+             </div>
+          <!-- </q-field> -->
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="modalDownloadExcel" persistent @before-hide="doHideButton()">
+      <q-card class="bg-white">
+        <q-bar class="bg-indigo-10 text-white">
+          <strong>Download Excel File</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+          <!-- <q-field style="padding-bottom: 20px;"> -->
+            <q-radio v-model="downloadType" val="manufacturer" label="Manufacturer" color="indigo-7" style="margin-right:10px"/>
+            <q-radio v-model="downloadType" val="brand" label="Brand" color="indigo-7" style="margin-right:10px"/>
+            <div align="right">
+              <q-btn round color="orange-9" text-color="white" @click.native="downloadExcel">
+                <q-icon name="get_app"/><q-tooltip>Download</q-tooltip>
+              </q-btn>
+          </div>
+          <!-- </q-field> -->
+        </q-card-section>
+      </q-card>
     </q-dialog>
 
   </q-page>

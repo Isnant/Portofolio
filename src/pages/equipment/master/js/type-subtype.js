@@ -5,6 +5,14 @@ export default {
     return {
       dataList: [],
       listOfSubType: [],
+      modalUploadExcel: false,
+      modalDownloadExcel: false,
+      downloadType: 'productType',
+      fileAttach: {
+        fileName: '',
+        file64: '',
+        equipmentCategory: 'productType'
+      },
       tableColumns: [
         {
           name: 'pid',
@@ -15,8 +23,16 @@ export default {
           sortable: true
         },
         {
+          name: 'productType',
+          label: 'Product Type',
+          field: 'productType',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
           name: 'equipmentCategory',
-          label: 'Type Name',
+          label: 'Equipment Category',
           field: 'equipmentCategory',
           align: 'left',
           style: 'width: 200px',
@@ -212,6 +228,90 @@ export default {
           })
           this.showForm = false
           this.doRefresh()
+        })
+    },
+    doAttachFile (file) {
+      let fr = new FileReader()
+      this.uploadButton = true
+      fr.onload = (e) => {
+        this.fileAttach.fileName = file.name
+        this.fileAttach.file64 = e.target.result
+      }
+      fr.readAsDataURL(file)
+    },
+    uploadProductType (file) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.post(`${process.env.urlPrefix}uploadProductType`, this.fileAttach)
+        .then((response) => {
+          this.modalUploadExcel = false
+          this.$q.loading.hide()
+          this.doInitPage()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    downloadExcel () {
+      if (this.downloadType === 'productType') {
+        this.productTypeExcelDownload()
+      } else {
+        this.subTypeExcelDownload()
+      }
+    },
+    productTypeExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}productTypeExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_product_type.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    subTypeExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}subTypeExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_sub_type.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
         })
     },
     doAddNewRegion () {

@@ -15,7 +15,7 @@
       </div>
     </div>
     <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Product Type - Sub Type</h4> -->
-    <div style="max-width: 500px">
+    <div style="max-width: 700px">
       <q-table
         :data="dataList"
         :columns="tableColumns"
@@ -69,11 +69,20 @@
       </q-table>
     </div>
 
-    <q-page-sticky position="top-right" :offset="[15, 30]">
+    <!-- <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="orange-4" @click.native="doOpenForm(false)">
         <q-icon name="fas fa-plus" />
         <q-tooltip>Add New Record</q-tooltip>
       </q-btn>
+    </q-page-sticky> -->
+    <q-page-sticky position="top-right" :offset="[15, 30]">
+      <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
+        <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm(false)" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
+        <q-btn round color="orange-6" text-color="white" @click.native="modalDownloadExcel=true">
+          <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
+        </q-btn>
+      </q-fab>
     </q-page-sticky>
 
     <q-dialog v-model="showForm" persistent @before-hide="clear()">
@@ -89,8 +98,10 @@
           <div>
             <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
               label="Type Code"/>
+            <q-input v-model="formData.productType"
+              label="Product Type"/>
             <q-input v-model="formData.equipmentCategory"
-              label="Type Name"/>
+              label="Equipment Category"/>
           </div>
           <br/>
           <fieldset>
@@ -150,6 +161,53 @@
         </q-card-section>
       </q-card>
 
+    </q-dialog>
+
+    <q-dialog v-model="modalUploadExcel" persistent @before-hide="doHideButton()">
+      <q-card class="bg-white">
+        <q-bar class="bg-indigo-10 text-white">
+          <strong>Upload Excel File</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+          <!-- <q-field style="padding-bottom: 20px;"> -->
+            <q-radio v-model="fileAttach.equipmentCategory" val="productType" @input="getInitPage" label="Product Type" color="indigo-7" style="margin-right:10px"/>
+            <q-radio v-model="fileAttach.equipmentCategory" val="subType" @input="getInitPage" label="Sub Type" color="indigo-7" style="margin-right:10px"/>
+            <q-input
+              type="file"
+              @input="val => { doAttachFile(val[0]) }"
+            />
+             <div align="right" style="margin-top:20px">
+              <q-btn round color="orange-6" @click="uploadProductType()">
+                <q-icon name="fas fa-file-upload"/>
+                <q-tooltip>Upload</q-tooltip>
+              </q-btn>
+             </div>
+          <!-- </q-field> -->
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="modalDownloadExcel" persistent @before-hide="doHideButton()">
+      <q-card class="bg-white">
+        <q-bar class="bg-indigo-10 text-white">
+          <strong>Download Excel File</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+          <!-- <q-field style="padding-bottom: 20px;"> -->
+            <q-radio v-model="downloadType" val="productType" label="Product Type" color="indigo-7" style="margin-right:10px"/>
+            <q-radio v-model="downloadType" val="subType" label="Sub Type" color="indigo-7" style="margin-right:10px"/>
+            <div align="right">
+              <q-btn round color="orange-9" text-color="white" @click.native="downloadExcel">
+                <q-icon name="get_app"/><q-tooltip>Download</q-tooltip>
+              </q-btn>
+          </div>
+          <!-- </q-field> -->
+        </q-card-section>
+      </q-card>
     </q-dialog>
 
   </q-page>

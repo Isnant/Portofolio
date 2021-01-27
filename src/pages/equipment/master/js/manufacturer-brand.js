@@ -5,6 +5,14 @@ export default {
     return {
       dataList: [],
       listOfBrand: [],
+      modalUploadExcel: false,
+      modalDownloadExcel: false,
+      downloadType: 'manufacturer',
+      fileAttach: {
+        fileName: '',
+        file64: '',
+        equipmentCategory: 'manufacturer'
+      },
       tableColumns: [
         {
           name: 'Manucaturer Code',
@@ -38,7 +46,7 @@ export default {
       ],
       brandColumns: [
         {
-          name: 'Brand Code',
+          name: 'id',
           label: 'Brand Id',
           field: 'id',
           align: 'left',
@@ -234,6 +242,90 @@ export default {
     doToggleSubTypeStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
       this.listOfBrand[cell] = cell.row
+    },
+    doAttachFile (file) {
+      let fr = new FileReader()
+      this.uploadButton = true
+      fr.onload = (e) => {
+        this.fileAttach.fileName = file.name
+        this.fileAttach.file64 = e.target.result
+      }
+      fr.readAsDataURL(file)
+    },
+    uploadManufacturerBrand (file) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.post(`${process.env.urlPrefix}uploadManufacturerBrand`, this.fileAttach)
+        .then((response) => {
+          this.modalUploadExcel = false
+          this.$q.loading.hide()
+          this.doInitPage()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    downloadExcel () {
+      if (this.downloadType === 'manufacturer') {
+        this.manufacturerExcelDownload()
+      } else {
+        this.brandExcelDownload()
+      }
+    },
+    brandExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}brandExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_brand.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    manufacturerExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}manufacturerExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_manufacturer.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
     },
     doRefresh () {
       this.clear()
