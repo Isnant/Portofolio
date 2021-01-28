@@ -956,7 +956,7 @@
                 v-model="groupSelect.assetStatus"
                 stack-label
                 label="Asset Status"
-                :options="assetStatusListSe"
+                :options="assetStatusList"
                 @input="getDropdownValue('assetStatusSelectForm')"/>
             <div align="right" style="margin-top:20px">
               <q-btn v-show="btnChangeStatus" round @click.native="changeSelectedStatus" color="orange-5" icon="save">

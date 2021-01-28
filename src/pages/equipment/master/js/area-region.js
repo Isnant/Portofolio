@@ -6,6 +6,8 @@ export default {
       list: [],
       listOfRegion: [],
       modalUploadExcel: false,
+      modalDownloadExcel: false,
+      downloadType: 'area',
       fileAttach: {
         fileName: '',
         file64: '',
@@ -233,14 +235,18 @@ export default {
           })
         })
     },
-    downloadExcel (props) {
+    downloadExcel () {
+      if (this.downloadType === 'area') {
+        this.areaExcelDownload()
+      } else {
+        this.regionExcelDownload()
+      }
+    },
+    areaExcelDownload (props) {
       // this.$q.loading.show()
       this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}areaExcelDownload`, {
-        responseType: 'arraybuffer',
-        params: {
-          searchVal: this.searchVal
-        }
+        responseType: 'arraybuffer'
       })
         .then((response) => {
           this.$q.loading.hide()
@@ -249,6 +255,31 @@ export default {
           link.href = url
           link.style = 'display: none'
           link.download = 'master_area.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    regionExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}regionExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'master_region.xlsx'
           document.body.appendChild(link)
           link.click()
         })

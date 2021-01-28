@@ -315,6 +315,13 @@ export default {
           sortable: true
         },
         {
+          name: 'bdfCode',
+          label: 'Bdf Code',
+          field: 'bdfCode',
+          align: 'left',
+          sortable: true
+        },
+        {
           name: 'serialNumberInternal',
           label: 'Serial Number',
           field: 'serialNumberInternal',

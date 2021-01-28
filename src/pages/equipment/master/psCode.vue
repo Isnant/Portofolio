@@ -84,7 +84,7 @@
     </q-card>
 
     <q-page-sticky position="top-right" :offset="[15, 30]">
-     <q-btn round color="green" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
+     <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
     </q-page-sticky>
 
     <!-- <q-page-sticky position="top-right" :offset="[15, 30]">

@@ -507,7 +507,7 @@ export default {
         this.productSeriesList.unshift({ label: 'All', value: 'All' })
         this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'All')
       } else if (type === 'detail') {
-        this.productTypeList = this.productTypeListSearch.filter(a => a.value !== 'All')
+        this.productTypeList = this.productTypeListSearch.filter(a => a.cascadeValue === 'Field')
         // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
         this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
         this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
@@ -643,10 +643,14 @@ export default {
         }
       })
         .then((response) => {
-          this.subTypeList = response.data.map(data => ({
-            label: data.id.toUpperCase(),
-            value: data.id.toUpperCase()
-          }))
+          if (response.data !== '') {
+            this.subTypeList = response.data.map(data => ({
+              label: data.id.toUpperCase(),
+              value: data.id.toUpperCase()
+            }))
+          } else {
+            this.subTypeList = []
+          }
           this.$q.loading.hide()
         })
         .catch((error) => {
