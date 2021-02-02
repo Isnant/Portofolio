@@ -476,12 +476,12 @@
     <q-dialog v-model="modalUploadExcel" persistent @before-hide="doHideButton()">
       <q-card class="bg-white">
         <q-bar class="bg-indigo-10 text-white">
-          <strong>Upload Excel File</strong>
+          <strong>Upload Equipment File</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <a href="/statics/template/FieldTemplateExcel.xlsx">Download Excel Template</a>
+          <a href="/statics/template/FieldTemplateExcel.xlsx">Download Template</a>
         </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
@@ -489,13 +489,68 @@
               type="file"
               @input="val => { doAttachFile(val[0]) }"
             />
-             <div align="right" style="margin-top:20px">
-              <q-btn round color="orange-6" @click="doUploadFile()">
+            <div align="right">
+              <q-btn style="margin-top:20px" round color="orange-6" @click="doUploadFile()">
                 <q-icon name="fas fa-file-upload"/>
                 <q-tooltip>Upload</q-tooltip>
               </q-btn>
-             </div>
+            </div>
           <!-- </q-field> -->
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="modalErrorExcel" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-negative text-white">
+          <!-- <strong>Error</strong> -->
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+        <q-table
+          :data="listOfError"
+          :columns="errorListColumn"
+          table-header-class="bg-red-2 text-indigo-10"
+          dense>
+          <q-td slot="body-cell-message" slot-scope="props">
+            <div v-if="props.row.messageStatus === 'error'" class="text-red bg-white">
+              {{ props.row.message }}
+            </div>
+            <div v-else class="text-orange bg-white">
+              {{ props.row.message }}
+            </div>
+          </q-td>
+        </q-table>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="modalWarningExcel" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-orange text-white">
+          <!-- <strong>Warning</strong> -->
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+        <q-table
+          :data="listOfError"
+          :columns="errorListColumn"
+          table-header-class="bg-orange-2 text-indigo-10"
+          dense>
+          <q-td slot="body-cell-message" slot-scope="props">
+            <div class="text-orange bg-white">
+              {{ props.row.message }}
+            </div>
+          </q-td>
+        </q-table>
+        <div align="right" style="margin-top:20px">
+          <q-btn round color="orange-6" @click="doUploadAfterWarning()">
+            <q-icon name="fas fa-file-upload"/>
+            <q-tooltip>Upload Data</q-tooltip>
+          </q-btn>
+        </div>
         </q-card-section>
       </q-card>
     </q-dialog>

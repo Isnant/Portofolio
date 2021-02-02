@@ -146,7 +146,7 @@
                 label="Product Type"
                 :options="productTypeList"
                  @input="getProductTypeValue()"/>
-            <q-select v-model="formData.productTypeSubType"
+            <q-select v-model="formData.productSubType"
                 stack-label
                 label="Sub Type"
                 :options="subTypeList"

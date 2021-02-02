@@ -66,9 +66,9 @@ export default {
           sortable: true
         },
         {
-          name: 'productTypeSubType',
+          name: 'productSubType',
           label: 'Sub Type',
-          field: 'productTypeSubType',
+          field: 'productSubType',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -142,7 +142,7 @@ export default {
         brand: '',
         productType: '',
         mode: 'create',
-        productTypeSubType: ''
+        productSubType: ''
       }
     }
   },
@@ -167,7 +167,7 @@ export default {
           this.doMainFillTableResult(response.data.listOfProductSeries)
           this.manufacturerCodeList = response.data.listOfManufacturerDropdown
           this.listOfManufacturer = response.data.listOfManufacturer
-          this.productTypeList = response.data.listOfProductTypeDropdown
+          this.productTypeList = response.data.listOfProductTypeDropdown.sort(this.compareValue)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -333,7 +333,7 @@ export default {
       this.getSubType()
     },
     getSubTypeValue () {
-      this.formData.productTypeSubType = this.formData.productTypeSubType.value
+      this.formData.productSubType = this.formData.productSubType.value
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
@@ -394,6 +394,28 @@ export default {
             message: error
           })
         })
+    },
+    compareLabel (a, b) {
+      const labelA = a.label.toUpperCase()
+      const labelB = b.label.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    compareValue (a, b) {
+      const labelA = a.value.toUpperCase()
+      const labelB = b.value.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
     },
     clear () {
       this.formData = {
