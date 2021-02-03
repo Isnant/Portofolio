@@ -151,12 +151,14 @@
                 label="Sub Type"
                 :options="subTypeList"
                  @input="getSubTypeValue()"/>
+            <q-input v-model="formData.unit"
+              stack-label label="Unit"/>
           </div>
           <br/>
           <div style="text-align: right">
-            <q-btn round color="primary" @click.native="doSave()" size="small">
+            <q-btn round color="orange-6" @click.native="doSave()" size="small">
               <q-icon name="fas fa-save"/>
-              <q-tooltip>Save Form</q-tooltip>
+              <q-tooltip>Submit</q-tooltip>
             </q-btn>
           </div>
         </q-card-section>

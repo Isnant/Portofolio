@@ -74,32 +74,9 @@ export default {
           sortable: true
         },
         {
-          name: 'recordStatus',
-          label: 'Status',
-          field: 'recordStatus',
-          align: 'left',
-          sortable: true
-        },
-        {
-          name: 'action',
-          label: 'Action',
-          align: 'center',
-          style: 'width: 100px'
-        }
-      ],
-      brandColumns: [
-        {
-          name: 'id',
-          label: 'Brand Id',
-          field: 'id',
-          align: 'left',
-          style: 'width: 100px',
-          sortable: true
-        },
-        {
-          name: 'brand',
-          label: 'Brand Name',
-          field: 'brand',
+          name: 'unit',
+          label: 'Unit',
+          field: 'unit',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -109,7 +86,6 @@ export default {
           label: 'Status',
           field: 'recordStatus',
           align: 'left',
-          style: 'width: 200px',
           sortable: true
         },
         {
@@ -142,7 +118,8 @@ export default {
         brand: '',
         productType: '',
         mode: 'create',
-        productSubType: ''
+        productSubType: '',
+        unit: ''
       }
     }
   },

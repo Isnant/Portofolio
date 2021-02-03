@@ -240,6 +240,33 @@ export default {
       element.click()
       document.body.removeChild(element)
     },
+    downloadExcel (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}getLogBatch`, {
+        params: {
+          id: props.row.id
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          var element = document.createElement('a')
+          element.setAttribute('href', response.data.fileContent)
+          element.setAttribute('download', response.data.fileName)
+          element.style.display = 'none'
+          document.body.appendChild(element)
+          element.click()
+          document.body.removeChild(element)
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
     clear () {
       this.formData = {
         hubCode: '',

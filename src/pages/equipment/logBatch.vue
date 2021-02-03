@@ -54,7 +54,7 @@
           {{ props.row.createdDate | formatDateTime}}
         </q-td>
         <q-td slot="body-cell-fileName" slot-scope="props">
-          <a @click="doDownload(props)" href="#">{{props.row.fileName}}</a>
+          <a @click="downloadExcel(props)" href="#">{{props.row.fileName}}</a>
         </q-td>
 
         <q-td slot="body-cell-recordStatus" slot-scope="props">
