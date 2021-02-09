@@ -310,6 +310,14 @@ export default {
       },
       listColumnNotes: [
         {
+          name: 'equipmentUploadStatus',
+          label: 'Status',
+          field: 'equipmentUploadStatus',
+          align: 'left',
+          style: 'width: 700px',
+          sortable: true
+        },
+        {
           name: 'equipmentName',
           label: 'Equipment Name',
           field: 'equipmentName',
