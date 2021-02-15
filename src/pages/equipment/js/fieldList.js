@@ -1202,7 +1202,6 @@ export default {
       return selectedElement
     },
     doMigrationAssignNewName () {
-      alert('2')
       let prefix = this.equipmentToMigrate.newNodeCode.substring(0, 6)
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         if (this.equipmentToMigrate.migrationListNew[i].newNumber === '') {
@@ -1241,7 +1240,6 @@ export default {
       }
     },
     doMigrationInitializeEquipmentList (removeNode) {
-      alert('1')
       const oppositeService = this.equipmentToMigrate.service === 'DIGITAL' ? 'ANALOG' : 'DIGITAL'
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         let selectedElement = this.equipmentToMigrate.migrationListNew[i]
@@ -1291,7 +1289,6 @@ export default {
       }
     },
     doMigrationSetupNewHierarchy () {
-      alert('haha')
       this.equipmentToMigrate.selectedNewNode = this.nodePrefixByHub + this.equipmentToMigrate.newNodeNumber
       if (!this.equipmentToMigrate.isNewNode) {
         this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode
