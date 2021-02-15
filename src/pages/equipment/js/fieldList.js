@@ -1730,7 +1730,7 @@ export default {
       }
       if (targetFibernodeCode.length > 0) {
         targetFibernode = {
-          label: '[NODE] ' + targetFibernodeCode[0].newName,
+          label: '[NODE] ' + targetFibernodeCode[0].newName + ' - ' + targetFibernodeCode[0].assetStatus,
           original: targetFibernodeCode[0].equipmentName,
           status: targetFibernodeCode[0].assetStatus,
           children: []
