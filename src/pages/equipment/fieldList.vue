@@ -67,9 +67,10 @@
                 <div class="col-15" style="margin-right: 10px; width: 22%">
                   <q-select v-model="searchVal.productSeries"
                     :stack-label="true"
+                    color="purple-6"
                     :options="filteredProductSeries"
                     @input="getDropdownValue('productSeriesSearch')"
-                    @filter="doDropdownFilter"
+                    @filter="doProductSeriesFilter"
                     label="Product Series"
                     use-input
                     fill-input
@@ -104,13 +105,25 @@
                   />
                 </div>
                 <div class="col-20" style="margin-right: 10px;width: 22%">
-                  <q-select
-                    v-model="searchVal.hubCode"
-                    label="Hub Code"
+                  <q-select v-model="searchVal.hubCode"
+                    :stack-label="true"
                     color="purple-6"
-                    :options="hubCodeListSearch"
+                    :options="filteredHubCode"
                     @input="getDropdownValue('hubCodeSearch')"
-                  />
+                    @filter="doHubCodeFilter"
+                    label="Hub Code"
+                    use-input
+                    fill-input
+                    hide-selected
+                    input-debounce="500">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
                 </div>
 
                 <div class="col-20" style="margin-right: 10px;width: 22%">
@@ -118,9 +131,21 @@
                     v-model="searchVal.bdfCode"
                     label="BDF Code"
                     color="purple-6"
-                    :options="bdfCodeList"
+                    :options="filteredBdfCode"
                     @input="getDropdownValue('bdfCodeSearch')"
-                  />
+                    @filter="doBdfFilter"
+                    use-input
+                    fill-input
+                    hide-selected
+                    input-debounce="500">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
                 </div>
 
                 <div class="col-20" style="margin-right: 10px; width: 22%">

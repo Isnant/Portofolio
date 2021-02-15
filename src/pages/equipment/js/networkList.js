@@ -1,12 +1,22 @@
+import moment from 'moment'
 import showLoading from './loading.js'
 export default {
   mixins: [showLoading],
   data () {
     return {
       file: undefined,
+      equipmentStatusListSearch: [],
+      productTypeListSearch: [],
+      assetStatusListSearch: [],
+      hubCodeListSearch: [],
+      filteredHubCode: [],
       productTypeList: [],
+      productSeriesList: [],
+      filteredProductSeries: [],
+      assetStatusList: [],
       hubCodeList: [],
       bdfCodeList: [],
+      filteredBdfCode: [],
       subTypeList: [],
       manufacturerList: [],
       listOfError: [],
@@ -81,11 +91,14 @@ export default {
       equipmentCategoryList: ['Hub', 'Field', 'Network'],
       searchVal: {
         equipmentCategory: 'Network',
-        productType: 'All',
-        productSeries: '',
-        hubCode: 'All',
-        bdfCode: 'All',
-        nodeCode: ''
+        productType: 'ALL',
+        productSeries: 'ALL',
+        hubCode: 'ALL',
+        bdfCode: 'ALL',
+        nodeCode: '',
+        assetStatus: 'ALL',
+        equipmentStatus: 'ACTIVE',
+        equipmentName: ''
       },
       equipmentListColumns: [
         {
@@ -381,16 +394,14 @@ export default {
       if (authorities.findIndex(x => x === 'ROLE_05') === -1) {
         this.$router.push('/')
       }
-      this.$axios.post(`${process.env.urlPrefix}getNetworkInitPage/`, {})
+      this.$axios.get(`${process.env.urlPrefix}getNetworkInitPage/`, {
+        params: {
+          searchVal: this.searchVal
+        }
+      })
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
-
-          this.assetCategoryList = response.data.listOfAssetCategory
-          this.productTypeList = response.data.listOfProductSubType.map(productType => productType.value)
-          this.hubCodeList = response.data.listOfHub.map(hubCode => hubCode.value)
-          this.bdfCodeList = response.data.listOfBdf
-          this.manufacturerList = response.data.listOfManufacturer
-
+          this.constructSelectList(response, 'main')
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -430,6 +441,130 @@ export default {
       }
 
       this.doMainRefresh(params)
+    },
+    getSelectOptionForDetail () {
+      this.$axios.get(`${process.env.urlPrefix}getFieldEquipmentDetailSelectOption`, {})
+        .then((response) => {
+          this.constructSelectList(response, 'detail')
+          this.modalAddNewAsset = true
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+      this.$q.loading.hide()
+    },
+    constructSelectList (response, type) {
+      if (type === 'main') {
+        this.equipmentStatusListSearch = response.data.listOfEquipmentStatusSearch.sort(this.compareValue)
+        this.productTypeListSearch = response.data.listOfProductTypeSearch.sort(this.compareValue)
+        this.assetStatusListSearch = response.data.listOfAssetStatusSearch.sort(this.compareValue)
+        this.hubCodeListSearch = response.data.listOfHubCodeSearch.sort(this.compareValue)
+        this.productSeriesList = response.data.listOfProductSeriesSearch.sort(this.compareValue)
+        this.bdfCodeList = response.data.listOfBdfCodeSearch.sort(this.compareValue)
+
+        this.productTypeListSearch = this.productTypeListSearch.filter(a => a.cascadeValue === 'Network')
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
+        this.assetStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.equipmentStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productSeriesList.unshift({ label: 'ALL', value: 'ALL' })
+        this.bdfCodeList.unshift({ label: 'ALL', value: 'ALL' })
+        this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'All')
+      } else if (type === 'detail') {
+        this.productTypeList = this.productTypeListSearch.filter(a => a.cascadeValue === 'Network')
+        // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
+        this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
+        this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
+        this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
+        this.serviceList = response.data.listOfService.sort(this.compareValue)
+        this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
+        this.departmentList = response.data.listOfDepartment.sort(this.compareValue)
+        this.divisionList = response.data.listOfDivision.sort(this.compareValue)
+        this.propertyOfList = response.data.listOfPropertyOf.sort(this.compareValue)
+        this.capacityUnitsList = response.data.listOfCapacityUnits.sort(this.compareValue)
+        this.hubCodeRoomList = response.data.listOfHubCodeRoom.sort(this.compareValue)
+      }
+    },
+    getDropdownValue (type) {
+      // search bar
+      if (type === 'equipmentStatusSearch') {
+        this.searchVal.equipmentStatus = this.searchVal.equipmentStatus.value
+      }
+      if (type === 'productTypeSearch') {
+        this.searchVal.productType = this.searchVal.productType.value
+      }
+      if (type === 'productSeriesSearch') {
+        this.searchVal.productSeries = this.searchVal.productSeries.value
+      }
+      if (type === 'assetStatusSearch') {
+        this.searchVal.assetStatus = this.searchVal.assetStatus.value
+      }
+      if (type === 'hubCodeSearch') {
+        this.searchVal.hubCode = this.searchVal.hubCode.value
+      }
+      if (type === 'bdfCodeSearch') {
+        this.searchVal.bdfCode = this.searchVal.bdfCode.value
+      }
+
+      // form detail
+      if (type === 'equipmentStatusForm') {
+        this.input.equipmentStatus = this.input.equipmentStatus.value
+      }
+      if (type === 'assetStatusForm') {
+        this.input.equipmentUploadStatus = this.input.equipmentUploadStatus.value
+      }
+      if (type === 'assetStatusSelectForm') {
+        this.groupSelect.assetStatus = this.groupSelect.assetStatus.value
+        this.btnChangeStatus = true
+      }
+      if (type === 'statusReasonForm') {
+        this.input.statusReason = this.input.statusReason.value
+      } else if (type === 'hubCodeForm') {
+        this.input.hubCode = this.input.hubCode.value
+      } else if (type === 'hubCodeRoomForm') {
+        this.input.hubCodeRoom = this.input.hubCodeRoom.value
+      } else if (type === 'serviceForm') {
+        this.input.service = this.input.service.value
+      } else if (type === 'technologyForm') {
+        this.input.technology = this.input.technology.value
+      } else if (type === 'capacityUnitsForm') {
+        this.input.capacityUnits = this.input.capacityUnits.value
+      } else if (type === 'divisionForm') {
+        this.input.division = this.input.division.value
+      } else if (type === 'departmentForm') {
+        this.input.department = this.input.department.value
+      } else if (type === 'productSeriesForm') {
+        this.input.productSeries = this.input.productSeries.value
+      } else if (type === 'brand') {
+        this.input.brand = this.input.brand.value
+      } else if (type === 'productSubType') {
+        this.input.productSubType = this.input.productSubType.value
+      } else if (type === 'propertyOf') {
+        this.input.propertyOf = this.input.propertyOf.value
+      }
+    },
+    doProductSeriesFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredProductSeries = this.productSeriesList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    doHubCodeFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredHubCode = this.hubCodeListSearch.filter(v => v.value.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    doBdfFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredBdfCode = this.bdfCodeList.filter(v => v.value.toLowerCase().indexOf(needle) > -1)
+      })
     },
     saveEquipment () {
       // Network
@@ -701,8 +836,46 @@ export default {
       }
     },
     doEdit (cell) {
+      this.showLoading()
       this.input = JSON.parse(JSON.stringify(cell.row))
+      this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
+      this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
+      this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
+      this.getSelectOptionForDetail()
       this.modalAddNewAsset = true
+    },
+    compare (a, b) {
+      const statusA = a.messageStatus.toUpperCase()
+      const statusB = b.messageStatus.toUpperCase()
+      let comparison = 0
+      if (statusA > statusB) {
+        comparison = 1
+      } else if (statusA < statusB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    compareLabel (a, b) {
+      const labelA = a.label.toUpperCase()
+      const labelB = b.label.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    compareValue (a, b) {
+      const labelA = a.value.toUpperCase()
+      const labelB = b.value.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
     },
     doRefresh () {
       this.input = {

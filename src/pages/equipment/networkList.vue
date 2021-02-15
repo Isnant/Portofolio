@@ -23,58 +23,141 @@
     /> -->
     <q-card>
       <q-card-section>
-        <q-expansion-item
+         <q-expansion-item
           label="SEARCH"
           header-class="bg-indigo-2 text-indigo-10"
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
             <fieldset class="fieldset_search" style="width: 100%; margin:10px">
-              <div class="row" style="width: 100%">
+            <!-- <legend class="legedn_search">Search</legend> -->
 
-                <div class="col-20" style="margin-right: 10px; width: 25%">
+              <div class="row" style="width: 100%">
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-select
+                    v-model="searchVal.equipmentStatus"
+                    stack-label
+                    label="Equipment Status"
+                    color="purple-6"
+                    :options="equipmentStatusListSearch"
+                    @input="getDropdownValue('equipmentStatusSearch')"
+                  />
+                </div>
+
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-input
+                  v-model="searchVal.equipmentName"
+                  stack-label
+                  label="Equipment Name"
+                  oninput="this.value = this.value.toUpperCase()"
+                  class="text-uppercase"
+                  color="purple-6"/>
+                </div>
+
+                <div class="col-15" style="margin-right: 10px; width: 22%">
                   <q-select
                   v-model="searchVal.productType"
                   label="Product Type"
-                  color="indigo-6"
-                  :options="productTypeList"/>
+                  color="purple-6"
+                  :options="productTypeListSearch"
+                  @input="getDropdownValue('productTypeSearch')"
+                  />
                 </div>
 
-                <div class="col-20" style="margin-right: 10px; width: 15%">
-                  <q-input
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-select v-model="searchVal.productSeries"
+                    :stack-label="true"
+                    color="purple-6"
+                    :options="filteredProductSeries"
+                    @input="getDropdownValue('productSeriesSearch')"
+                    @filter="doProductSeriesFilter"
+                    label="Product Series"
+                    use-input
+                    fill-input
+                    hide-selected
+                    input-debounce="500">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                  <!-- <q-input
                     v-model="searchVal.productSeries"
                     label="Product Series"
-                    color="indigo-6"
+                    color="purple-6"
                     stack-label
-                  />
+                    productSeriesList
+                  /> -->
                 </div>
-
-                <div class="col-20" style="margin-right: 10px;width: 20%">
+              </div>
+              <div class="row" style="margin-top:20px">
+                <div class="col-20" style="margin-right: 10px; width: 22%">
                   <q-select
-                    v-model="searchVal.hubCode"
-                    label="Hub Code"
-                    color="indigo-6"
-                    :options="hubCodeList"
+                    v-model="searchVal.assetStatus"
+                    stack-label
+                    label="Asset Status"
+                    color="purple-6"
+                    :options="assetStatusListSearch"
+                    @input="getDropdownValue('assetStatusSearch')"
                   />
                 </div>
+                <div class="col-20" style="margin-right: 10px;width: 22%">
+                  <q-select v-model="searchVal.hubCode"
+                    :stack-label="true"
+                    color="purple-6"
+                    :options="filteredHubCode"
+                    @input="getDropdownValue('hubCodeSearch')"
+                    @filter="doHubCodeFilter"
+                    label="Hub Code"
+                    use-input
+                    fill-input
+                    hide-selected
+                    input-debounce="500">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
 
-                <div class="col-20" style="margin-right: 10px;width: 20%">
+                <div class="col-20" style="margin-right: 10px;width: 22%">
                   <q-select
                     v-model="searchVal.bdfCode"
                     label="BDF Code"
-                    color="indigo-6"
-                    :options="bdfCodeList"
-                  />
+                    color="purple-6"
+                    :options="filteredBdfCode"
+                    @input="getDropdownValue('bdfCodeSearch')"
+                    @filter="doBdfFilter"
+                    use-input
+                    fill-input
+                    hide-selected
+                    input-debounce="500">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
                 </div>
 
-                <div class="col-20" style="margin-right: 10px; width: 10%">
+                <!-- <div class="col-20" style="margin-right: 10px; width: 22%">
                   <q-input
                     v-model="searchVal.nodeCode"
                     label="Node Code"
-                    color="indigo-6"
+                    color="purple-6"
+                    oninput="this.value = this.value.toUpperCase()"
+                    class="text-uppercase"
                     stack-label
                   />
-                </div>
+                </div> -->
 
                 <div class="col" style="width: 5%">
                   <q-btn round color="indigo-10" @click="doMainEquipmentRefreshList()">
@@ -114,7 +197,7 @@
         <q-tooltip>Upload</q-tooltip>
       </q-btn> -->
       <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="orange-6" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-6" text-color="white" @click.native="getSelectOptionForDetail" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
         <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
         <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadTxt=true" icon="table_view"><q-tooltip>Import Txt</q-tooltip></q-fab-action>
       </q-fab>
@@ -122,7 +205,7 @@
 
     <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
       <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+        <q-bar class="bg-indigo-10 text-white">
         <strong>Network Equipment Form</strong>
         <q-space/>
         <q-btn dense flat icon="close" v-close-popup/>

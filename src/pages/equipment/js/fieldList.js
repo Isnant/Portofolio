@@ -31,9 +31,11 @@ export default {
       productTypeList: [],
       newProductTypeList: ['AMPLIFIER', 'POWER SUPPLY', 'FIBERNODE'],
       hubCodeList: [],
+      filteredHubCode: [],
       productSeriesList: [],
       filteredProductSeries: [],
       bdfCodeList: [],
+      filteredBdfCode: [],
       subTypeList: [],
       hubCodeRoomList: [],
       technologyList: [],
@@ -123,13 +125,13 @@ export default {
       equipmentCategoryList: ['Hub', 'Field', 'Network'],
       searchVal: {
         equipmentCategory: 'Field',
-        productType: 'All',
-        productSeries: 'All',
-        hubCode: 'All',
-        bdfCode: 'All',
+        productType: 'ALL',
+        productSeries: 'ALL',
+        hubCode: 'ALL',
+        bdfCode: 'ALL',
         nodeCode: '',
-        assetStatus: 'All',
-        equipmentStatus: 'All',
+        assetStatus: 'ALL',
+        equipmentStatus: 'ALL',
         equipmentName: ''
       },
       groupSelect: {
@@ -497,20 +499,23 @@ export default {
       if (type === 'main') {
         this.equipmentStatusListSearch = response.data.listOfEquipmentStatusSearch.sort(this.compareValue)
         this.productTypeListSearch = response.data.listOfProductTypeSearch.sort(this.compareValue)
+        this.productTypeListSearch = this.productTypeListSearch.filter(a => a.cascadeValue === 'Field')
         this.assetStatusListSearch = response.data.listOfAssetStatusSearch.sort(this.compareValue)
         this.hubCodeListSearch = response.data.listOfHubCodeSearch.sort(this.compareValue)
         this.productSeriesList = response.data.listOfProductSeriesSearch.sort(this.compareValue)
-        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
-        this.assetStatusListSearch.unshift({ label: 'All', value: 'All' })
-        this.equipmentStatusListSearch.unshift({ label: 'All', value: 'All' })
-        this.productTypeListSearch.unshift({ label: 'All', value: 'All' })
-        this.productSeriesList.unshift({ label: 'All', value: 'All' })
-        this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'All')
+        this.bdfCodeList = response.data.listOfBDFSearch.sort(this.compareValue)
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'ALL')
+        this.assetStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.equipmentStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productSeriesList.unshift({ label: 'ALL', value: 'ALL' })
+        this.bdfCodeList.unshift({ label: 'ALL', value: 'ALL' })
+        this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'ALL')
       } else if (type === 'detail') {
         this.productTypeList = this.productTypeListSearch.filter(a => a.cascadeValue === 'Field')
         // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
-        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
-        this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'ALL')
+        this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'ALL')
         this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
         this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
         this.serviceList = response.data.listOfService.sort(this.compareValue)
@@ -627,10 +632,22 @@ export default {
         this.input.propertyOf = this.input.propertyOf.value
       }
     },
-    doDropdownFilter (val, update) {
+    doProductSeriesFilter (val, update) {
       update(() => {
         const needle = val.toLowerCase()
         this.filteredProductSeries = this.productSeriesList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    doHubCodeFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredHubCode = this.hubCodeListSearch.filter(v => v.value.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    doBdfFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredBdfCode = this.bdfCodeList.filter(v => v.value.toLowerCase().indexOf(needle) > -1)
       })
     },
     getSubType () {
@@ -1185,6 +1202,7 @@ export default {
       return selectedElement
     },
     doMigrationAssignNewName () {
+      alert('2')
       let prefix = this.equipmentToMigrate.newNodeCode.substring(0, 6)
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         if (this.equipmentToMigrate.migrationListNew[i].newNumber === '') {
@@ -1223,6 +1241,7 @@ export default {
       }
     },
     doMigrationInitializeEquipmentList (removeNode) {
+      alert('1')
       const oppositeService = this.equipmentToMigrate.service === 'DIGITAL' ? 'ANALOG' : 'DIGITAL'
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         let selectedElement = this.equipmentToMigrate.migrationListNew[i]
@@ -1272,6 +1291,7 @@ export default {
       }
     },
     doMigrationSetupNewHierarchy () {
+      alert('haha')
       this.equipmentToMigrate.selectedNewNode = this.nodePrefixByHub + this.equipmentToMigrate.newNodeNumber
       if (!this.equipmentToMigrate.isNewNode) {
         this.equipmentToMigrate.newNodeCode = this.equipmentToMigrate.selectedNewNode
