@@ -33,7 +33,7 @@
             <!-- <legend class="legedn_search">Search</legend> -->
 
               <div class="row" style="width: 100%">
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-select
                     v-model="searchVal.equipmentStatus"
                     stack-label
@@ -44,7 +44,7 @@
                   />
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-input
                   v-model="searchVal.equipmentName"
                   stack-label
@@ -54,7 +54,7 @@
                   color="purple-6"/>
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-15" style="margin-right: 10px; width: 20%">
                   <q-select
                   v-model="searchVal.productType"
                   label="Product Type"
@@ -64,7 +64,7 @@
                   />
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-12" style="margin-right: 10px; width: 22%">
                   <q-select v-model="searchVal.productSeries"
                     :stack-label="true"
                     color="purple-6"
@@ -91,6 +91,14 @@
                     stack-label
                     productSeriesList
                   /> -->
+                </div>
+                <div class="col-12" style="margin-right: 10px; width: 10%">
+                  <q-input
+                    v-model="searchVal.logBatch"
+                    label="Log Batch"
+                    color="purple-6"
+                    stack-label
+                  />
                 </div>
               </div>
               <div class="row" style="margin-top:20px">
@@ -1209,14 +1217,21 @@
                         row-key="id">
 
                         <q-td align="center" slot="body-cell-newName" slot-scope="cell">
-                          <div v-if="cell.row.migrate === false || cell.row.assetStatus === 'Inactive'" class="text-red">
+                          <div v-if="cell.row.migrate === false" class="text-red">
                             {{ cell.row.newName }}
+                            <q-tooltip>Stay</q-tooltip>
+                          </div>
+                          <div v-else-if="cell.row.assetStatus === 'Inactive'" class="text-red">
+                            {{ cell.row.newName }}
+                            <q-tooltip>Inactive</q-tooltip>
                           </div>
                           <div v-else-if="cell.row.assetStatus === 'Replace'" class="text-blue">
                             {{ cell.row.newName }}
+                            <q-tooltip>Replace</q-tooltip>
                           </div>
                           <div v-else class="text-green">
                             {{ cell.row.newName }}
+                            <q-tooltip>Migrate</q-tooltip>
                           </div>
                           <q-popup-edit v-model="cell.row.newName">
                             <q-input v-model="cell.row.newNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
@@ -1232,14 +1247,21 @@
                             @input="doMigrationChangeProductType(cell.row)"/>
                         </q-td>
                         <q-td align="center" slot="body-cell-newPredecessor" slot-scope="cell">
-                          <div v-if="cell.row.migrate === false || cell.row.assetStatus === 'Inactive'" class="text-red">
+                          <div v-if="cell.row.migrate === false" class="text-red">
                             {{ cell.row.newPredecessor }}
+                            <q-tooltip>Stay</q-tooltip>
+                          </div>
+                          <div v-else-if="cell.row.assetStatus === 'Inactive'" class="text-red">
+                            {{ cell.row.newPredecessor }}
+                            <q-tooltip>Inactive</q-tooltip>
                           </div>
                           <div v-else-if="cell.row.assetStatus === 'Replace'" class="text-blue">
                             {{ cell.row.newPredecessor }}
+                            <q-tooltip>Replace</q-tooltip>
                           </div>
                           <div v-else class="text-green">
                             {{ cell.row.newPredecessor }}
+                            <q-tooltip>Migrate</q-tooltip>
                           </div>
                           <q-popup-edit v-model="cell.row.newPredecessor" :disable="cell.row.productType === 'FIBERNODE' || cell.row.productType === 'POWER SUPPLY'" >
                             <q-input v-model="cell.row.newPredecessorNumber" dense :prefix="getMigrationEquipmentPrefix(cell.row)"
@@ -1248,14 +1270,21 @@
                           </q-popup-edit>
                         </q-td>
                         <q-td align="center" slot="body-cell-newPsCode" slot-scope="cell">
-                          <div v-if="cell.row.migrate === false || cell.row.assetStatus === 'Inactive'" class="text-red">
+                          <div v-if="cell.row.migrate === false" class="text-red">
                             {{ cell.row.newPsCode }}
+                            <q-tooltip>Stay</q-tooltip>
+                          </div>
+                          <div v-else-if="cell.row.assetStatus === 'Inactive'" class="text-red">
+                            {{ cell.row.newPsCode }}
+                            <q-tooltip>Inactive</q-tooltip>
                           </div>
                           <div v-else-if="cell.row.assetStatus === 'Replace'" class="text-blue">
                             {{ cell.row.newPsCode }}
+                            <q-tooltip>Replace</q-tooltip>
                           </div>
                           <div v-else class="text-green">
                             {{ cell.row.newPsCode }}
+                            <q-tooltip>Migrate</q-tooltip>
                           </div>
                           <q-popup-edit v-model="cell.row.newPsCode" :disable="cell.row.productType === 'PS'">
                             <q-input v-model="cell.row.newPsCode" dense

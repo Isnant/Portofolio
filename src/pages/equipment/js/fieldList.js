@@ -132,7 +132,8 @@ export default {
         nodeCode: '',
         assetStatus: 'ALL',
         equipmentStatus: 'ALL',
-        equipmentName: ''
+        equipmentName: '',
+        logBatch: ''
       },
       groupSelect: {
         assetStatus: '',
@@ -1461,13 +1462,27 @@ export default {
       }
     },
     isMigrationInactiveVisible (row) {
-      // if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
-      return true
-      // }
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
+        if (row.productType === 'FIBERNODE' && row.migrate === false) {
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return true
+      }
     },
     isMigrationRemoveVisible (row) {
       if (this.equipmentToMigrate.selectedMoveNodeOption !== 'C') {
-        return true
+        if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
+          if (row.productType === 'FIBERNODE' && row.migrate === false) {
+            return false
+          } else {
+            return true
+          }
+        } else {
+          return true
+        }
       }
     },
     isMigrationAddPowerSupplyVisible () {

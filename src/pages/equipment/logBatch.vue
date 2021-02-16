@@ -14,60 +14,83 @@
         </div>
       </div>
     </div>
+    <q-card>
+      <q-card-section>
+        <q-expansion-item
+          label="SEARCH"
+          header-class="bg-indigo-2 text-indigo-10"
+          style="margin-bottom:10px"
+          icon="search">
+          <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
+            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+              <div class="row" style="width:700px;margin:10px">
+                <div class="col" style="margin-right:20px">
+                  <q-input
+                    v-model="searchVal.id"
+                    color="indigo-9"
+                    label="Batch"
+                    stack-label>
+                  </q-input>
+                </div>
+                <div class="col" style="margin-right:20px">
+                  <q-input
+                    v-model="searchVal.fileName"
+                    color="indigo-9"
+                    label="File Name"
+                    stack-label>
+                  </q-input>
+                </div>
+                <div class="col" style="margin-right:20px">
+                  <q-select
+                    v-model="searchVal.equipmentCategory"
+                    color="indigo-9"
+                    label="Equipment Category"
+                    :options="equipmentCategoryList"
+                    stack-label>
+                  </q-select>
+                </div>
 
-     <!-- <div class="row" style="margin-buttom:20px">
-      <div class="col-15" style="margin-right: 10px; width: 22%">
-        <q-input
-          v-model="searchVal.hubCode"
-          stack-label
-          label="Hub Code"
-          color="purple-6"/>
-      </div>
-
-      <div class="col-15" style="margin-right: 10px; width: 22%">
-        <q-input
-        v-model="searchVal.hubName"
-        stack-label
-        label="Hub Name"
-        color="purple-6"/>
-      </div>
-
-      <div class="col" style="width: 5%">
-        <q-btn round color="purple-10" @click="doSearchByFilter()">
-          <q-icon name="search"/>
-          <q-tooltip>Search</q-tooltip>
-        </q-btn>
-      </div>
-    </div> -->
-
-    <div style="max-width: 1200px">
-      <q-table
-        :data="dataList"
-        :columns="tableColumns"
-        :pagination.sync="pagination"
-        table-header-class="text-indigo-10 bg-indigo-2"
-        @request="doMainEquipmentChangePage"
-        row-key="id"
-        dense>
-
-        <q-td slot="body-cell-createdDate" slot-scope="props">
-          {{ props.row.createdDate | formatDateTime}}
-        </q-td>
-        <q-td slot="body-cell-fileName" slot-scope="props">
-          <a @click="downloadExcel(props)" href="#">{{props.row.fileName}}</a>
-        </q-td>
-
-        <q-td slot="body-cell-recordStatus" slot-scope="props">
-          <div v-if="props.row.recordStatus === 'A'">
-            <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+                <div class="col">
+                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                    <q-icon name="search"/>
+                    <q-tooltip>Search</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </fieldset>
           </div>
-          <div v-else>
-            <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
-          </div>
-        </q-td>
+        </q-expansion-item>
 
-      </q-table>
-    </div>
+        <div style="max-width: 1200px">
+          <q-table
+            :data="dataList"
+            :columns="tableColumns"
+            :pagination.sync="pagination"
+            table-header-class="text-indigo-10 bg-indigo-2"
+            @request="doMainEquipmentChangePage"
+            row-key="id"
+            dense>
+
+            <q-td slot="body-cell-createdDate" slot-scope="props">
+              {{ props.row.createdDate | formatDateTime}}
+            </q-td>
+            <q-td slot="body-cell-fileName" slot-scope="props">
+              <a @click="downloadExcel(props)" href="#">{{props.row.fileName}}</a>
+            </q-td>
+
+            <q-td slot="body-cell-recordStatus" slot-scope="props">
+              <div v-if="props.row.recordStatus === 'A'">
+                <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+              </div>
+              <div v-else>
+                <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
+              </div>
+            </q-td>
+
+          </q-table>
+        </div>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 

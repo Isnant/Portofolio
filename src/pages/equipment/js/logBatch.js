@@ -9,6 +9,7 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      equipmentCategoryList: ['Field', 'Indoor', 'Network'],
       tableColumns: [
         {
           name: 'id',
@@ -88,8 +89,9 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
-        hubCode: '',
-        hubName: ''
+        id: '',
+        fileName: '',
+        equipmentCategory: ''
       },
       showForm: false,
       formData: {
@@ -113,7 +115,10 @@ export default {
         pageIndex: this.pagination.page - 1,
         pageSize: this.pagination.rowsPerPage,
         sortBy: this.pagination.sortBy,
-        descending: this.pagination.descending
+        descending: this.pagination.descending,
+        id: this.searchVal.id,
+        equipmentCategory: this.searchVal.equipmentCategory,
+        fileName: this.searchVal.fileName
       }
       this.getLogBatchList(params)
     },
@@ -154,10 +159,11 @@ export default {
         pageSize: rowsPerPage,
         sortBy: sortBy,
         descending: descending,
-        hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        id: this.searchVal.id,
+        equipmentCategory: this.searchVal.equipmentCategory,
+        fileName: this.searchVal.fileName
       }
-      this.getHubCodeList(params)
+      this.getLogBatchList(params)
     },
     doSearchByFilter () {
       const params = {
@@ -165,10 +171,11 @@ export default {
         pageSize: this.pagination.rowsPerPage,
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
-        hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        id: this.searchVal.id,
+        equipmentCategory: this.searchVal.equipmentCategory,
+        fileName: this.searchVal.fileName
       }
-      this.getHubCodeList(params)
+      this.getLogBatchList(params)
     },
     doOpenForm (cell) {
       if (cell !== undefined) {
