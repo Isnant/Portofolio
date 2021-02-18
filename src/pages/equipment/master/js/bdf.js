@@ -115,6 +115,10 @@ export default {
         rowsNumber: 0
       },
       showForm: false,
+      searchVal: {
+        bdfCode: '',
+        bdfName: ''
+      },
       formData: {
         bdfCode: '',
         bdfName: '',
@@ -138,14 +142,14 @@ export default {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
-          descending: this.pagination.descending
+          descending: this.pagination.descending,
+          bdfCode: this.searchVal.bdfCode,
+          bdfName: this.searchVal.bdfName
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.listOfBDF.content
-          this.pagination.rowsNumber = response.data.listOfBDF.totalElements
-          this.pagination.page = response.data.listOfBDF.number + 1
+          this.doMainFillTableResult(response.data.listOfBDF)
           this.areaList = response.data.listOfAreaDropdown
           this.listOfAreaForRegion = response.data.listOfArea
         })
@@ -158,26 +162,22 @@ export default {
           })
         })
     },
-    getBuildingList (props) {
+    doMainFillTableResult (pagedEquipment) {
+      this.dataList = pagedEquipment.content
+      this.pagination.rowsNumber = pagedEquipment.totalElements
+      this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
+      this.pagination.page = pagedEquipment.number + 1
+    },
+    getBdfList (params) {
       // this.$q.loading.show()
       this.showLoading()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
 
       this.$axios.get(`${process.env.urlPrefix}getBdfList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -187,6 +187,29 @@ export default {
             message: error
           })
         })
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        bdfCode: this.searchVal.bdfCode,
+        bdfName: this.searchVal.bdfName
+      }
+      this.getBdfList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        bdfCode: this.searchVal.bdfCode,
+        bdfName: this.searchVal.bdfName
+      }
+      this.getBdfList(params)
     },
     doOpenForm (cell) {
       if (cell !== undefined) {
