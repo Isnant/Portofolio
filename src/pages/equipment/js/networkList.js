@@ -360,9 +360,9 @@ export default {
           sortable: true
         },
         {
-          name: 'serialNumberInternal',
+          name: 'serialNumberDevice',
           label: 'Serial Number',
-          field: 'serialNumberInternal',
+          field: 'serialNumberDevice',
           align: 'left',
           sortable: true
         },
