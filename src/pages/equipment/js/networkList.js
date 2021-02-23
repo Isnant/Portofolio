@@ -443,19 +443,21 @@ export default {
       this.doMainRefresh(params)
     },
     getSelectOptionForDetail () {
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getFieldEquipmentDetailSelectOption`, {})
         .then((response) => {
           this.constructSelectList(response, 'detail')
           this.modalAddNewAsset = true
+          this.$q.loading.hide()
         })
         .catch((error) => {
+          this.$q.loading.hide()
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error
           })
         })
-      this.$q.loading.hide()
     },
     constructSelectList (response, type) {
       if (type === 'main') {
@@ -804,15 +806,20 @@ export default {
         })
     },
     getBrand () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
       this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
-          pid: this.input.manufacturer
+          description: this.input.manufacturer
         }
       })
         .then((response) => {
-          this.brandList = response.data.map(brand => brand.brand)
+          this.brandList = response.data.map(data => ({
+            label: data.brand.toUpperCase(),
+            value: data.brand.toUpperCase()
+          }))
+          // this.brandList = response.data.map(brand => brand.brand)
           this.$q.loading.hide()
         })
         .catch((error) => {

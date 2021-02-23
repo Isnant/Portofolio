@@ -182,7 +182,7 @@
           :data="listOfEquipment"
           :columns="equipmentListColumns"
           :pagination.sync="equipmentPagination"
-          :rows-per-page-options="[10, 20, 50, 100]"
+          :rows-per-page-options="[10, 20, 50, 100, 'All']"
           table-header-class="bg-indigo-2 text-indigo-10"
           @request="doMainEquipmentChangePage"
           :selected-rows-label="getSelectedString"
@@ -899,7 +899,7 @@
 
         <q-dialog v-model="modalUpload" persistent @before-hide="doHideButton()">
           <q-card class="bg-white">
-            <q-bar class="bg-primary text-white">
+            <q-bar class="bg-indigo-10 text-white">
               <strong>Upload Equipment File</strong>
               <q-space />
               <q-btn dense flat icon="close" v-close-popup />
@@ -913,10 +913,12 @@
                   type="file"
                   @input="val => { doAttachFile(val[0]) }"
                 />
-                <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
-                  <q-icon name="fas fa-file-upload"/>
-                  <q-tooltip>Upload</q-tooltip>
-                </q-btn>
+                <div align="right" style="margin-top:10px">
+                  <q-btn v-show="uploadButton" round color="orange-5" @click="doUploadFile()">
+                    <q-icon name="fas fa-file-upload"/>
+                    <q-tooltip>Upload</q-tooltip>
+                  </q-btn>
+                </div>
               <!-- </q-field> -->
             </q-card-section>
           </q-card>
@@ -974,7 +976,7 @@
 
         <q-dialog v-model="modalChangeAssetStatus" persistent>
           <q-card class="bg-white">
-            <q-bar class="bg-primary text-white">
+            <q-bar class="bg-indigo-10 text-white">
               <strong>Change Status</strong>
               <q-space />
               <q-btn dense flat icon="close" v-close-popup />
@@ -994,6 +996,25 @@
             <div align="right" style="margin-top:20px">
               <q-btn v-show="btnChangeStatus" round @click.native="changeSelectedStatus" color="orange-5" icon="save">
                 <q-tooltip>Submit</q-tooltip>
+              </q-btn>
+            </div>
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+
+        <q-dialog v-model="modalWarningLoad" persistent>
+          <q-card class="bg-warning">
+            <q-bar class="bg-warning text-white">
+              <strong></strong>
+              <q-space />
+              <q-btn dense flat icon="close" v-close-popup />
+            </q-bar>
+            <q-card-section>
+            Are you sure to load {{this.equipmentPagination.rowsNumber}} data?
+            <div align="right" style="margin-top:20px">
+              <q-btn round @click.native="doMainEquipmentChangePageAfterWarning" color="white">
+                <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+                <q-tooltip>yes</q-tooltip>
               </q-btn>
             </div>
             </q-card-section>

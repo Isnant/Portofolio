@@ -293,6 +293,13 @@ export default {
         rowsPerPage: 10,
         rowsNumber: 0
       },
+      paramsPagination: {
+        pageIndex: '',
+        pageSize: '',
+        searchVal: '',
+        sortBy: '',
+        descending: ''
+      },
       errorListColumn: [
         {
           name: 'message',
@@ -311,6 +318,7 @@ export default {
       addHub: true,
       modalAddField: false,
       modalAddNetwork: false,
+      modalWarningLoad: false,
       uploadCategory: 'field',
       migrationStep: 1,
       showMigrationForm: false,
@@ -485,16 +493,29 @@ export default {
       this.doMainRefresh(params)
     },
     doMainEquipmentChangePage (props) {
+      var pageSize = 0
       const { page, rowsPerPage, sortBy, descending } = props.pagination
-      const params = {
+      if (rowsPerPage !== 'All') {
+        pageSize = rowsPerPage
+      }
+
+      this.paramsPagination = {
         pageIndex: page - 1,
-        pageSize: rowsPerPage,
+        pageSize: pageSize,
         searchVal: this.searchVal,
         sortBy: sortBy,
         descending: descending
       }
 
-      this.doMainRefresh(params)
+      if (this.equipmentPagination.rowsNumber > 1000 && rowsPerPage === 'All') {
+        this.modalWarningLoad = true
+      } else {
+        this.doMainRefresh(this.paramsPagination)
+      }
+    },
+    doMainEquipmentChangePageAfterWarning () {
+      this.modalWarningLoad = false
+      this.doMainRefresh(this.paramsPagination)
     },
     constructSelectList (response, type) {
       if (type === 'main') {
@@ -538,13 +559,14 @@ export default {
       this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
       this.getMigrationHistory(cell)
       this.getSelectOptionForDetail()
-      this.modalAddNewAsset = true
     },
     getSelectOptionForDetail () {
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getFieldEquipmentDetailSelectOption`, {})
         .then((response) => {
           this.constructSelectList(response, 'detail')
           this.modalAddNewAsset = true
+          this.$q.loading.hide()
         })
         .catch((error) => {
           this.$q.notify({
@@ -552,8 +574,8 @@ export default {
             icon: 'report_problem',
             message: error
           })
+          this.$q.loading.hide()
         })
-      this.$q.loading.hide()
     },
     getMigrationHistory (cell) {
       var assetId = cell.row.id.toString()
