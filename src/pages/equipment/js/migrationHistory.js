@@ -112,7 +112,9 @@ export default {
       searchVal: {
         reqStartDate: '',
         reqEndDate: '',
-        createdBy: ''
+        createdBy: '',
+        sourceCode: '',
+        newCode: ''
       },
       showForm: false,
       formData: {
@@ -152,7 +154,9 @@ export default {
           descending: this.pagination.descending,
           startDate: this.searchVal.reqStartDate,
           endDate: this.searchVal.reqEndDate,
-          createdBy: this.searchVal.createdBy
+          createdBy: this.searchVal.createdBy,
+          sourceCode: this.searchVal.sourceCode,
+          newCode: this.searchVal.newCode
         }
       })
         .then((response) => {
@@ -204,7 +208,9 @@ export default {
         descending: descending,
         startDate: this.searchVal.reqStartDate,
         endDate: this.searchVal.reqEndDate,
-        createdBy: this.searchVal.createdBy
+        createdBy: this.searchVal.createdBy,
+        sourceCode: this.searchVal.sourceCode,
+        newCode: this.searchVal.newCode
       }
       this.getMigrationHistoryList(params)
     },
@@ -216,7 +222,9 @@ export default {
         descending: this.pagination.descending,
         startDate: this.searchVal.reqStartDate,
         endDate: this.searchVal.reqEndDate,
-        createdBy: this.searchVal.createdBy
+        createdBy: this.searchVal.createdBy,
+        sourceCode: this.searchVal.sourceCode,
+        newCode: this.searchVal.newCode
       }
       this.getMigrationHistoryList(params)
     },

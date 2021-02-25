@@ -22,7 +22,7 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%">
-            <div class="row" style="width:700px;margin:10px">
+            <div class="row" style="margin:10px">
               <div class="col" style="margin-right:20px">
                 <q-input
                   v-model="searchVal.reqStartDate"
@@ -66,6 +66,20 @@
                   stack-label
                   clearable
                   label="Created By">
+                </q-input>
+              </div>
+              <div class="col" style="margin-left:20px; margin-right:20px">
+                <q-input
+                  v-model="searchVal.sourceCode"
+                  stack-label
+                  label="Source Code">
+                </q-input>
+              </div>
+              <div class="col" style="margin-left:20px; margin-right:20px">
+                <q-input
+                  v-model="searchVal.newCode"
+                  stack-label
+                  label="New Code">
                 </q-input>
               </div>
               <div class="col">
