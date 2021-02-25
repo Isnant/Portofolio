@@ -311,6 +311,7 @@ export default {
       listOfEquipment: [],
       listOfError: [],
       modalUpload: false,
+      modalSuccess: false,
       modalError: false,
       modalWarning: false,
       modalAddNewAsset: false,
@@ -324,6 +325,7 @@ export default {
       showMigrationForm: false,
       migrationTab: 'newConfig',
       reloadMigrationList: true,
+      succesMessage: '',
       equipmentToMigrate: {
         hubCode: undefined,
         nodeCode: undefined,
@@ -940,7 +942,7 @@ export default {
     },
     doUploadFile (file) {
       // this.$q.loading.show()
-      this.showLoading()
+      this.showCheckingLoading()
       this.$axios.post(`${process.env.urlPrefix}uploadField`, this.fileAttach)
         .then((response) => {
           this.$q.loading.hide()
@@ -950,9 +952,12 @@ export default {
             this.modalError = true
           } else if (this.listOfError[0].messageStatus === 'warning') {
             this.modalWarning = true
+          } else if (this.listOfError[0].messageStatus === 'success') {
+            this.modalSuccess = true
+            this.succesMessage = this.listOfError[0].message
           } else {
             this.$q.notify({
-              color: 'positive',
+              color: 'negative',
               icon: 'info',
               message: this.listOfError[0].message
             })
@@ -973,7 +978,7 @@ export default {
     },
     doUploadAfterWarning () {
       // this.$q.loading.show()
-      this.showLoading()
+      this.showUploadLoading()
       this.$axios.post(`${process.env.urlPrefix}uploadFieldAfterWarning`)
         .then((response) => {
           this.$q.loading.hide()
@@ -990,6 +995,7 @@ export default {
               message: this.listOfError[0].message
             })
             this.modalWarning = false
+            this.modalSuccess = false
           }
           this.doRefresh()
           this.doMainInitPage()
@@ -1875,7 +1881,8 @@ export default {
             '0000').substring(0, 10)
         }
 
-        this.equipmentToMigrate.migrationListNew[i].nodeCode = this.equipmentToMigrate.newNodeCode
+        this.equipmentToMigrate.migrationListNew[i].nodeCode = this.equipmentToMigrate.nodeCode
+        this.equipmentToMigrate.migrationListNew[i].newNodeCode = this.equipmentToMigrate.newNodeCode
       }
       this.$axios.post(`${process.env.urlPrefix}doValidate/`, this.equipmentToMigrate)
         .then((response) => {
