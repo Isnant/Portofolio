@@ -256,8 +256,8 @@ export default {
       if (region !== null) {
         var RegionList = JSON.parse(region)
         this.filteredRegionList = RegionList.map(data => ({
-          label: data.region.toUpperCase(),
-          value: data.region.toUpperCase()
+          label: data.region,
+          value: data.region
         }))
       } else {
         this.filteredRegionList = []

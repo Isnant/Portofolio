@@ -29,16 +29,16 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+            <!-- <fieldset class="fieldset_search" style="width: 100%; margin:10px"> -->
             <!-- <legend class="legedn_search">Search</legend> -->
 
               <div class="row" style="width: 100%">
                 <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-select
+                    rounded outlined
+                    color="orange-8"
                     v-model="searchVal.equipmentStatus"
-                    stack-label
                     label="Equipment Status"
-                    color="purple-6"
                     :options="equipmentStatusListSearch"
                     @input="getDropdownValue('equipmentStatusSearch')"
                   />
@@ -46,19 +46,20 @@
 
                 <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-input
-                  v-model="searchVal.equipmentName"
-                  stack-label
-                  label="Equipment Name"
-                  oninput="this.value = this.value.toUpperCase()"
-                  class="text-uppercase"
-                  color="purple-6"/>
+                    v-model="searchVal.equipmentName"
+                    label="Equipment Name"
+                    oninput="this.value = this.value.toUpperCase()"
+                    class="text-uppercase"
+                    rounded outlined
+                    color="orange-8"/>
                 </div>
 
                 <div class="col-15" style="margin-right: 10px; width: 20%">
                   <q-select
                   v-model="searchVal.productType"
                   label="Product Type"
-                  color="purple-6"
+                  rounded outlined
+                  color="orange-8"
                   :options="productTypeListSearch"
                   @input="getDropdownValue('productTypeSearch')"
                   />
@@ -67,7 +68,8 @@
                 <div class="col-12" style="margin-right: 10px; width: 22%">
                   <q-select v-model="searchVal.productSeries"
                     :stack-label="true"
-                    color="purple-6"
+                    rounded outlined
+                    color="orange-8"
                     :options="filteredProductSeries"
                     @input="getDropdownValue('productSeriesSearch')"
                     @filter="doProductSeriesFilter"
@@ -92,30 +94,34 @@
                     productSeriesList
                   /> -->
                 </div>
-                <div class="col-12" style="margin-right: 10px; width: 10%">
+                <div class="col-12" style="width: 13%">
                   <q-input
                     v-model="searchVal.logBatch"
                     label="Log Batch"
-                    color="purple-6"
+                    rounded outlined
+                    color="orange-8"
                     stack-label
                   />
                 </div>
               </div>
-              <div class="row" style="margin-top:20px">
-                <div class="col-20" style="margin-right: 10px; width: 22%">
+
+              <div class="row" style="margin-top:20px; width: 100%" >
+                <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-select
                     v-model="searchVal.assetStatus"
                     stack-label
                     label="Asset Status"
-                    color="purple-6"
+                    rounded outlined
+                    color="orange-8"
                     :options="assetStatusListSearch"
                     @input="getDropdownValue('assetStatusSearch')"
                   />
                 </div>
-                <div class="col-20" style="margin-right: 10px;width: 22%">
+                <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-select v-model="searchVal.hubCode"
                     :stack-label="true"
-                    color="purple-6"
+                    rounded outlined
+                    color="orange-8"
                     :options="filteredHubCode"
                     @input="getDropdownValue('hubCodeSearch')"
                     @filter="doHubCodeFilter"
@@ -134,11 +140,12 @@
                   </q-select>
                 </div>
 
-                <div class="col-20" style="margin-right: 10px;width: 22%">
+                <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-select
                     v-model="searchVal.bdfCode"
                     label="BDF Code"
-                    color="purple-6"
+                    rounded outlined
+                    color="orange-8"
                     :options="filteredBdfCode"
                     @input="getDropdownValue('bdfCodeSearch')"
                     @filter="doBdfFilter"
@@ -156,25 +163,26 @@
                   </q-select>
                 </div>
 
-                <div class="col-20" style="margin-right: 10px; width: 22%">
+                <div class="col-12" style="margin-right: 10px; width: 22%">
                   <q-input
                     v-model="searchVal.nodeCode"
                     label="Node Code"
-                    color="purple-6"
+                    rounded outlined
+                    color="orange-8"
                     oninput="this.value = this.value.toUpperCase()"
                     class="text-uppercase"
                     stack-label
                   />
                 </div>
 
-                <div class="col" style="width: 5%">
+                <div class="col-12" style="width: 5%">
                   <q-btn round color="indigo-10" @click="doMainEquipmentRefreshList()">
                     <q-icon name="search"/>
                     <q-tooltip>Search</q-tooltip>
                   </q-btn>
                 </div>
               </div>
-            </fieldset>
+            <!-- </fieldset> -->
           </div>
         </q-expansion-item>
 
@@ -343,7 +351,7 @@
                     :stack-label="true"
                     :options="filteredProductSeries"
                     @input="getDropdownValue('productSeriesForm')"
-                    @filter="doDropdownFilter"
+                    @filter="doProductSeriesFilter"
                     label="Product Series"
                     tabindex="6"
                     style="margin-top:20px"

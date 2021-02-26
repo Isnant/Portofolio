@@ -22,34 +22,32 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
-
-              <div class="row" style="margin-bottom:20px">
-                <div class="col-15" style="margin-right: 10px; width: 22%">
-                  <q-input
+              <div class="row" style="margin-bottom:10px">
+                <div class="col-15" style="margin-right: 10px;">
+                  <q-input rounded outlined
                     v-model="searchVal.bdfCode"
                     stack-label
                     label="BDF Code"
-                    color="purple-6"/>
+                    color="orange-8"/>
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-15" style="margin-right: 10px;%">
                   <q-input
+                  rounded outlined
                   v-model="searchVal.bdfName"
                   stack-label
                   label="BDF Name"
-                  color="purple-6"/>
+                  color="orange-8"/>
                 </div>
 
-                <div class="col" style="width: 5%">
+                <div class="col" style="width:20%">
                   <q-btn round size="small" color="indigo-10" @click="doSearchByFilter()">
                     <q-icon name="search"/>
                     <q-tooltip>Search</q-tooltip>
                   </q-btn>
                 </div>
               </div>
-            </fieldset>
-          </div>
+            </div>
         </q-expansion-item>
     <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Building</h4> -->
         <div style="max-width: 1200px">
@@ -57,8 +55,9 @@
             :data="dataList"
             :columns="tableColumns"
             :pagination.sync="pagination"
+            :rows-per-page-options="[10, 20, 50, 100]"
             table-header-class="text-indigo-10 bg-indigo-2"
-            @request="getBuildingList"
+            @request="doMainEquipmentChangePage"
             row-key="id"
             dense>
 
@@ -126,10 +125,10 @@
         <q-card-section>
           <div class="row">
             <div class="col">
-              <q-input v-model="formData.bdfCode"
-                stack-label label="Hub Code"/>
+              <q-input v-model="formData.bdfCode" :readonly="formData.createdBy !== undefined"
+                stack-label label="BDF Code"/>
               <q-input v-model="formData.bdfName"
-                stack-label label="Hub Name"/>
+                stack-label label="BDF Name"/>
               <q-select v-model="formData.areaName"
                 stack-label
                 label="Area Name"
