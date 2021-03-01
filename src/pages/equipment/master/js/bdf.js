@@ -17,6 +17,14 @@ export default {
       },
       tableColumns: [
         {
+          name: 'bdfId',
+          label: 'BDF Id',
+          field: 'bdfId',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
           name: 'bdfCode',
           label: 'BDF Code',
           field: 'bdfCode',
@@ -120,6 +128,7 @@ export default {
         bdfName: ''
       },
       formData: {
+        bdfId: '',
         bdfCode: '',
         bdfName: '',
         areaName: '',
@@ -283,6 +292,7 @@ export default {
         .then((response) => {
           this.modalUploadExcel = false
           this.$q.loading.hide()
+          this.doRefresh()
         })
         .catch((error) => {
           this.$q.loading.hide()

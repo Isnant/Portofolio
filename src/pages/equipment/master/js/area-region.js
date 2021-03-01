@@ -16,7 +16,7 @@ export default {
       tableColumns: [
         {
           name: 'id',
-          label: 'Area Code',
+          label: 'Area Id',
           field: 'id',
           align: 'left',
           style: 'width: 100px',

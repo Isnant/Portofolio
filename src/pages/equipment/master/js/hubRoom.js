@@ -17,6 +17,14 @@ export default {
       },
       tableColumns: [
         {
+          name: 'hubRoomId',
+          label: 'Hub Room Id ',
+          field: 'hubRoomId',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
           name: 'hubCodeRoom',
           label: 'Hub Room Code ',
           field: 'hubCodeRoom',
@@ -104,6 +112,7 @@ export default {
       },
       showForm: false,
       formData: {
+        hubRoomId: '',
         hubCodeRoom: '',
         hubName: '',
         floor: '',
@@ -244,6 +253,7 @@ export default {
         .then((response) => {
           this.modalUploadExcel = false
           this.$q.loading.hide()
+          this.doRefresh()
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -288,6 +298,7 @@ export default {
     },
     clear () {
       this.formData = {
+        hubRoomId: '',
         hubCodeRoom: '',
         hubName: '',
         floor: '',

@@ -125,7 +125,9 @@
         <q-card-section>
           <div class="row">
             <div class="col">
-              <q-input v-model="formData.bdfCode" :readonly="formData.createdBy !== undefined"
+              <q-input v-model="formData.bdfId" readonly
+                stack-label label="BDF Id"/>
+              <q-input v-model="formData.bdfCode"
                 stack-label label="BDF Code"/>
               <q-input v-model="formData.bdfName"
                 stack-label label="BDF Name"/>
@@ -160,7 +162,7 @@
             </div>
           </div>
           <div style="text-align: right; margin-top:20px">
-            <q-btn round color="primary" @click.native="doSave()" size="small">
+            <q-btn round color="orange-4" @click.native="doSave()" size="small">
               <q-icon name="fas fa-save"/>
               <q-tooltip>Submit</q-tooltip>
             </q-btn>

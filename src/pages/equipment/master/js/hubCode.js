@@ -17,6 +17,14 @@ export default {
       },
       tableColumns: [
         {
+          name: 'hubId',
+          label: 'Hub Id',
+          field: 'hubId',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: true
+        },
+        {
           name: 'hubCode',
           label: 'Hub Code',
           field: 'hubCode',
@@ -133,6 +141,7 @@ export default {
       },
       showForm: false,
       formData: {
+        hubId: '',
         hubCode: '',
         hubName: '',
         hubCodeIt: '',
@@ -228,6 +237,7 @@ export default {
     doOpenForm (cell) {
       if (cell !== undefined) {
         this.formData = JSON.parse(JSON.stringify(cell.row))
+        this.getRegion(this.formData.areaName)
         this.vDisable = true
       } else {
         this.clear()
@@ -266,22 +276,30 @@ export default {
       this.formData = cell.row
       this.doSave()
     },
-    getRegion () {
-      this.formData.areaName = this.formData.areaName.value
-      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(this.formData.areaName) > -1)[0].region
+    getRegion (areaName) {
+      this.showLoading()
+      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(areaName) > -1)[0].region
       if (region !== null) {
         var RegionList = JSON.parse(region)
         this.filteredRegionList = RegionList.map(data => ({
-          label: data.region.toUpperCase(),
-          value: data.region.toUpperCase()
+          label: data.region,
+          value: data.region
         }))
+        this.$q.loading.hide()
       } else {
         this.filteredRegionList = []
         this.formData.region = ''
+        this.$q.loading.hide()
       }
     },
-    doRegion () {
-      this.formData.regionName = this.formData.regionName.value
+    getSelectValue (value) {
+      if (value === 'area') {
+        this.formData.areaName = this.formData.areaName.value
+        this.getRegion(this.formData.areaName)
+      }
+      if (value === 'region') {
+        this.formData.regionName = this.formData.regionName.value
+      }
     },
     doAttachFile (file) {
       let fr = new FileReader()
@@ -299,6 +317,7 @@ export default {
         .then((response) => {
           this.modalUploadExcel = false
           this.$q.loading.hide()
+          this.doRefresh()
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -343,6 +362,7 @@ export default {
     },
     clear () {
       this.formData = {
+        hubId: '',
         hubCode: '',
         hubName: '',
         hubCodeIt: '',

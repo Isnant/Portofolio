@@ -69,7 +69,7 @@
     </q-page-sticky> -->
     <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm(false)" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm()" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
         <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
         <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel">
           <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
@@ -109,8 +109,10 @@
           <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
         <q-card-section>
+          <q-input v-model="formData.hubRoomId"
+            readonly
+            stack-label label="Hub Room Id"/>
           <q-input v-model="formData.hubCodeRoom"
-            :disable="vDisable"
             stack-label label="Hub Room Code"/>
           <q-input v-model="formData.room"
             stack-label label="Room"/>
@@ -119,7 +121,7 @@
           <q-input v-model="formData.hubName"
             stack-label label="Hub Name"/>
           <div style="text-align: right; margin-top:20px">
-            <q-btn round color="primary" @click.native="doSave()" size="small">
+            <q-btn round color="orange-4" @click.native="doSave()" size="small">
               <q-icon name="fas fa-save"/>
               <q-tooltip>Submit</q-tooltip>
             </q-btn>

@@ -22,23 +22,25 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+            <!-- <fieldset class="fieldset_search" style="width: 100%; margin:10px"> -->
 
-              <div class="row" style="margin-bottom:20px">
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+              <div class="row">
+                <div class="col-20" style="margin-right: 10px">
                   <q-input
                     v-model="searchVal.hubCode"
                     stack-label
                     label="Hub Code"
-                    color="purple-6"/>
+                    rounded outlined
+                    color="orange-8"/>
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-20" style="margin-right: 10px">
                   <q-input
                   v-model="searchVal.hubName"
                   stack-label
                   label="Hub Name"
-                  color="purple-6"/>
+                  rounded outlined
+                  color="orange-8"/>
                 </div>
 
                 <div class="col" style="width: 5%">
@@ -48,7 +50,7 @@
                   </q-btn>
                 </div>
               </div>
-            </fieldset>
+            <!-- </fieldset> -->
           </div>
         </q-expansion-item>
 
@@ -108,7 +110,7 @@
     </q-page-sticky> -->
     <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-fab color="orange-7" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm(false)" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-6" text-color="white" @click.native="doOpenForm()" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
         <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
         <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel">
           <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip>
@@ -150,9 +152,12 @@
         <q-card-section>
           <div class="row">
             <div class="col">
+              <q-input v-model="formData.hubId"
+                stack-label
+                disable
+                label="Hub Id"/>
               <q-input v-model="formData.hubCode"
                 stack-label
-                :disable="vDisable"
                 label="Hub Code"/>
               <q-input v-model="formData.hubName"
                 stack-label label="Hub Name"/>
@@ -162,11 +167,11 @@
                 stack-label
                 label="Area Name"
                 :options="areaList"
-                @input="getRegion()"/>
+                @input="getSelectValue('area')"/>
               <q-select v-model="formData.regionName"
                 stack-label
                 label="Region"
-                @input="doRegion()"
+                @input="getSelectValue('region')"
                 :options="filteredRegionList"/>
               <q-input v-model="formData.city"
                 stack-label label="City"/>
@@ -193,7 +198,7 @@
             </div>
           </div>
           <div style="text-align: right; margin-top:20px">
-            <q-btn round color="primary" @click.native="doSave()" size="small">
+            <q-btn round color="orange-5" @click.native="doSave()" size="small">
               <q-icon name="fas fa-save"/>
               <q-tooltip>Submit</q-tooltip>
             </q-btn>
