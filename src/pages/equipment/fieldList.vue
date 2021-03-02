@@ -48,8 +48,8 @@
                   <q-input
                     v-model="searchVal.equipmentName"
                     label="Equipment Name"
+                    stack-label
                     oninput="this.value = this.value.toUpperCase()"
-                    class="text-uppercase"
                     rounded outlined
                     color="orange-8"/>
                 </div>
@@ -170,7 +170,6 @@
                     rounded outlined
                     color="orange-8"
                     oninput="this.value = this.value.toUpperCase()"
-                    class="text-uppercase"
                     stack-label
                   />
                 </div>
