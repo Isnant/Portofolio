@@ -8,6 +8,7 @@ export default {
       equipmentStatusListSearch: [],
       productTypeListSearch: [],
       assetStatusListSearch: [],
+      technologyListSearch: [],
       hubCodeListSearch: [],
       hubCodeName: '',
       migrationHistoryList: [],
@@ -133,7 +134,8 @@ export default {
         assetStatus: 'ALL',
         equipmentStatus: 'ALL',
         equipmentName: '',
-        logBatch: ''
+        logBatch: '',
+        technology: 'ALL'
       },
       groupSelect: {
         assetStatus: '',
@@ -450,7 +452,7 @@ export default {
       if (authorities.findIndex(x => x === 'ROLE_03') === -1) {
         this.$router.push('/')
       }
-      this.$axios.post(`${process.env.urlPrefix}getFieldInitPage/`, {})
+      this.$axios.get(`${process.env.urlPrefix}getFieldInitPage/`, {})
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfEquipment)
           this.constructSelectList(response, 'main')
@@ -526,10 +528,12 @@ export default {
         this.productTypeListSearch = this.productTypeListSearch.filter(a => a.cascadeValue === 'Field')
         this.assetStatusListSearch = response.data.listOfAssetStatusSearch.sort(this.compareValue)
         this.hubCodeListSearch = response.data.listOfHubCodeSearch.sort(this.compareValue)
+        this.technologyListSearch = response.data.listOfTechnologySearch.sort(this.compareValue)
         this.productSeriesList = response.data.listOfProductSeriesSearch.sort(this.compareValue)
         this.bdfCodeList = response.data.listOfBDFSearch.sort(this.compareValue)
         this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'ALL')
         this.assetStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.technologyListSearch.unshift({ label: 'ALL', value: 'ALL' })
         this.equipmentStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
         this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
         this.productSeriesList.unshift({ label: 'ALL', value: 'ALL' })
@@ -618,6 +622,9 @@ export default {
       }
       if (type === 'bdfCodeSearch') {
         this.searchVal.bdfCode = this.searchVal.bdfCode.value
+      }
+      if (type === 'technologySearch') {
+        this.searchVal.technology = this.searchVal.technology.value
       }
 
       // form detail

@@ -106,7 +106,7 @@
               </div>
 
               <div class="row" style="margin-top:20px; width: 100%" >
-                <div class="col-12" style="margin-right: 10px; width: 20%">
+                <div class="col-10" style="margin-right: 10px; width: 15%">
                   <q-select
                     v-model="searchVal.assetStatus"
                     stack-label
@@ -117,7 +117,7 @@
                     @input="getDropdownValue('assetStatusSearch')"
                   />
                 </div>
-                <div class="col-12" style="margin-right: 10px; width: 20%">
+                <div class="col-10" style="margin-right: 10px; width: 15%">
                   <q-select v-model="searchVal.hubCode"
                     :stack-label="true"
                     rounded outlined
@@ -140,7 +140,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-12" style="margin-right: 10px; width: 20%">
+                <div class="col-10" style="margin-right: 10px; width: 15%">
                   <q-select
                     v-model="searchVal.bdfCode"
                     label="BDF Code"
@@ -163,7 +163,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-12" style="margin-right: 10px; width: 22%">
+                <div class="col-10" style="margin-right: 10px; width: 22%">
                   <q-input
                     v-model="searchVal.nodeCode"
                     label="Node Code"
@@ -171,6 +171,18 @@
                     color="orange-8"
                     oninput="this.value = this.value.toUpperCase()"
                     stack-label
+                  />
+                </div>
+
+                <div class="col-10" style="margin-right: 10px; width: 20%">
+                  <q-select
+                    v-model="searchVal.technology"
+                    stack-label
+                    label="Technology"
+                    rounded outlined
+                    color="orange-8"
+                    :options="technologyListSearch"
+                    @input="getDropdownValue('technologySearch')"
                   />
                 </div>
 
