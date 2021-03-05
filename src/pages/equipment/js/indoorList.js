@@ -193,7 +193,8 @@ export default {
       listOfError: [],
       modalError: false,
       modalWarning: false,
-      modalAddNewAsset: false
+      modalAddNewAsset: false,
+      modalSuccess: false
     }
   },
 
@@ -415,9 +416,12 @@ export default {
             this.modalError = true
           } else if (this.listOfError[0].messageStatus === 'warning') {
             this.modalWarning = true
+          } else if (this.listOfError[0].messageStatus === 'success') {
+            this.modalSuccess = true
+            this.succesMessage = this.listOfError[0].message
           } else {
             this.$q.notify({
-              color: 'positive',
+              color: 'negative',
               icon: 'info',
               message: this.listOfError[0].message
             })
@@ -429,6 +433,39 @@ export default {
         .catch((error) => {
           this.$q.loading.hide()
 
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    doUploadAfterWarning () {
+      // this.$q.loading.show()
+      this.showUploadLoading()
+      this.$axios.post(`${process.env.urlPrefix}uploadIndoorAfterWarning`)
+        .then((response) => {
+          this.$q.loading.hide()
+          this.listOfError = response.data
+          this.listOfError.sort(this.compare)
+          if (this.listOfError[0].messageStatus === 'error') {
+            this.modalError = true
+          } else if (this.listOfError[0].messageStatus === 'warning') {
+            this.modalWarning = true
+          } else {
+            this.$q.notify({
+              color: 'positive',
+              icon: 'info',
+              message: this.listOfError[0].message
+            })
+            this.modalWarning = false
+            this.modalSuccess = false
+          }
+          this.doRefresh()
+          this.doMainInitPage()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',

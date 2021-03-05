@@ -128,6 +128,25 @@
       </q-fab>
     </q-page-sticky>
 
+    <q-dialog v-model="modalSuccess" persistent>
+          <q-card class="bg-white">
+            <q-bar class="bg-white text-indigo-10">
+              <strong></strong>
+              <q-space />
+              <q-btn dense flat icon="close" v-close-popup />
+            </q-bar>
+            <q-card-section>
+            <div align="center" class="text-green">{{succesMessage}}</div>
+            <div align="right" style="margin-top:20px">
+              <q-btn round color="orange-4" @click="doUploadAfterWarning()">
+                <q-icon name="fas fa-file-upload"/>
+                <q-tooltip>Upload Data</q-tooltip>
+              </q-btn>
+            </div>
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+
      <q-dialog v-model="modalError" persistent>
       <q-card class="bg-white">
         <q-bar class="bg-negative text-white">
@@ -179,21 +198,51 @@
     </q-dialog>
 
     <q-dialog v-model="modalAddNewAsset" maximized persistent @before-hide="doRefresh()">
-      <q-card class="bg-white">
+      <q-card class="bg-white" >
         <q-bar class="bg-indigo-10 text-white">
         <strong>Indoor Equipment Form</strong>
         <q-space/>
         <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
-        <div style="margin:20px">
-          <div class="row">
+        <div class="row" style="margin-right:20px; margin-left:20px; margin-top:10px; margin-bottom:40px">
+          <div class="col" style="width:30%; margin-right:15px">
+            <q-input  v-model="input.id"
+              :stack-label="true"
+              label="Equipment Id"
+              disable
+              tabindex="1"/>
+          </div>
+          <div class="col" style="width:30%; margin-right:15px">
+            <q-input  v-model="input.equipmentName"
+              :stack-label="true"
+              label="Equipment Name"
+              disable
+              tabindex="1"/>
+          </div>
+          <div class="col" style="width:30%">
+            <q-select
+              v-model="input.equipmentUploadStatus"
+              stack-label
+              label="Asset Status"
+              color="purple-6"
+              :options="assetStatusList"
+              @input="getDropdownValue('assetStatusForm')"/>
+          </div>
+        </div>
+        <q-expansion-item
+          label="Basic Information"
+          header-class="bg-indigo-5 text-white"
+          default-opened
+          style="margin-bottom:10px"
+          icon="article">
+          <div class="row"  style="margin:20px">
             <div class="col" style="margin-right:10px">
               <q-input v-model="input.equipmentCategory"
                 :stack-label="true"
                 label="Equipment Category"
                 disable
                 tabindex="1"/>
-              <q-input v-model="input.equipmentName" ref="hEquipmentName"
+              <q-input v-model="input.equipmentName" ref="fEquipmentName"
                 :rules="[val => !! val || 'Equipment Name is required']"
                 :stack-label="true"
                 label="Equipment Name*"
@@ -203,26 +252,41 @@
                 :stack-label="true"
                 label="Description"
                 tabindex="3"/>
-              <q-select v-model="input.productType" ref="hProductType"
+              <q-select v-model="input.productType" ref="fProductType"
                 :rules="[val => !! val || 'Product Type is required']"
                 :stack-label="true"
-                @input="getSubType()"
                 label="Product Type*"
-                tabindex="4"
                 :options="productTypeList"
+                @input="getSubType()"
+                tabindex="4"
                 style="margin-top:20px"/>
-              <q-select v-model="input.productSubType" ref="hProductSubType"
-                :rules="[val => !! val || 'Product Sub Type is required']"
+
+              <!-- <div v-if="input.technology === 'FTTH'">
+                <q-select v-model="input.productSubType"
+                  :stack-label="true"
+                  :options="subTypeList"
+                  @input="getSubTypeValue()"
+                  label="Product Sub Type"
+                  style="margin-bottom:20px"
+                  tabindex="5"/>
+              </div> -->
+              <!-- <div v-else> -->
+              <q-select v-model="input.productSubType"
                 :stack-label="true"
                 :options="subTypeList"
-                label="Product Sub Type*"
+                @input="getDropdownValue('productSubType')"
+                label="Product Sub Type"
                 tabindex="5"/>
-              <q-select v-model="searchVal.productSeries"
+              <!-- </div> -->
+              <q-select v-model="input.productSeries" ref="fProductSeries"
+                :rules="[val => !! val || 'Product Series is required']"
                 :stack-label="true"
                 :options="filteredProductSeries"
-                @input="getDropdownValue('productSeriesSearch')"
-                @filter="doDropdownFilter"
+                @input="getDropdownValue('productSeriesForm')"
+                @filter="doProductSeriesFilter"
                 label="Product Series"
+                tabindex="6"
+                style="margin-top:20px"
                 use-input
                 fill-input
                 hide-selected
@@ -235,19 +299,44 @@
                   </q-item>
                 </template>
               </q-select>
-              <q-select v-model="input.manufacturer" ref="hManufacturer"
+              <!-- <q-input v-model="input.productSeries" ref="fProductSeries"
+                :rules="[val => !! val || 'Product Series is required']"
+                :stack-label="true"
+                label="Product Series*"
+                tabindex="6"
+                style="margin-top:20px"/> -->
+              <q-select v-model="input.manufacturer" ref="fManufacturer"
                 :rules="[val => !! val || 'Manufacturer is required']"
                 :stack-label="true"
+                label="Manufacturer*"
                 :options="manufacturerList"
                 @input="getBrand()"
-                label="Manufacturer*"
                 tabindex="7"/>
-              <q-select v-model="input.brand" ref="hBrand"
+              <q-select v-model="input.brand" ref="fBrand"
                 :rules="[val => !! val || 'Brand is required']"
                 :stack-label="true"
                 label="Brand*"
+                @input="getDropdownValue('brand')"
                 :options="brandList"
                 tabindex="8"/>
+            </div>
+            <div class="col" style="margin-right:10px">
+              <q-select
+                v-model="input.equipmentStatus"
+                stack-label
+                label="Status"
+                color="purple-6"
+                :options="equipmentStatusList"
+                tabindex="42"
+                @input="getDropdownValue('equipmentStatusForm')"/>
+              <q-select v-model="input.statusReason" ref="fStatusReason"
+              :rules="[val => !! val || 'Status Reason is required']"
+                :stack-label="true"
+                label="Status Reason*"
+                tabindex="42"
+                :options="statusReasonList"
+                @input="getDropdownValue('statusReasonForm')"
+                style="margin-top:20px"/>
               <q-input v-model="input.serialNumberDevice"
                 :stack-label="true"
                 label="Serial Number Device"
@@ -257,73 +346,120 @@
                 label="Serial Number Internal"
                 tabindex="10"
                 style="margin-top:20px"/>
-              <q-input v-model="input.quantity" ref="hQuantity"
+              <q-input v-model="input.quantity" ref="fQuantity"
                 :rules="[val => !! val || 'Quantity is required']"
-                type="number"
                 :stack-label="true"
                 label="Quantity*"
+                type="number"
                 tabindex="11"
                 style="margin-top:20px"/>
-              <q-input v-model="input.rack" ref="hRack"
-                :rules="[val => !! val || 'Rack is required']"
+            </div>
+          </div>
+        </q-expansion-item>
+        <q-expansion-item
+          label="Location"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="location_on">
+          <div class="row" style="margin:20px">
+            <div class="col" style="margin-right:10px">
+              <q-input v-model="input.rack"
                 :stack-label="true"
-                label="Rack*"
-                tabindex="12"/>
-              <q-input v-model="input.chassis" ref="hChassis"
-                :rules="[val => !! val || 'Chassis is required']"
+                label="Rack"
+                tabindex="12"
+                style="margin-top:20px"/>
+              <q-input v-model="input.chassis"
                 :stack-label="true"
-                label="Chassis*"
-                tabindex="13"/>
-              <q-input v-model="input.slot" ref="hSlot"
-                :rules="[val => !! val || 'Slot is required']"
+                label="Chassis"
+                tabindex="13"
+                style="margin-top:20px"/>
+              <q-input v-model="input.slot"
                 :stack-label="true"
-                label="Slot*"
-                tabindex="14"/>
+                label="Slot"
+                tabindex="14"
+                style="margin-top:20px"/>
+            </div>
+            <div class="col">
               <q-select v-model="input.hubCode" ref="fHubCode"
                 :rules="[val => !! val || 'Hub Code is required']"
                 :stack-label="true"
                 label="Hub Code*"
                 tabindex="15"
                 :options="hubCodeList"
-                 @input="getDropdownValue('hubCodeForm')"/>
-              <q-input v-model="input.hubAddress" ref="hHubAddress"
-                :rules="[val => !! val || 'Hub Address is required']"
-                :stack-label="true"
-                label="Hub Address*"
-                tabindex="16"/>
-              <!-- <q-input v-model="input.bdfCode"
-                :stack-label="true"
-                label="BDF Code"
-                tabindex="17"/>
-              <q-input v-model="input.nodeCode"
-                :stack-label="true"
-                label="Node Code"
-                tabindex="18"
+                @input="getDropdownValue('hubCodeForm')"
                 style="margin-top:20px"/>
-              <q-input v-model="input.psCode"
+              <q-select v-model="input.hubCodeRoom"
                 :stack-label="true"
-                label="Power Supply Code"
-                tabindex="19"
+                label="Hub Code Room"
+                tabindex="16"
+                :options="hubCodeRoomList"
+                @input="getDropdownValue('hubCodeRoomForm')"/>
+            </div>
+          </div>
+        </q-expansion-item>
+        <q-expansion-item
+          label="Detail Information"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="library_books">
+          <div class="row" style="margin:20px">
+            <div class="col" style="margin-right:10px">
+              <q-input v-model="input.productionYear"
+                :stack-label="true"
+                label="Production Year"
+                tabindex="33"
                 style="margin-top:20px"/>
-              <q-input v-model="input.amplifierCode"
+              <q-input v-model="input.assetLifetime"
                 :stack-label="true"
-                label="Amplifier Code"
-                tabindex="20"
-                style="margin-top:20px"/> -->
+                label="Asset Lifetime"
+                tabindex="34"
+                style="margin-top:20px"/>
+              <q-input v-model="input.purchasedDate"
+                :stack-label="true"
+                label="Purchased Date"
+                tabindex="35"
+                style="margin-top:20px">
+                <template v-slot:after>
+                  <q-icon name="event">
+                    <q-popup-proxy ref="qPurchasedDate" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="input.purchasedDate" mask="DD/MM/YYYY" @input="() => $refs.qPurchasedDate.hide()" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+              <q-input v-model="input.installationDate" ef="mInstallationDate"
+                :rules="[val => !! val || 'Installation Date is required']"
+                :stack-label="true"
+                label="Installation Date*"
+                tabindex="36"
+                style="margin-top:20px">
+                <template v-slot:after>
+                  <q-icon name="event">
+                    <q-popup-proxy ref="qInstallationDate" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="input.installationDate" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDate.hide()" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+              <q-input v-model="input.installedBy"
+                :stack-label="true"
+                label="Installed By"
+                tabindex="37"/>
               <q-select v-model="input.service" ref="fService"
                 :rules="[val => !! val || 'Service is required']"
                 :stack-label="true"
                 label="Service*"
                 tabindex="21"
                 :options="serviceList"
-                 @input="getDropdownValue('serviceForm')"/>
+                @input="getDropdownValue('serviceForm')"
+                style="margin-top:20px"/>
               <q-select v-model="input.technology" ref="fTechnology"
                 :rules="[val => !! val || 'Technology is required']"
                 :stack-label="true"
                 label="Technology*"
                 tabindex="22"
                 :options="technologyList"
-                 @input="getDropdownValue('technologyForm')"/>
+                @input="getDropdownValue('technologyForm')"/>
               <q-input v-model="input.ipAddress"
                 :stack-label="true"
                 label="IP Address"
@@ -333,33 +469,52 @@
                 label="MAC Address"
                 tabindex="24"
                 style="margin-top:20px"/>
+              <q-input v-model="input.customerType"
+                :stack-label="true"
+                label="Customer Type"
+                tabindex="24"
+                style="margin-top:20px"/>
             </div>
             <div class="col">
-              <q-select
-                v-model="input.equipmentStatus"
-                stack-label
-                label="Status"
-                color="purple-6"
-                :options="equipmentStatusList"
-                tabindex="42"
-                @input="getDropdownValue('equipmentStatusForm')"/>
-              <q-input v-model="input.capacity"
-                :stack-label="true"
-                label="Capacity"
-                tabindex="25"
-                style="margin-top:20px"/>
-              <q-select v-model="input.capacityUnits"
-                :stack-label="true"
-                label="Capacity Units"
-                tabindex="26"
-                :options="capacityUnitsList"
-                @input="getDropdownValue('capacityUnitsForm')"
-                style="margin-top:20px"/>
+              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
+                <q-input v-model="input.capacity"
+                  :stack-label="true"
+                  label="Capacity"
+                  tabindex="25"
+                  style="margin-top:20px; margin-bottom:20px"/>
+              </div>
+              <div v-else>
+                <q-input v-model="input.capacity" ref="fCapacity"
+                  :rules="[val => !! val || 'Capacity is required']"
+                  :stack-label="true"
+                  label="Capacity*"
+                  tabindex="25"
+                  style="margin-top:20px"/>
+              </div>
+
+              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
+                <q-select v-model="input.capacityUnits"
+                  :stack-label="true"
+                  label="Capacity Units"
+                  tabindex="26"
+                  :options="capacityUnitsList"
+                  @input="getDropdownValue('capacityUnitsForm')"
+                  style="margin-bottom:20px"/>
+              </div>
+              <div v-else>
+                <q-select v-model="input.capacityUnits" ref="fCapacityUnits"
+                  :rules="[val => !! val || 'Capacity Units is required']"
+                  :stack-label="true"
+                  label="Capacity Units*"
+                  tabindex="26"
+                  :options="capacityUnitsList"
+                  @input="getDropdownValue('capacityUnitsForm')"/>
+              </div>
+
               <q-input v-model="input.usedCapacity"
                 :stack-label="true"
                 label="Used Capacity"
-                tabindex="27"
-                style="margin-top:20px"/>
+                tabindex="27"/>
               <q-input v-model="input.capacity1"
                 :stack-label="true"
                 label="Capacity 1"
@@ -385,87 +540,61 @@
                 label="No Of Port Rear"
                 tabindex="32"
                 style="margin-top:20px"/>
-              <q-input v-model="input.productionYear"
-                :stack-label="true"
-                label="Production Year"
-                tabindex="33"
-                style="margin-top:20px"/>
-              <q-input v-model="input.assetLifetime"
-                :stack-label="true"
-                label="Asset Lifetime"
-                tabindex="34"
-                style="margin-top:20px"/>
-              <q-input v-model="input.purchasedDate"
-                :stack-label="true"
-                label="Purchased Date"
-                tabindex="35"
-                style="margin-top:20px">
-                <template v-slot:after>
-                  <q-icon name="event">
-                    <q-popup-proxy ref="qPurchasedDateHub" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="input.purchasedDate" mask="DD/MM/YYYY" @input="() => $refs.qPurchasedDateHub.hide()" />
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-              <q-input v-model="input.installationDate"
-                :stack-label="true"
-                label="Installation Date"
-                tabindex="36"
-                style="margin-top:20px">
-                <template v-slot:after>
-                  <q-icon name="event">
-                    <q-popup-proxy ref="qInstallationDateHub" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="input.installationDate" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDateHub.hide()" />
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-              <q-input v-model="input.installedBy"
-                :stack-label="true"
-                label="Installed By"
-                tabindex="37"
-                style="margin-top:20px"/>
+            </div>
+          </div>
+        </q-expansion-item>
+        <q-expansion-item
+          label="Owners Information"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="account_circle">
+          <div class="row" style="margin:20px">
+            <div class="col" style="margin-right:10px">
               <q-input v-model="input.pic"
                 :stack-label="true"
                 label="PIC"
-                tabindex="38"
-                style="margin-top:20px"/>
-              <q-input v-model="input.division" ref="hDivision"
+                tabindex="38"/>
+              <q-select v-model="input.division" ref="fDivision"
                 :rules="[val => !! val || 'Division is required']"
                 :stack-label="true"
                 label="Division*"
                 tabindex="39"
+                :options="divisionList"
+                @input="getDropdownValue('divisionForm')"
                 style="margin-top:20px"/>
-               <q-select v-model="input.department" ref="fDepartment"
+            </div>
+            <div class="col">
+              <q-select v-model="input.department" ref="fDepartment"
                 :rules="[val => !! val || 'Department is required']"
                 :stack-label="true"
                 label="Department*"
                 tabindex="40"
                 :options="departmentList"
-                 @input="getDropdownValue('departmentForm')"/>
-              <q-input v-model="input.propertyOf" ref="hPropertyOf"
+                @input="getDropdownValue('departmentForm')"/>
+              <q-select v-model="input.propertyOf" ref="fPropertyOf"
                 :rules="[val => !! val || 'Property Of is required']"
                 :stack-label="true"
                 label="Property Of*"
-                tabindex="41"/>
-              <q-select v-model="input.statusReason" ref="fStatusReason"
-               :rules="[val => !! val || 'Status Reason is required']"
-                :stack-label="true"
-                label="Status Reason*"
-                tabindex="42"
-                :options="statusReasonList"
-                 @input="getDropdownValue('statusReasonForm')"/>
-              <q-input v-model="input.remarks"
-                :stack-label="true"
-                label="Remarks"
-                tabindex="43"/>
+                tabindex="41"
+                :options="propertyOfList"
+                @input="getDropdownValue('propertyOf')"/>
             </div>
           </div>
-          <div align="right">
-            <q-btn @click.native="saveEquipment" color="warning" icon="save"/>
-          </div>
+        </q-expansion-item>
+        <q-separator></q-separator>
+        <div align="right" style="margin:20px;width:50%">
+          <q-input v-model="input.remarks"
+            :stack-label="true"
+            label="Remarks"
+            tabindex="56"
+            type="textarea"
+            style="margin-top:20px"/>
         </div>
+          <div align="right" style="margin:20px">
+            <q-btn round @click.native="saveEquipment" color="orange-5" icon="save">
+            <q-tooltip>Submit</q-tooltip>
+            </q-btn>
+          </div>
       </q-card>
     </q-dialog>
 
