@@ -6,6 +6,11 @@ export default {
     return {
       file: undefined,
       uploadButton: false,
+      equipmentStatusListSearch: [],
+      productTypeListSearch: [],
+      assetStatusListSearch: [],
+      hubCodeListSearch: [],
+      filteredHubCode: [],
       productTypeList: [],
       productSeriesList: [],
       equipmentStatusList: [],
@@ -87,13 +92,13 @@ export default {
       },
       searchVal: {
         equipmentCategory: 'Hub',
-        productType: 'All',
-        productSeries: 'All',
-        hubCode: 'All',
-        bdfCode: 'All',
+        productType: 'ALL',
+        productSeries: 'ALL',
+        hubCode: 'ALL',
+        bdfCode: 'ALL',
         nodeCode: '',
-        assetStatus: 'All',
-        equipmentStatus: 'All',
+        assetStatus: 'ALL',
+        equipmentStatus: 'ALL',
         equipmentName: ''
       },
       equipmentListColumns: [
@@ -251,18 +256,22 @@ export default {
     constructSelectList (response, type) {
       if (type === 'main') {
         this.equipmentStatusListSearch = response.data.listOfEquipmentStatusSearch.sort(this.compareValue)
-        this.productTypeListSearch = response.data.listOfProductTypeSearch.sort(this.compareValue)
+        this.productTypeListSearch = response.data.listOfProductTypeSearch.sort(this.compareValue).filter(a => a.cascadeValue === 'Indoor')
+        this.assetStatusListSearch = response.data.listOfAssetStatusSearch.sort(this.compareValue)
+        this.hubCodeListSearch = response.data.listOfHubCodeSearch.sort(this.compareValue)
         this.productSeriesList = response.data.listOfProductSeriesSearch.sort(this.compareValue)
-        this.equipmentStatusListSearch.unshift({ label: 'All', value: 'All' })
-        this.productTypeListSearch.unshift({ label: 'All', value: 'All' })
-        this.productSeriesList.unshift({ label: 'All', value: 'All' })
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'ALL')
+        this.assetStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.equipmentStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productSeriesList.unshift({ label: 'ALL', value: 'ALL' })
       } else if (type === 'detail') {
-        this.productTypeList = this.productTypeListSearch.filter(a => a.value !== 'All')
+        this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'ALL')
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'ALL')
+        this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'ALL')
+        this.productTypeList = this.productTypeListSearch
         // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
-        this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
         this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
-        this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
-        this.serviceList = response.data.listOfService.sort(this.compareValue)
         this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
         this.departmentList = response.data.listOfDepartment.sort(this.compareValue)
         this.divisionList = response.data.listOfDivision.sort(this.compareValue)
@@ -271,6 +280,7 @@ export default {
         this.hubCodeRoomList = response.data.listOfHubCodeRoom.sort(this.compareValue)
       }
     },
+
     doMainEquipmentRefreshList () {
       const params = {
         pageIndex: 0,
@@ -312,6 +322,18 @@ export default {
           this.$q.loading.hide()
         })
     },
+    doProductSeriesFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredProductSeries = this.productSeriesList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    doHubCodeFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.filteredHubCode = this.hubCodeListSearch.filter(v => v.value.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     doEdit (cell) {
       // this.$q.loading.show()
       this.showLoading()
@@ -322,42 +344,44 @@ export default {
       this.getSelectOptionForDetail()
     },
     saveEquipment () {
-      this.$refs.hEquipmentName.validate()
-      this.$refs.hProductType.validate()
-      this.$refs.hProductSubType.validate()
-      this.$refs.hProductSeries.validate()
-      this.$refs.hManufacturer.validate()
-      this.$refs.hBrand.validate()
-      this.$refs.hQuantity.validate()
-      this.$refs.hRack.validate()
-      this.$refs.hChassis.validate()
-      this.$refs.hSlot.validate()
-      this.$refs.hHubCode.validate()
-      this.$refs.hHubAddress.validate()
-      this.$refs.hDivision.validate()
-      this.$refs.hDepartment.validate()
-      this.$refs.hPropertyOf.validate()
-      this.$refs.hEquipmentStatus.validate()
+      this.$refs.fAssetStatus.validate()
+      this.$refs.fEquipmentName.validate()
+      this.$refs.fProductType.validate()
+      this.$refs.fProductSeries.validate()
+      this.$refs.fManufacturer.validate()
+      this.$refs.fBrand.validate()
+      this.$refs.fStatusReason.validate()
+      this.$refs.fQuantity.validate()
+      this.$refs.fRack.validate()
+      this.$refs.fChasis.validate()
+      this.$refs.fHubCode.validate()
+      this.$refs.fHubCodeRoom.validate()
+      this.$refs.fDivision.validate()
+      this.$refs.fDepartment.validate()
+      this.$refs.fPropertyOf.validate()
+      this.$refs.fEquipmentStatus.validate()
 
-      var h1 = this.$refs.hEquipmentName.hasError
-      var h2 = this.$refs.hProductType.hasError
-      var h3 = this.$refs.hProductSubType.hasError
-      var h4 = this.$refs.hProductSeries.hasError
-      var h5 = this.$refs.hManufacturer.hasError
-      var h6 = this.$refs.hBrand.hasError
-      var h7 = this.$refs.hQuantity.hasError
-      var h8 = this.$refs.hRack.hasError
-      var h9 = this.$refs.hChassis.hasError
-      var h10 = this.$refs.hSlot.hasError
-      var h11 = this.$refs.hHubCode.hasError
-      var h12 = this.$refs.hHubAddress.hasError
-      var h13 = this.$refs.hDivision.hasError
-      var h14 = this.$refs.hDepartment.hasError
-      var h15 = this.$refs.hPropertyOf.hasError
-      var h16 = this.$refs.hEquipmentStatus.hasError
+      var vAssetStatus = this.$refs.fAssetStatus.hasError
+      var vEquipmentName = this.$refs.fEquipmentName.hasError
+      var vProductType = this.$refs.fProductType.hasError
+      var vProductSeries = this.$refs.fProductSeries.hasError
+      var vManufacturer = this.$refs.fManufacturer.hasError
+      var vBrand = this.$refs.fBrand.hasError
+      var vStatusReason = this.$refs.fStatusReason.hasError
+      var vQuantity = this.$refs.fQuantity.hasError
+      var vRack = this.$refs.fRack.hasError
+      var vChasis = this.$refs.fChasis.hasError
+      var vHubCode = this.$refs.fHubCode.hasError
+      var vHubCodeRoom = this.$refs.fHubCodeRoom.hasError
+      var vDivision = this.$refs.fDivision.hasError
+      var vDepartment = this.$refs.fDepartment.hasError
+      var vPropertyOf = this.$refs.fPropertyOf.hasError
+      var fvEquipmentStatus = this.$refs.fEquipmentStatus.hasError
 
-      if (!h1 && !h2 && !h3 && !h4 && !h5 && !h6 && !h7 && !h8 && !h9 && !h10 && !h11 && !h12 && !h13 && !h14 && !h15 && !h16) {
-        this.doSaveEquipment()
+      if (!vAssetStatus && !vEquipmentName && !vProductType && !vProductSeries && !vManufacturer && !vBrand && !vStatusReason) {
+        if (!vQuantity && !vRack && !vChasis && !vHubCode && !vHubCodeRoom && !vDivision && !vDepartment && !vPropertyOf && !fvEquipmentStatus) {
+          this.doSaveEquipment()
+        }
       }
     },
     doSaveEquipment () {

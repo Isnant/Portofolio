@@ -25,54 +25,102 @@
       <q-card-section>
         <q-expansion-item
           label="SEARCH"
-          header-class="bg-indigo-2 text-indigo-7"
+          header-class="bg-indigo-2 text-indigo-10"
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+            <!-- <fieldset class="fieldset_search" style="width: 100%; margin:10px"> -->
+            <!-- <legend class="legedn_search">Search</legend> -->
+
               <div class="row" style="width: 100%">
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-15" style="margin-right: 10px; width: 23%">
                   <q-select
+                    rounded outlined
+                    color="orange-8"
                     v-model="searchVal.equipmentStatus"
-                    stack-label
                     label="Equipment Status"
-                    color="purple-6"
                     :options="equipmentStatusListSearch"
                     @input="getDropdownValue('equipmentStatusSearch')"
                   />
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-15" style="margin-right: 10px; width: 23%">
                   <q-input
-                  v-model="searchVal.equipmentName"
-                  stack-label
-                  label="Equipment Name"
-                  oninput="this.value = this.value.toUpperCase()"
-                  class="text-uppercase"
-                  color="purple-6"/>
+                    v-model="searchVal.equipmentName"
+                    label="Equipment Name"
+                    stack-label
+                    oninput="this.value = this.value.toUpperCase()"
+                    rounded outlined
+                    color="orange-8"/>
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-15" style="margin-right: 10px; width: 23%">
                   <q-select
                   v-model="searchVal.productType"
                   label="Product Type"
-                  color="purple-6"
+                  rounded outlined
+                  color="orange-8"
                   :options="productTypeListSearch"
                   @input="getDropdownValue('productTypeSearch')"
                   />
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
+                <div class="col-15" style="margin-right: 10px; width: 25%">
                   <q-select v-model="searchVal.productSeries"
                     :stack-label="true"
+                    rounded outlined
+                    color="orange-8"
                     :options="filteredProductSeries"
                     @input="getDropdownValue('productSeriesSearch')"
-                    @filter="doDropdownFilter"
+                    @filter="doProductSeriesFilter"
                     label="Product Series"
                     use-input
                     fill-input
                     hide-selected
-                    color="purple-6">
+                    input-debounce="500">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                  <!-- <q-input
+                    v-model="searchVal.productSeries"
+                    label="Product Series"
+                    color="purple-6"
+                    stack-label
+                    productSeriesList
+                  /> -->
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:10px; width: 100%" >
+                <div class="col-15" style="margin-right: 10px; width: 25%">
+                  <q-select
+                    v-model="searchVal.assetStatus"
+                    stack-label
+                    label="Asset Status"
+                    rounded outlined
+                    color="orange-8"
+                    :options="assetStatusListSearch"
+                    @input="getDropdownValue('assetStatusSearch')"
+                  />
+                </div>
+                <div class="col-15" style="margin-right: 10px; width: 25%">
+                  <q-select v-model="searchVal.hubCode"
+                    :stack-label="true"
+                    rounded outlined
+                    color="orange-8"
+                    :options="filteredHubCode"
+                    @input="getDropdownValue('hubCodeSearch')"
+                    @filter="doHubCodeFilter"
+                    label="Hub Code"
+                    use-input
+                    fill-input
+                    hide-selected
+                    input-debounce="500">
                     <template v-slot:no-option>
                       <q-item>
                         <q-item-section class="text-grey">
@@ -82,15 +130,24 @@
                     </template>
                   </q-select>
                 </div>
+                <div class="col-15" style="width: 25%">
+                  <q-input
+                    v-model="searchVal.logBatch"
+                    label="Log Batch"
+                    rounded outlined
+                    color="orange-8"
+                    stack-label
+                  />
+                </div>
 
-                <div class="col" style="width: 5%">
+                <div class="col-12" style="width: 5%">
                   <q-btn round color="indigo-10" @click="doMainEquipmentRefreshList()">
                     <q-icon name="search"/>
                     <q-tooltip>Search</q-tooltip>
                   </q-btn>
                 </div>
               </div>
-            </fieldset>
+            <!-- </fieldset> -->
           </div>
         </q-expansion-item>
 
@@ -122,7 +179,7 @@
       </q-btn> -->
 
       <q-fab color="orange-6" glossy icon="keyboard_arrow_down" direction="down">
-        <q-fab-action color="orange-5" text-color="white" @click.native="modalAddNewAsset=true" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
+        <q-fab-action color="orange-5" text-color="white" @click.native="getSelectOptionForDetail" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
         <q-fab-action color="orange-5" text-color="white" @click.native="modalUpload=true" icon="backup"><q-tooltip>Upload</q-tooltip></q-fab-action>
         <q-btn round color="orange-5" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
       </q-fab>
@@ -222,8 +279,10 @@
           <div class="col" style="width:30%">
             <q-select
               v-model="input.equipmentUploadStatus"
+              ref="fAssetStatus"
+              :rules="[val => !! val || 'Asset Status is required']"
               stack-label
-              label="Asset Status"
+              label="Asset Status*"
               color="purple-6"
               :options="assetStatusList"
               @input="getDropdownValue('assetStatusForm')"/>
@@ -284,7 +343,7 @@
                 :options="filteredProductSeries"
                 @input="getDropdownValue('productSeriesForm')"
                 @filter="doProductSeriesFilter"
-                label="Product Series"
+                label="Product Series*"
                 tabindex="6"
                 style="margin-top:20px"
                 use-input
@@ -322,9 +381,10 @@
             </div>
             <div class="col" style="margin-right:10px">
               <q-select
-                v-model="input.equipmentStatus"
+                v-model="input.equipmentStatus" ref="fEquipmentStatus"
+                :rules="[val => !! val || 'Status is required']"
                 stack-label
-                label="Status"
+                label="Status*"
                 color="purple-6"
                 :options="equipmentStatusList"
                 tabindex="42"
@@ -335,8 +395,7 @@
                 label="Status Reason*"
                 tabindex="42"
                 :options="statusReasonList"
-                @input="getDropdownValue('statusReasonForm')"
-                style="margin-top:20px"/>
+                @input="getDropdownValue('statusReasonForm')"/>
               <q-input v-model="input.serialNumberDevice"
                 :stack-label="true"
                 label="Serial Number Device"
@@ -363,21 +422,21 @@
           icon="location_on">
           <div class="row" style="margin:20px">
             <div class="col" style="margin-right:10px">
-              <q-input v-model="input.rack"
+              <q-input v-model="input.rack" ref="fRack"
+                :rules="[val => !! val || 'Rack is required']"
                 :stack-label="true"
                 label="Rack"
                 tabindex="12"
                 style="margin-top:20px"/>
-              <q-input v-model="input.chassis"
+              <q-input v-model="input.chassis" ref="fChasis"
+                :rules="[val => !! val || 'Chasis is required']"
                 :stack-label="true"
                 label="Chassis"
-                tabindex="13"
-                style="margin-top:20px"/>
+                tabindex="13"/>
               <q-input v-model="input.slot"
                 :stack-label="true"
                 label="Slot"
-                tabindex="14"
-                style="margin-top:20px"/>
+                tabindex="14"/>
             </div>
             <div class="col">
               <q-select v-model="input.hubCode" ref="fHubCode"
@@ -388,9 +447,10 @@
                 :options="hubCodeList"
                 @input="getDropdownValue('hubCodeForm')"
                 style="margin-top:20px"/>
-              <q-select v-model="input.hubCodeRoom"
+              <q-select v-model="input.hubCodeRoom"  ref="fHubCodeRoom"
+                :rules="[val => !! val || 'Hub Code Room is required']"
                 :stack-label="true"
-                label="Hub Code Room"
+                label="Hub Code Room*"
                 tabindex="16"
                 :options="hubCodeRoomList"
                 @input="getDropdownValue('hubCodeRoomForm')"/>
@@ -445,72 +505,30 @@
                 :stack-label="true"
                 label="Installed By"
                 tabindex="37"/>
-              <q-select v-model="input.service" ref="fService"
-                :rules="[val => !! val || 'Service is required']"
-                :stack-label="true"
-                label="Service*"
-                tabindex="21"
-                :options="serviceList"
-                @input="getDropdownValue('serviceForm')"
-                style="margin-top:20px"/>
-              <q-select v-model="input.technology" ref="fTechnology"
-                :rules="[val => !! val || 'Technology is required']"
-                :stack-label="true"
-                label="Technology*"
-                tabindex="22"
-                :options="technologyList"
-                @input="getDropdownValue('technologyForm')"/>
               <q-input v-model="input.ipAddress"
                 :stack-label="true"
                 label="IP Address"
-                tabindex="23"/>
+                tabindex="23"
+                style="margin-top:20px"/>
               <q-input v-model="input.macAddress"
                 :stack-label="true"
                 label="MAC Address"
                 tabindex="24"
                 style="margin-top:20px"/>
-              <q-input v-model="input.customerType"
-                :stack-label="true"
-                label="Customer Type"
-                tabindex="24"
-                style="margin-top:20px"/>
             </div>
             <div class="col">
-              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
-                <q-input v-model="input.capacity"
-                  :stack-label="true"
-                  label="Capacity"
-                  tabindex="25"
-                  style="margin-top:20px; margin-bottom:20px"/>
-              </div>
-              <div v-else>
-                <q-input v-model="input.capacity" ref="fCapacity"
-                  :rules="[val => !! val || 'Capacity is required']"
-                  :stack-label="true"
-                  label="Capacity*"
-                  tabindex="25"
-                  style="margin-top:20px"/>
-              </div>
-
-              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
-                <q-select v-model="input.capacityUnits"
-                  :stack-label="true"
-                  label="Capacity Units"
-                  tabindex="26"
-                  :options="capacityUnitsList"
-                  @input="getDropdownValue('capacityUnitsForm')"
-                  style="margin-bottom:20px"/>
-              </div>
-              <div v-else>
-                <q-select v-model="input.capacityUnits" ref="fCapacityUnits"
-                  :rules="[val => !! val || 'Capacity Units is required']"
-                  :stack-label="true"
-                  label="Capacity Units*"
-                  tabindex="26"
-                  :options="capacityUnitsList"
-                  @input="getDropdownValue('capacityUnitsForm')"/>
-              </div>
-
+              <q-input v-model="input.capacity"
+                :stack-label="true"
+                label="Capacity"
+                tabindex="25"
+                style="margin-top:20px; margin-bottom:20px"/>
+              <q-select v-model="input.capacityUnits"
+                :stack-label="true"
+                label="Capacity Units"
+                tabindex="26"
+                :options="capacityUnitsList"
+                @input="getDropdownValue('capacityUnitsForm')"
+                style="margin-bottom:20px"/>
               <q-input v-model="input.usedCapacity"
                 :stack-label="true"
                 label="Used Capacity"
@@ -582,14 +600,20 @@
           </div>
         </q-expansion-item>
         <q-separator></q-separator>
-        <div align="right" style="margin:20px;width:50%">
-          <q-input v-model="input.remarks"
-            :stack-label="true"
-            label="Remarks"
-            tabindex="56"
-            type="textarea"
-            style="margin-top:20px"/>
-        </div>
+        <q-expansion-item
+          label="Remarks"
+          header-class="bg-indigo-5 text-white"
+          style="margin-bottom:10px"
+          icon="subject">
+          <div align="right" style="margin:20px;width:50%">
+            <q-input v-model="input.remarks"
+              :stack-label="true"
+              label="Remarks"
+              tabindex="56"
+              type="textarea"
+              style="margin-top:20px"/>
+          </div>
+        </q-expansion-item>
           <div align="right" style="margin:20px">
             <q-btn round @click.native="saveEquipment" color="orange-5" icon="save">
             <q-tooltip>Submit</q-tooltip>
