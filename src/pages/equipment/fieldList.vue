@@ -288,14 +288,14 @@
                 <q-input  v-model="input.id"
                   :stack-label="true"
                   label="Equipment Id"
-                  disable
+                  readonly
                   tabindex="1"/>
               </div>
               <div class="col" style="width:30%; margin-right:15px">
                 <q-input  v-model="input.equipmentName"
                   :stack-label="true"
                   label="Equipment Name"
-                  disable
+                  readonly
                   tabindex="1"/>
               </div>
               <div class="col" style="width:30%">
@@ -319,9 +319,10 @@
                   <q-input v-model="input.equipmentCategory"
                     :stack-label="true"
                     label="Equipment Category"
-                    disable
+                    readonly
                     tabindex="1"/>
                   <q-input v-model="input.equipmentName" ref="fEquipmentName"
+                    readonly
                     :rules="[val => !! val || 'Equipment Name is required']"
                     :stack-label="true"
                     label="Equipment Name*"
