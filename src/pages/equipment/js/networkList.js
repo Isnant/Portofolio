@@ -23,6 +23,7 @@ export default {
       brandList: [],
       hubTrue: false,
       hubFalse: true,
+      convertTabs: 'convert',
       input: {
         id: '',
         equipmentCategory: 'Network',
@@ -315,6 +316,7 @@ export default {
         rowsPerPage: 0
       },
       dataNotesList: [],
+      dataEmptyList: [],
       paginationNotes: {
         descending: false,
         page: 1,
@@ -442,23 +444,6 @@ export default {
 
       this.doMainRefresh(params)
     },
-    getSelectOptionForDetail () {
-      this.showLoading()
-      this.$axios.get(`${process.env.urlPrefix}getFieldEquipmentDetailSelectOption`, {})
-        .then((response) => {
-          this.constructSelectList(response, 'detail')
-          this.modalAddNewAsset = true
-          this.$q.loading.hide()
-        })
-        .catch((error) => {
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: error
-          })
-        })
-    },
     constructSelectList (response, type) {
       if (type === 'main') {
         this.equipmentStatusListSearch = response.data.listOfEquipmentStatusSearch.sort(this.compareValue)
@@ -482,8 +467,6 @@ export default {
         this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
         this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
         this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
-        this.technologyList = response.data.listOfTechnology.sort(this.compareValue)
-        this.serviceList = response.data.listOfService.sort(this.compareValue)
         this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
         this.departmentList = response.data.listOfDepartment.sort(this.compareValue)
         this.divisionList = response.data.listOfDivision.sort(this.compareValue)
@@ -491,6 +474,24 @@ export default {
         this.capacityUnitsList = response.data.listOfCapacityUnits.sort(this.compareValue)
         this.hubCodeRoomList = response.data.listOfHubCodeRoom.sort(this.compareValue)
       }
+    },
+    getSelectOptionForDetail () {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}getNetworkEquipmentDetailSelectOption`, {})
+        .then((response) => {
+          this.constructSelectList(response, 'detail')
+          this.modalAddNewAsset = true
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+          this.$q.loading.hide()
+        })
     },
     getDropdownValue (type) {
       // search bar
@@ -544,8 +545,6 @@ export default {
         this.input.productSeries = this.input.productSeries.value
       } else if (type === 'brand') {
         this.input.brand = this.input.brand.value
-      } else if (type === 'productSubType') {
-        this.input.productSubType = this.input.productSubType.value
       } else if (type === 'propertyOf') {
         this.input.propertyOf = this.input.propertyOf.value
       }
@@ -694,7 +693,10 @@ export default {
       this.showLoading()
       this.$axios.post(`${process.env.urlPrefix}uploadTxtEquipment`, this.fileAttach)
         .then((response) => {
-          this.dataNotesList = response.data
+          this.dataNotesList = response.data.listOfNetworkEquipment
+          this.dataEmptyList = response.data.listOfHostname.map(data => ({
+            hostname: data
+          }))
           this.modalUploadTxt = false
           this.modalUploadPreviewTxt = true
           this.$q.loading.hide()
@@ -708,11 +710,14 @@ export default {
           })
         })
     },
-    convertTxtToExcel (props) {
+    convertTxtToExcel (mode) {
       // this.$q.loading.show()
       this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}networkFromTxtExcelDownload`, {
-        responseType: 'arraybuffer'
+        responseType: 'arraybuffer',
+        params: {
+          mode: mode
+        }
       })
         .then((response) => {
           this.$q.loading.hide()
@@ -720,7 +725,11 @@ export default {
           const link = document.createElement('a')
           link.href = url
           link.style = 'display: none'
-          link.download = 'network_equipment.xlsx'
+          if (mode === 'convert') {
+            link.download = 'network_equipment.xlsx'
+          } else {
+            link.download = 'hostname_empty.xlsx'
+          }
           document.body.appendChild(link)
           link.click()
         })
@@ -786,7 +795,9 @@ export default {
       }
     },
     getSubType () {
-      this.$q.loading.show()
+      // this.$q.loading.show()
+      this.showLoading()
+      this.input.productType = this.input.productType.value
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
           pid: this.input.productType
@@ -811,15 +822,11 @@ export default {
       this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
-          description: this.input.manufacturer
+          pid: this.input.manufacturer
         }
       })
         .then((response) => {
-          this.brandList = response.data.map(data => ({
-            label: data.brand.toUpperCase(),
-            value: data.brand.toUpperCase()
-          }))
-          // this.brandList = response.data.map(brand => brand.brand)
+          this.brandList = response.data.map(brand => brand.brand)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -849,7 +856,6 @@ export default {
       this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
       this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
       this.getSelectOptionForDetail()
-      this.modalAddNewAsset = true
     },
     compare (a, b) {
       const statusA = a.messageStatus.toUpperCase()
