@@ -278,8 +278,9 @@ export default {
     },
     getRegion (areaName) {
       this.showLoading()
-      var region = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(areaName) > -1)[0].region
-      if (region !== null) {
+      var regionObj = this.listOfAreaForRegion.filter(v => v.areaName.indexOf(areaName) > -1)
+      if (regionObj.length !== 0) {
+        var region = regionObj[0].region
         var RegionList = JSON.parse(region)
         this.filteredRegionList = RegionList.map(data => ({
           label: data.region,
@@ -291,6 +292,7 @@ export default {
         this.formData.region = ''
         this.$q.loading.hide()
       }
+      this.$q.loading.hide()
     },
     getSelectValue (value) {
       if (value === 'area') {
