@@ -1,9 +1,9 @@
 <template>
   <div class="q-pa-md">
   <q-layout view="hHh Lpr lff">
-    <q-header class="bg-indigo-5" elevated>
+    <q-header class="bg-indigo-4" elevated>
       <q-toolbar
-        color="indigo-10">
+        color="indigo-3">
         <q-btn
           flat
           round
@@ -13,9 +13,9 @@
           <q-icon name="menu" />
         </q-btn>
         <q-toolbar-title>
-          <div align="left">
-            <img src="statics/eel.png"  class="responsive"  width="30px">
-            <font color="white" size=4 class="text-bold"> | ENGINEERING EQUIPMENT LIST</font>
+
+          <div align="left" style="margin-top:10px">
+            <img src="statics/seal icon.png"  class="responsive"  width="250px">
           </div>
 
         </q-toolbar-title>
