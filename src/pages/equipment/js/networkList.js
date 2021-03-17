@@ -464,7 +464,7 @@ export default {
       } else if (type === 'detail') {
         this.productTypeList = this.productTypeListSearch.filter(a => a.cascadeValue === 'Network')
         // this.productSeriesList = response.data.listOfProductSeries.sort(this.compareValue)
-        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'All')
+        this.assetStatusList = this.assetStatusListSearch.filter(a => a.value !== 'ALL')
         this.equipmentStatusList = this.equipmentStatusListSearch.filter(a => a.value !== 'All')
         this.manufacturerList = response.data.listOfManufacturer.sort(this.compareValue)
         this.statusReasonList = response.data.listOfStatusReason.sort(this.compareValue)
@@ -544,7 +544,7 @@ export default {
       } else if (type === 'productSeriesForm') {
         this.input.productSeries = this.input.productSeries.value
       } else if (type === 'brand') {
-        this.input.brand = this.input.brand.value
+        this.input.brand = this.input.brand
       } else if (type === 'propertyOf') {
         this.input.propertyOf = this.input.propertyOf.value
       }
@@ -794,10 +794,13 @@ export default {
         this.input.amplifierCode = ''
       }
     },
+    getProductTypeValue () {
+      this.input.productType = this.input.productType.value
+      this.getSubType()
+    },
     getSubType () {
       // this.$q.loading.show()
       this.showLoading()
-      this.input.productType = this.input.productType.value
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
           pid: this.input.productType
@@ -816,17 +819,24 @@ export default {
           this.$q.loading.hide()
         })
     },
+    getManufacturerValue () {
+      this.input.manufacturer = this.input.manufacturer.value
+      this.getBrand()
+    },
     getBrand () {
       // this.$q.loading.show()
       this.showLoading()
-      this.input.manufacturer = this.input.manufacturer.value
       this.$axios.get(`${process.env.urlPrefix}getBrand`, {
         params: {
-          pid: this.input.manufacturer
+          description: this.input.manufacturer
         }
       })
         .then((response) => {
-          this.brandList = response.data.map(brand => brand.brand)
+          if (response.data !== '') {
+            this.brandList = response.data.map(brand => brand.brand)
+          } else {
+            this.brandList = []
+          }
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -856,6 +866,8 @@ export default {
       this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
       this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
       this.getSelectOptionForDetail()
+      this.getSubType()
+      this.getBrand()
     },
     compare (a, b) {
       const statusA = a.messageStatus.toUpperCase()
@@ -956,6 +968,7 @@ export default {
         lastModifiedByExcel: '',
         isComplete: ''
       }
+      this.brandList = []
     }
   },
   beforeMount () {
