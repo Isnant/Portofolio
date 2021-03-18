@@ -15,7 +15,7 @@
         <q-toolbar-title>
 
           <div align="left" style="margin-top:10px">
-            <img src="statics/seal5.png"  class="responsive"  width="250px">
+            <img src="statics/Seal5.png"  class="responsive"  width="250px">
           </div>
 
         </q-toolbar-title>
@@ -247,6 +247,17 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>Leg Amplifier</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/mProblemType"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section avatar>
+              <q-icon name="sticky_note_2" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Problem Type</q-item-label>
             </q-item-section>
           </q-item>
           <q-item

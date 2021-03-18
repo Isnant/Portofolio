@@ -91,7 +91,8 @@ export default {
         isComplete: ''
       },
       searchVal: {
-        equipmentCategory: 'Hub',
+        id: '',
+        equipmentCategory: 'Field',
         productType: 'ALL',
         productSeries: 'ALL',
         hubCode: 'ALL',
@@ -99,7 +100,9 @@ export default {
         nodeCode: '',
         assetStatus: 'ALL',
         equipmentStatus: 'ALL',
-        equipmentName: ''
+        equipmentName: '',
+        logBatch: '',
+        technology: 'ALL'
       },
       equipmentListColumns: [
         {

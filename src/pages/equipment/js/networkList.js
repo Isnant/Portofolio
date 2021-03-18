@@ -91,15 +91,18 @@ export default {
       },
       equipmentCategoryList: ['Hub', 'Field', 'Network'],
       searchVal: {
-        equipmentCategory: 'Network',
+        id: '',
+        equipmentCategory: 'Field',
         productType: 'ALL',
         productSeries: 'ALL',
         hubCode: 'ALL',
         bdfCode: 'ALL',
         nodeCode: '',
         assetStatus: 'ALL',
-        equipmentStatus: 'ACTIVE',
-        equipmentName: ''
+        equipmentStatus: 'ALL',
+        equipmentName: '',
+        logBatch: '',
+        technology: 'ALL'
       },
       equipmentListColumns: [
         {

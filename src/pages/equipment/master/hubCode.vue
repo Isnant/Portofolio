@@ -43,6 +43,15 @@
                   color="orange-8"/>
                 </div>
 
+                <div class="col-20" style="margin-right: 10px">
+                  <q-input
+                  v-model="searchVal.area"
+                  stack-label
+                  label="Area Name"
+                  rounded outlined
+                  color="orange-8"/>
+                </div>
+
                 <div class="col" style="width: 5%">
                   <q-btn round size="small" color="indigo-10" @click="doSearchByFilter()">
                     <q-icon name="search"/>

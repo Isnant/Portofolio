@@ -137,7 +137,8 @@ export default {
       },
       searchVal: {
         hubCode: '',
-        hubName: ''
+        hubName: '',
+        area: ''
       },
       showForm: false,
       formData: {
@@ -167,7 +168,8 @@ export default {
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
           hubCode: this.searchVal.hubCode,
-          hubName: this.searchVal.hubName
+          hubName: this.searchVal.hubName,
+          area: this.searchVal.area
         }
       })
         .then((response) => {
@@ -219,7 +221,8 @@ export default {
         sortBy: sortBy,
         descending: descending,
         hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        hubName: this.searchVal.hubName,
+        area: this.searchVal.area
       }
       this.getHubCodeList(params)
     },
@@ -230,7 +233,8 @@ export default {
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
         hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        hubName: this.searchVal.hubName,
+        area: this.searchVal.area
       }
       this.getHubCodeList(params)
     },

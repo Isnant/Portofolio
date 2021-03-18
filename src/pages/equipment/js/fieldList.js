@@ -125,6 +125,7 @@ export default {
       },
       equipmentCategoryList: ['Hub', 'Field', 'Network'],
       searchVal: {
+        id: '',
         equipmentCategory: 'Field',
         productType: 'ALL',
         productSeries: 'ALL',

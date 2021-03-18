@@ -31,15 +31,12 @@
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
             <div class="row" style="width: 100%">
               <div class="col-15" style="margin-right: 10px; width: 22%">
-                <q-select
+               <q-input
                   rounded outlined
-                  v-model="searchVal.equipmentStatus"
+                  v-model="searchVal.id"
                   stack-label
-                  label="Equipment Status"
-                  color="orange-8"
-                  :options="equipmentStatusListSearch"
-                  @input="getDropdownValue('equipmentStatusSearch')"
-                />
+                  label="Equipment Id"
+                  color="orange-8"/>
               </div>
 
               <div class="col-15" style="margin-right: 10px; width: 23%">
@@ -93,18 +90,30 @@
             </div>
 
             <div class="row" style="margin-top:10px; width:100%">
-              <div class="col-20" style="margin-right: 10px; width: 22%">
+              <div class="col-15" style="margin-right: 10px; width: 22%">
+                <q-select
+                  rounded outlined
+                  v-model="searchVal.equipmentStatus"
+                  stack-label
+                  label="Status"
+                  color="orange-8"
+                  :options="equipmentStatusListSearch"
+                  @input="getDropdownValue('equipmentStatusSearch')"
+                />
+              </div>
+
+              <div class="col-20" style="margin-right: 10px; width: 20%">
                 <q-select
                   rounded outlined
                   v-model="searchVal.assetStatus"
                   stack-label
-                  label="Asset Status"
+                  label="Equipment Status"
                   color="orange-8"
                   :options="assetStatusListSearch"
                   @input="getDropdownValue('assetStatusSearch')"
                 />
               </div>
-              <div class="col-20" style="margin-right: 10px;width: 23%">
+              <div class="col-20" style="margin-right: 10px;width: 22%">
                 <q-select v-model="searchVal.hubCode"
                   rounded outlined
                   :stack-label="true"
@@ -127,7 +136,7 @@
                 </q-select>
               </div>
 
-              <div class="col-20" style="margin-right: 10px;width: 23%">
+              <div class="col-20" style="margin-right: 10px;width: 21%">
                 <q-select
                   rounded outlined
                   v-model="searchVal.bdfCode"
@@ -150,7 +159,7 @@
                 </q-select>
               </div>
 
-              <div class="col-20" style="width: 27%">
+              <div class="col-20" style="width: 10%">
                 <q-btn round color="indigo-10" @click="doMainEquipmentRefreshList()">
                   <q-icon name="search"/>
                   <q-tooltip>Search</q-tooltip>
