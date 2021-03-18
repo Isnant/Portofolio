@@ -15,7 +15,7 @@
         <q-toolbar-title>
 
           <div align="left" style="margin-top:10px">
-            <img src="statics/seal icon.png"  class="responsive"  width="250px">
+            <img src="statics/seal5.png"  class="responsive"  width="250px">
           </div>
 
         </q-toolbar-title>

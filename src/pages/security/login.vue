@@ -3,7 +3,7 @@
    <div class="row justify-center">
     <fieldset class="login-box">
       <div align="center" class="text-bold" style="margin-bottom:20px">
-        <img src="statics/seal.png"  class="responsive"  width="90px">
+        <img src="statics/seal3.png"  class="responsive"  width="90px">
         <br>
         <font size= 3> LOGIN YOUR ACCOUNT</font>
       </div>
