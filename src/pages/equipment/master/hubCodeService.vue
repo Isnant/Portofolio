@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-    <q-card style="max-width: 600px">
+    <q-card style="max-width: 800px">
       <q-card-section>
         <q-expansion-item
           label="SEARCH"
@@ -22,37 +22,48 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
-              <div class="row" style="margin-buttom:20px; width:500px">
-
-                <div class="col-15" style="margin-right: 10px; width: 40%">
-                  <q-input
+            <div class="row" style="margin-buttom:20px;">
+              <div class="col-15" style="margin-right: 10px; width: 30%">
+                <q-input
+                  rounded outlined
                   v-model="searchVal.hubName"
                   stack-label
                   label="Hub Name"
-                  color="purple-6"/>
-                </div>
-
-                <div class="col-15" style="margin-right: 10px; width: 40%">
-                  <q-input
-                    v-model="searchVal.hubCode"
-                    stack-label
-                    label="Hub Code"
-                    color="purple-6"/>
-                </div>
-
-                <div class="col" style="width: 5%">
-                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
-                    <q-icon name="search"/>
-                    <q-tooltip>Search</q-tooltip>
-                  </q-btn>
-                </div>
+                  color="orange-8"/>
               </div>
-            </fieldset>
+
+              <div class="col-15" style="margin-right: 10px; width: 30%">
+                <q-input
+                  rounded outlined
+                  v-model="searchVal.hubCode"
+                  stack-label
+                  label="Hub Code"
+                  color="orange-8"/>
+              </div>
+
+              <div class="col-15" style="margin-right: 10px; width: 30%">
+                <q-select
+                  rounded outlined
+                  stack-label
+                  color="orange-8"
+                  v-model="searchVal.service"
+                  label="Service"
+                  :options="serviceSearchList"
+                />
+              </div>
+
+              <div class="col" style="width: 5%">
+                <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                  <q-icon name="search"/>
+                  <q-tooltip>Search</q-tooltip>
+                </q-btn>
+              </div>
+
+            </div>
           </div>
         </q-expansion-item>
 
-        <div style="max-width: 600px; margin-top:20px">
+        <div style="margin-top:20px">
           <q-table
             :data="dataList"
             :columns="tableColumns"

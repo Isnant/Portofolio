@@ -96,9 +96,13 @@
 
         <q-card-section>
           <div>
-            <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
+            <q-input
+              readonly
+              v-model="formData.pid"
+              class="text-italic"
               label="Manufacturer Code"/>
             <q-input v-model="formData.description"
+              stack-label
               label="Description"/>
           </div>
           <br/>

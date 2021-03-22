@@ -97,8 +97,10 @@ export default {
       },
       searchVal: {
         hubCode: '',
-        hubName: ''
+        hubName: '',
+        service: 'ALL'
       },
+      serviceSearchList: ['ALL', 'Analog', 'Digital', 'FTTH'],
       showForm: false,
       formData: {
         id: '',
@@ -121,7 +123,8 @@ export default {
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
           hubCode: this.searchVal.hubCode,
-          hubName: this.searchVal.hubName
+          hubName: this.searchVal.hubName,
+          service: this.searchVal.service
         }
       })
         .then((response) => {
@@ -137,12 +140,6 @@ export default {
             message: error
           })
         })
-    },
-    doMainFillTableResult (pagedEquipment) {
-      this.dataList = pagedEquipment.content
-      this.pagination.rowsNumber = pagedEquipment.totalElements
-      this.pagination.rowsPerPage = pagedEquipment.pageable.pageSize
-      this.pagination.page = pagedEquipment.number + 1
     },
     getHubCodeList (params) {
       // this.$q.loading.show()
@@ -164,6 +161,12 @@ export default {
           })
         })
     },
+    doMainFillTableResult (data) {
+      this.dataList = data.content
+      this.pagination.rowsNumber = data.totalElements
+      this.pagination.rowsPerPage = data.pageable.pageSize
+      this.pagination.page = data.number + 1
+    },
     doMainEquipmentChangePage (props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const params = {
@@ -172,7 +175,8 @@ export default {
         sortBy: sortBy,
         descending: descending,
         hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        hubName: this.searchVal.hubName,
+        service: this.searchVal.service
       }
       this.getHubCodeList(params)
     },
@@ -183,7 +187,8 @@ export default {
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
         hubCode: this.searchVal.hubCode,
-        hubName: this.searchVal.hubName
+        hubName: this.searchVal.hubName,
+        service: this.searchVal.service
       }
       this.getHubCodeList(params)
     },

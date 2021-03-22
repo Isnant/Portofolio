@@ -200,6 +200,8 @@
         <q-fab-action color="orange-6" text-color="white" @click.native="getSelectOptionForDetail" icon="add"><q-tooltip>Add</q-tooltip></q-fab-action>
         <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadExcel=true" icon="backup"><q-tooltip>Upload Excel</q-tooltip></q-fab-action>
         <q-fab-action color="orange-6" text-color="white" @click.native="modalUploadTxt=true" icon="table_view"><q-tooltip>Import Txt</q-tooltip></q-fab-action>
+        <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel">
+              <q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
       </q-fab>
     </q-page-sticky>
 

@@ -112,7 +112,7 @@ export default {
       },
       showForm: false,
       formData: {
-        pid: '',
+        pid: 'AUTO GENERATE',
         description: '',
         manufacturer: '',
         brand: '',
@@ -231,6 +231,9 @@ export default {
     doSave () {
       // this.$q.loading.show()
       this.showLoading()
+      if (this.formData.pid === 'AUTO GENERATE') {
+        this.formData.pid = ''
+      }
       this.$axios.post(`${process.env.urlPrefix}saveProductSeries`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -334,6 +337,7 @@ export default {
         .then((response) => {
           this.modalUploadExcel = false
           this.$q.loading.hide()
+          this.doInitPage()
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -396,7 +400,7 @@ export default {
     },
     clear () {
       this.formData = {
-        pid: '',
+        pid: 'AUTO GENERATE',
         description: '',
         manufacturerId: '',
         brand: '',

@@ -8,6 +8,7 @@ export default {
       modalUploadExcel: false,
       modalDownloadExcel: false,
       downloadType: 'productType',
+      categoryList: ['Field', 'Indoor', 'Network'],
       fileAttach: {
         fileName: '',
         file64: '',
@@ -54,14 +55,6 @@ export default {
       ],
       subTypeColumns: [
         {
-          name: 'id',
-          label: 'Sub Type Id',
-          field: 'id',
-          align: 'left',
-          style: 'width: 100px',
-          sortable: true
-        },
-        {
           name: 'subtype',
           label: 'Subtype Name',
           field: 'subtype',
@@ -97,12 +90,13 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
-        id: '',
-        area: ''
+        productType: '',
+        category: 'ALL'
       },
+      categorySearchList: ['ALL', 'Field', 'Indoor', 'Network'],
       showForm: false,
       formData: {
-        pid: '',
+        pid: 'AUTO GENERATE',
         equipmentCategory: '',
         mode: 'create'
       }
@@ -123,9 +117,7 @@ export default {
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -136,26 +128,15 @@ export default {
           })
         })
     },
-    getProductTypeSubTypeList (props) {
+    getProductTypeSubTypeList (params) {
       // this.$q.loading.show()
       this.showLoading()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
-
       this.$axios.get(`${process.env.urlPrefix}getProductTypeSubTypeList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -165,6 +146,35 @@ export default {
             message: error
           })
         })
+    },
+    doMainFillTableResult (data) {
+      this.dataList = data.content
+      this.pagination.rowsNumber = data.totalElements
+      this.pagination.rowsPerPage = data.pageable.pageSize
+      this.pagination.page = data.number + 1
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        productType: this.searchVal.productType,
+        category: this.searchVal.category
+      }
+      this.getProductTypeSubTypeList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        productType: this.searchVal.productType,
+        category: this.searchVal.category
+      }
+      this.getProductTypeSubTypeList(params)
     },
     doOpenForm (pid) {
       if (pid === false) {
@@ -199,6 +209,9 @@ export default {
       this.showLoading()
       if (!deactivate) {
         this.formData.subType = JSON.stringify(this.listOfSubType)
+      }
+      if (this.formData.pid === 'AUTO GENERATE') {
+        this.formData.pid = ''
       }
       this.$axios.post(`${process.env.urlPrefix}saveProductTypeSubType`, this.formData)
         .then((response) => {
@@ -314,10 +327,9 @@ export default {
           })
         })
     },
-    doAddNewRegion () {
+    doAddNewSubType () {
       let newSubType = {}
 
-      this.$set(newSubType, 'id', '')
       this.$set(newSubType, 'subtype', '')
       this.$set(newSubType, 'recordStatus', 'A')
 
@@ -339,7 +351,7 @@ export default {
     },
     clear () {
       this.formData = {
-        pid: '',
+        pid: 'AUTO GENERATE',
         equipmentCategory: '',
         mode: 'create'
       }

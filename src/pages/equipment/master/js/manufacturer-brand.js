@@ -46,14 +46,6 @@ export default {
       ],
       brandColumns: [
         {
-          name: 'id',
-          label: 'Brand Id',
-          field: 'id',
-          align: 'left',
-          style: 'width: 100px',
-          sortable: true
-        },
-        {
           name: 'brand',
           label: 'Brand Name',
           field: 'brand',
@@ -94,7 +86,7 @@ export default {
       },
       showForm: false,
       formData: {
-        pid: '',
+        pid: 'AUTO GENERATE',
         description: '',
         productTypeSubType: '',
         mode: 'create'
@@ -227,7 +219,6 @@ export default {
     },
     doAddNewRegion () {
       let newBrand = {}
-      this.$set(newBrand, 'id', '')
       this.$set(newBrand, 'brand', '')
       this.$set(newBrand, 'recordStatus', 'A')
 
@@ -333,7 +324,7 @@ export default {
     },
     clear () {
       this.formData = {
-        pid: '',
+        pid: 'AUTO GENERATE',
         description: '',
         mode: 'create'
       }

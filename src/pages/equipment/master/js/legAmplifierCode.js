@@ -7,9 +7,11 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      technologyList: ['ALL', 'FTTH', 'HFC'],
       searchVal: {
         hubCode: 'All',
-        amplifier: ''
+        amplifier: '',
+        technology: 'ALL'
       },
       tableColumns: [
         {
@@ -103,7 +105,8 @@ export default {
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
           hubCode: this.searchVal.hubCode,
-          amplifier: this.searchVal.amplifier
+          amplifier: this.searchVal.amplifier,
+          technology: this.searchVal.technology
         }
       })
         .then((response) => {
@@ -152,7 +155,8 @@ export default {
         sortBy: sortBy,
         descending: descending,
         hubCode: this.searchVal.hubCode,
-        amplifier: this.searchVal.amplifier
+        amplifier: this.searchVal.amplifier,
+        technology: this.searchVal.technology
       }
       this.getAmplifierList(params)
     },
@@ -163,7 +167,8 @@ export default {
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
         hubCode: this.searchVal.hubCode,
-        amplifier: this.searchVal.amplifier
+        amplifier: this.searchVal.amplifier,
+        technology: this.searchVal.technology
       }
       this.getAmplifierList(params)
     },
@@ -180,7 +185,8 @@ export default {
         responseType: 'arraybuffer',
         params: {
           hubCode: this.searchVal.hubCode,
-          amplifier: this.searchVal.amplifier
+          amplifier: this.searchVal.amplifier,
+          technology: this.searchVal.technology
         }
       })
         .then((response) => {

@@ -125,8 +125,9 @@
 
         <q-card-section>
           <div>
-            <q-input readonly v-show="formData.createdBy !== undefined" v-model="formData.pid"
-              stack-label label="Series Code"/>
+            <q-input readonly v-model="formData.pid"
+              stack-label label="Series Code"
+              class="text-italic"/>
              <q-input v-model="formData.series"
               stack-label label="Series"/>
             <q-input v-model="formData.description"
@@ -172,6 +173,9 @@
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
+         <q-card-section>
+          <a href="/statics/template/productSeries.xlsx">Download Template</a>
+        </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
             <q-input

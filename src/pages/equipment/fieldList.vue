@@ -33,16 +33,6 @@
             <!-- <legend class="legedn_search">Search</legend> -->
 
               <div class="row" style="width: 100%">
-                <div class="col-12" style="margin-right: 10px; width: 20%">
-                  <q-select
-                    rounded outlined
-                    color="orange-8"
-                    v-model="searchVal.equipmentStatus"
-                    label="Equipment Status"
-                    :options="equipmentStatusListSearch"
-                    @input="getDropdownValue('equipmentStatusSearch')"
-                  />
-                </div>
 
                 <div class="col-12" style="margin-right: 10px; width: 20%">
                   <q-input
@@ -94,30 +84,8 @@
                     productSeriesList
                   /> -->
                 </div>
-                <div class="col-12" style="width: 13%">
-                  <q-input
-                    v-model="searchVal.logBatch"
-                    label="Log Batch"
-                    rounded outlined
-                    color="orange-8"
-                    stack-label
-                  />
-                </div>
-              </div>
 
-              <div class="row" style="margin-top:20px; width: 100%" >
-                <div class="col-10" style="margin-right: 10px; width: 15%">
-                  <q-select
-                    v-model="searchVal.assetStatus"
-                    stack-label
-                    label="Asset Status"
-                    rounded outlined
-                    color="orange-8"
-                    :options="assetStatusListSearch"
-                    @input="getDropdownValue('assetStatusSearch')"
-                  />
-                </div>
-                <div class="col-10" style="margin-right: 10px; width: 15%">
+                 <div class="col-10" style="margin-right: 10px; width: 15%">
                   <q-select v-model="searchVal.hubCode"
                     :stack-label="true"
                     rounded outlined
@@ -138,6 +106,40 @@
                       </q-item>
                     </template>
                   </q-select>
+                </div>
+
+                <div class="col-12" style="width: 13%">
+                  <q-input
+                    v-model="searchVal.logBatch"
+                    label="Log Batch"
+                    rounded outlined
+                    color="orange-8"
+                    stack-label
+                  />
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:20px; width: 100%" >
+                <div class="col-10" style="margin-right: 10px; width: 20%">
+                  <q-select
+                    v-model="searchVal.assetStatus"
+                    stack-label
+                    label="Equipment Status"
+                    rounded outlined
+                    color="orange-8"
+                    :options="assetStatusListSearch"
+                    @input="getDropdownValue('assetStatusSearch')"
+                  />
+                </div>
+                 <div class="col-12" style="margin-right: 10px; width: 15%">
+                  <q-select
+                    rounded outlined
+                    color="orange-8"
+                    v-model="searchVal.equipmentStatus"
+                    label="Status"
+                    :options="equipmentStatusListSearch"
+                    @input="getDropdownValue('equipmentStatusSearch')"
+                  />
                 </div>
 
                 <div class="col-10" style="margin-right: 10px; width: 15%">
@@ -163,7 +165,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-10" style="margin-right: 10px; width: 22%">
+                <div class="col-10" style="margin-right: 10px; width: 18%">
                   <q-input
                     v-model="searchVal.nodeCode"
                     label="Node Code"
@@ -302,7 +304,7 @@
                 <q-select
                   v-model="input.equipmentUploadStatus"
                   stack-label
-                  label="Asset Status"
+                  label="Equipment Status"
                   color="purple-6"
                   :options="assetStatusList"
                   @input="getDropdownValue('assetStatusForm')"/>
@@ -1138,12 +1140,30 @@
                       <q-input v-model="equipmentToMigrate.newNodeNumber"
                         :stack-label="true"
                         :prefix="nodePrefixByHub"
-                        ref="destinationNode"
+                        ref="destinationNodeRef"
                         label="Destination Node"
                         oninput="this.value = this.value.toUpperCase()"
                         class="text-uppercase"
                         @input="doMergeSelectedNewNode"
                         :rules="[val => !!val || 'Destination Node is required']"/>
+                    </div>
+                  </div>
+                  <div class="row" style="width:60%; margin-bottom:10px">
+                    <div class="col" style="margin-right:20px;">
+                      <q-input
+                        v-model="equipmentToMigrate.description"
+                        stack-label
+                        label="Source Desctription"/>
+                    </div>
+                    <div class="col" style="margin-right:20px;">
+                      <q-input
+                        v-model="equipmentToMigrate.newDescription"
+                        ref="newDescriptionRef"
+                        stack-label
+                        :rules="[val => !!val || 'Destination Description is required']"
+                        label="Destination Desctription"/>
+                    </div>
+                    <div class="col" style="margin-right:20px;">
                     </div>
                   </div>
                       <!-- <div class="row">
@@ -1409,7 +1429,9 @@
                         >
                           <template v-slot:default-header="prop">
                             <span class="row items-center">
-                              <span class="text-weight-bold text-red">{{ prop.node.label }}</span>
+                              <span v-if="prop.node.status === 'Inactive'" class="text-weight-bold text-red">{{ prop.node.label }}</span>
+                              <span v-else-if="prop.node.status === 'New'" class="text-weight-bold text-orange">{{ prop.node.label }}</span>
+                              <span v-else class="text-weight-bold text-blue">{{ prop.node.label }}</span>
                               <span
                                 class="text-weight-bold text-black"
                                 v-if="prop.node.label !== prop.node.original && prop.node.original !== undefined">
@@ -1432,7 +1454,6 @@
                             <span class="row items-center">
                               <span v-if="prop.node.status === 'Inactive'" class="text-weight-bold text-red">{{ prop.node.label }}</span>
                               <span v-else-if="prop.node.status === 'New'" class="text-weight-bold text-orange">{{ prop.node.label }}</span>
-                              <span v-else-if="prop.node.status === 'Replace'" class="text-weight-bold text-blue">{{ prop.node.label }}</span>
                               <span v-else class="text-weight-bold text-green">{{ prop.node.label }}</span>
                               <span
                                 class="text-weight-bold text-black"
@@ -1444,6 +1465,12 @@
                         </q-tree>
                       </q-card-section>
                     </q-card>
+                    <div style="margin-top:20px;width:40%">
+                      <q-input v-model="equipmentToMigrate.remarks"
+                        type="textarea"
+                        stack-label
+                        label="Remarks"/>
+                    </div>
                   </div>
                 </q-step>
 

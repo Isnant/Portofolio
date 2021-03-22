@@ -92,7 +92,7 @@ export default {
       equipmentCategoryList: ['Hub', 'Field', 'Network'],
       searchVal: {
         id: '',
-        equipmentCategory: 'Field',
+        equipmentCategory: 'Network',
         productType: 'ALL',
         productSeries: 'ALL',
         hubCode: 'ALL',
@@ -685,6 +685,34 @@ export default {
           this.$q.loading.hide()
 
           this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    downloadExcel (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}fieldExcelDownload`, {
+        responseType: 'arraybuffer',
+        params: {
+          searchVal: this.searchVal
+        }
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'network_excel_download.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error

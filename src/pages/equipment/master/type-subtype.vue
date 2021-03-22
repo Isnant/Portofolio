@@ -14,60 +14,85 @@
         </div>
       </div>
     </div>
-    <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Product Type - Sub Type</h4> -->
-    <div style="max-width: 700px">
+    <q-card style="max-width: 800px">
+      <q-card-section>
+        <q-expansion-item
+          label="SEARCH"
+          header-class="bg-indigo-2 text-indigo-10"
+          style="margin-bottom:10px"
+          icon="search">
+          <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
+              <div class="col-15" style="margin-right: 10px; width: 30%">
+                <q-input
+                  rounded outlined
+                  v-model="searchVal.productType"
+                  stack-label
+                  label="Product Type"
+                  color="orange-8"/>
+              </div>
+
+              <div class="col-15" style="margin-right: 10px; width: 25%">
+                <q-select
+                  rounded outlined
+                  stack-label
+                  color="orange-8"
+                  v-model="searchVal.category"
+                  label="Equipment Category"
+                  :options="categorySearchList"
+                />
+              </div>
+
+              <div class="col" style="width: 5%">
+                <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                  <q-icon name="search"/>
+                  <q-tooltip>Search</q-tooltip>
+                </q-btn>
+              </div>
+
+            </div>
+        </q-expansion-item>
       <q-table
-        :data="dataList"
-        :columns="tableColumns"
-        :pagination.sync="pagination"
-        table-header-class="text-indigo-10 bg-indigo-2"
-        @request="getProductTypeSubTypeList"
-        row-key="id"
-        dense>
+          :data="dataList"
+          :columns="tableColumns"
+          :pagination.sync="pagination"
+          table-header-class="text-indigo-10 bg-indigo-2"
+          @request="doMainEquipmentChangePage"
+          row-key="id"
+          dense>
+            <q-td slot="body-cell-action" slot-scope="props">
+            <q-btn-dropdown rounded size="sm" color="indigo-10">
+              <q-list>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-btn color="indigo-6" round size="sm" @click="doOpenForm(props.row.pid)">
+                      <q-icon name="fas fa-edit" />
+                      <q-tooltip>Edit</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
+                      <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
+                      <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-td>
+          <q-td slot="body-cell-recordStatus" slot-scope="props">
+            <div v-if="props.row.recordStatus === 'A'">
+              <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+            </div>
+            <div v-else>
+              <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
+            </div>
+          </q-td>
+        </q-table>
 
-        <!-- <q-td slot="body-cell-action" slot-scope="props">
-          <q-btn color="primary" round size="sm" @click="doOpenForm(props.row.pid)" style="margin-right: 10px">
-            <q-icon name="fas fa-edit" />
-            <q-tooltip>Edit</q-tooltip>
-          </q-btn>
-          <q-btn color="primary" round size="sm" @click="doToggleStatus(props)">
-            <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-            <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
-          </q-btn>
-        </q-td> -->
-         <q-td slot="body-cell-action" slot-scope="props">
-          <q-btn-dropdown rounded size="sm" color="indigo-10">
-            <q-list>
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-btn color="indigo-6" round size="sm" @click="doOpenForm(props.row.pid)">
-                    <q-icon name="fas fa-edit" />
-                    <q-tooltip>Edit</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
-                    <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
-                    <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </q-td>
-        <q-td slot="body-cell-recordStatus" slot-scope="props">
-          <div v-if="props.row.recordStatus === 'A'">
-            <q-icon name="done" color="primary"  style="font-size: 20px;"/>
-          </div>
-          <div v-else>
-            <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
-          </div>
-        </q-td>
-
-      </q-table>
-    </div>
+      </q-card-section>
+    </q-card>
 
     <!-- <q-page-sticky position="top-right" :offset="[15, 30]">
       <q-btn round color="orange-4" @click.native="doOpenForm(false)">
@@ -96,11 +121,21 @@
 
         <q-card-section>
           <div>
-            <q-input :readonly="formData.createdBy !== undefined" v-model="formData.pid"
+            <q-input
+              readonly
+              class="text-italic"
+              v-model="formData.pid"
               label="Type Code"/>
-            <q-input v-model="formData.productType"
+            <q-input
+              v-model="formData.productType"
+              stack-label
+              oninput="this.value = this.value.toUpperCase()"
+              class="text-uppercase"
               label="Product Type"/>
-            <q-input v-model="formData.equipmentCategory"
+            <q-select
+              v-model="formData.equipmentCategory"
+              stack-label
+              :options="categoryList"
               label="Equipment Category"/>
           </div>
           <br/>
@@ -145,7 +180,7 @@
             </q-table>
 
             <div style="text-align: right; margin-top: 10px">
-              <q-btn flat round color="primary" @click.native="doAddNewRegion()" size="xs">
+              <q-btn flat round color="primary" @click.native="doAddNewSubType()" size="xs">
                 <q-icon name="fas fa-plus"/>
                 <q-tooltip>Add New Subtype</q-tooltip>
               </q-btn>
@@ -170,6 +205,13 @@
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
+         <q-card-section>
+          Download Template:
+          <br>
+          <a href="/statics/template/productTypeExcelDownload.xlsx">Product Type</a>
+          <br>
+          <a href="/statics/template/subTypeExcelDownload.xlsx">Sub Type</a>
+        </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
             <q-radio v-model="fileAttach.equipmentCategory" val="productType" @input="getInitPage" label="Product Type" color="indigo-7" style="margin-right:10px"/>

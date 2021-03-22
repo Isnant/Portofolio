@@ -107,7 +107,7 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
-        id: '',
+        hubName: '',
         area: ''
       },
       showForm: false,
@@ -135,9 +135,7 @@ export default {
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -148,26 +146,15 @@ export default {
           })
         })
     },
-    getBuildingList (props) {
+    getHubRoomList (params) {
       // this.$q.loading.show()
       this.showLoading()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
-
       this.$axios.get(`${process.env.urlPrefix}getHubRoomList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.dataList = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
-          this.pagination.rowsPerPage = response.data.pageable.pageSize
+          this.doMainFillTableResult(response.data)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -177,6 +164,33 @@ export default {
             message: error
           })
         })
+    },
+    doMainFillTableResult (data) {
+      this.dataList = data.content
+      this.pagination.rowsNumber = data.totalElements
+      this.pagination.rowsPerPage = data.pageable.pageSize
+      this.pagination.page = data.number + 1
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        hubName: this.searchVal.hubName
+      }
+      this.getHubRoomList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        hubName: this.searchVal.hubName
+      }
+      this.getHubRoomList(params)
     },
     doOpenForm (cell) {
       if (cell !== undefined) {

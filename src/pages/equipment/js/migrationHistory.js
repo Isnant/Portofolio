@@ -58,7 +58,7 @@ export default {
         },
         {
           name: 'assetStatus',
-          label: 'Asset Status',
+          label: 'Equipment Status',
           field: 'assetStatus',
           align: 'left',
           style: 'width: 200px',

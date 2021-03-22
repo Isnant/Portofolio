@@ -207,16 +207,16 @@ export default {
           sortable: true
         },
         {
-          name: 'equipmentStatus',
+          name: 'equipmentUploadStatus',
           label: 'Equipment Status',
-          field: 'equipmentStatus',
+          field: 'equipmentUploadStatus',
           align: 'left',
           sortable: true
         },
         {
-          name: 'equipmentUploadStatus',
-          label: 'Asset Status',
-          field: 'equipmentUploadStatus',
+          name: 'equipmentStatus',
+          label: 'Status',
+          field: 'equipmentStatus',
           align: 'left',
           sortable: true
         },
@@ -340,6 +340,9 @@ export default {
         selectedNewNode: undefined,
         selectedMoveNodeOption: undefined,
         isNewNode: false,
+        description: '',
+        newDescription: '',
+        remarks: '',
         date: '',
         migrationListNew: []
       },
@@ -357,6 +360,14 @@ export default {
         {
           label: 'Change Service',
           value: 'C'
+        },
+        {
+          label: 'Reroute',
+          value: 'T'
+        },
+        {
+          label: 'Revision',
+          value: 'R'
         }
       ],
       destinationNodeOptions: [],
@@ -536,7 +547,9 @@ export default {
         this.assetStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
         this.technologyListSearch.unshift({ label: 'ALL', value: 'ALL' })
         this.equipmentStatusListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productTypeListSearch.unshift({ label: 'BLANK', value: 'BLANK' })
         this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.productSeriesList.unshift({ label: 'BLANK', value: 'BLANK' })
         this.productSeriesList.unshift({ label: 'ALL', value: 'ALL' })
         this.bdfCodeList.unshift({ label: 'ALL', value: 'ALL' })
         this.hubCodeList = this.hubCodeListSearch.filter(a => a.value !== 'ALL')
@@ -1026,6 +1039,8 @@ export default {
       this.equipmentToMigrate.nodeCode = cell.row.nodeCode
       this.equipmentToMigrate.service = cell.row.service
       this.equipmentToMigrate.newHubCode = cell.row.hubCode
+      this.equipmentToMigrate.description = cell.row.description
+      this.equipmentToMigrate.newDescription = ''
       this.equipmentToMigrate.migrationListNew = []
       this.equipmentToMigrate.isNewNode = false
       this.equipmentToMigrate.newServiceNodeNumber = undefined
@@ -1044,6 +1059,11 @@ export default {
     },
     doMergeSelectedNewNode () {
       this.equipmentToMigrate.selectedNewNode = this.nodePrefixByHub + this.equipmentToMigrate.newNodeNumber
+      if (this.equipmentToMigrate.nodeCode === this.equipmentToMigrate.selectedNewNode) {
+        this.equipmentToMigrate.newDescription = this.equipmentToMigrate.description
+      } else {
+        this.equipmentToMigrate.newDescription = ''
+      }
     },
     // doMigrationChangeHub () {
     //   this.$axios.get(`${process.env.urlPrefix}getNodeByHub/`,
@@ -1113,7 +1133,6 @@ export default {
       if (!this.equipmentToMigrate.isNewNode && this.equipmentToMigrate.selectedMoveNodeOption !== 'C') {
         return
       }
-
       let constructedNodeName = this.nodePrefixByHub + this.equipmentToMigrate.newNodeNumber + '00'
 
       if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
@@ -1280,6 +1299,7 @@ export default {
     },
     doMigrationInitializeEquipmentList (removeNode) {
       const oppositeService = this.equipmentToMigrate.service === 'DIGITAL' ? 'ANALOG' : 'DIGITAL'
+      let noMigrate = this.equipmentToMigrate.nodeCode === this.equipmentToMigrate.selectedNewNode
       for (let i = 0; i < this.equipmentToMigrate.migrationListNew.length; i++) {
         let selectedElement = this.equipmentToMigrate.migrationListNew[i]
 
@@ -1299,7 +1319,7 @@ export default {
             this.$set(selectedElement, 'newPredecessor', '')
             this.$set(selectedElement, 'migrate', false)
             this.$set(selectedElement, 'newNumber', '')
-            this.$set(selectedElement, 'assetStatus', 'Update')
+            this.$set(selectedElement, 'assetStatus', '')
           } else {
             this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
             this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
@@ -1312,15 +1332,29 @@ export default {
             this.$set(selectedElement, 'assetStatus', 'Update')
           }
         } else {
-          this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
-          this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
-          this.$set(selectedElement, 'originalProductType', selectedElement.productType)
-          this.$set(selectedElement, 'newName', '')
-          this.$set(selectedElement, 'newPsCode', '')
-          this.$set(selectedElement, 'newPredecessor', '')
-          this.$set(selectedElement, 'migrate', true)
-          this.$set(selectedElement, 'newNumber', '')
-          this.$set(selectedElement, 'assetStatus', 'Update')
+          if (noMigrate) {
+            // this.equipmentToMigrate.migrationListNew.splice(i--, 1)
+            // continue
+            this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
+            this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
+            this.$set(selectedElement, 'originalProductType', selectedElement.productType)
+            this.$set(selectedElement, 'newName', selectedElement.equipmentName)
+            this.$set(selectedElement, 'newPsCode', selectedElement.psCode)
+            this.$set(selectedElement, 'newPredecessor', selectedElement.predecessor)
+            this.$set(selectedElement, 'migrate', false)
+            this.$set(selectedElement, 'newNumber', '')
+            this.$set(selectedElement, 'assetStatus', '')
+          } else {
+            this.$set(selectedElement, 'originalPredecessor', selectedElement.predecessor)
+            this.$set(selectedElement, 'originalPsCode', selectedElement.psCode)
+            this.$set(selectedElement, 'originalProductType', selectedElement.productType)
+            this.$set(selectedElement, 'newName', '')
+            this.$set(selectedElement, 'newPsCode', '')
+            this.$set(selectedElement, 'newPredecessor', '')
+            this.$set(selectedElement, 'migrate', true)
+            this.$set(selectedElement, 'newNumber', '')
+            this.$set(selectedElement, 'assetStatus', 'Update')
+          }
         }
         // if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
         //   this.$set(selectedElement, 'migrate', false)
@@ -1330,7 +1364,7 @@ export default {
       this.doMigrationAssignNewName()
     },
     doMigrationInitializeList () {
-      if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'X' || this.equipmentToMigrate.selectedMoveNodeOption === 'T' || this.equipmentToMigrate.selectedMoveNodeOption === 'R') {
         this.doMigrationInitializeEquipmentList(true)
       } else {
         this.doMigrationInitializeEquipmentList(false)
@@ -1486,7 +1520,7 @@ export default {
         this.equipmentToMigrate.isNewNode && row.migrate && this.equipmentToMigrate.selectedMoveNodeOption === 'X')
     },
     isMigrationStayOrMoveVisible (row) {
-      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C' || row.equipmentName === '') {
+      if (this.equipmentToMigrate.selectedMoveNodeOption === 'C' || row.equipmentName === '' || this.equipmentToMigrate.nodeCode === this.equipmentToMigrate.selectedNewNode) {
         return false
       } else if (row.productType !== 'FIBERNODE' && this.equipmentToMigrate.selectedMoveNodeOption !== 'N') {
         return true
@@ -1709,7 +1743,7 @@ export default {
 
         if (originalVirtualAmpli.length > 0) {
           sourceChild = {
-            label: originalVirtualAmpli[0].newName,
+            label: '[VA] ' + originalVirtualAmpli[0].newName,
             original: originalVirtualAmpli[0].equipmentName,
             status: '',
             children: []
@@ -1735,150 +1769,153 @@ export default {
     },
     createTagetTree () {
       let original
-      if (this.equipmentToMigrate.isNewNode) {
-        const promotedAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'FIBERNODE')
+      const dataMigration = this.equipmentToMigrate.migrationListNew.filter(f => f.migrate === true)
+      if (dataMigration.length > 0) {
+        if (this.equipmentToMigrate.isNewNode) {
+          const promotedAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'FIBERNODE')
 
-        if (promotedAmpli.length === 1) {
-          original = promotedAmpli[0].equipmentName
-        } else {
-          original = 'NEW'
-        }
-      }
-
-      let targetTree = {
-        label: '[' + this.equipmentToMigrate.newHubCode + ']',
-        original: original,
-        header: 'root',
-        status: '',
-        children: []
-      }
-
-      let targetChildResult = []
-
-      // get WDM Code
-      let targetWDMCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'WDM' && f.migrate === true)
-      let targetWDM = {
-        label: '',
-        original: '',
-        status: '',
-        children: []
-      }
-      if (targetWDMCode.length > 0) {
-        targetWDM = {
-          label: targetWDMCode[0].newName,
-          original: targetWDMCode[0].equipmentName,
-          children: []
-        }
-      }
-
-      // get Fibernode
-      let targetFibernodeCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'FIBERNODE' && f.migrate === true)
-      let targetFibernode = {
-        label: '',
-        original: '',
-        status: '',
-        children: []
-      }
-      if (targetFibernodeCode.length > 0) {
-        targetFibernode = {
-          label: '[NODE] ' + targetFibernodeCode[0].newName + ' - ' + targetFibernodeCode[0].assetStatus,
-          original: targetFibernodeCode[0].equipmentName,
-          status: targetFibernodeCode[0].assetStatus,
-          children: []
-        }
-      }
-
-      // get Power Supply
-      let targetPSCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'POWER SUPPLY' && f.migrate === true)
-      for (let i = 0; i < targetPSCode.length; i++) {
-        let psCode = targetPSCode[i].newName
-        let psCodeChild = {
-          label: '[PS] ' + psCode + ' - ' + targetPSCode[i].assetStatus,
-          original: targetPSCode[i].equipmentName,
-          status: targetPSCode[i].assetStatus,
-          children: []
-        }
-        targetFibernode.children.push(psCodeChild)
-      }
-
-      // get Virtual amplifier
-      let newVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === true)
-      let targetChild = {
-        label: '[]',
-        original: '',
-        status: '',
-        children: []
-      }
-
-      if (newVirtualAmpli.length > 0) {
-        targetChild = {
-          label: '[VA] ' + newVirtualAmpli[0].newName + ' - ' + newVirtualAmpli[0].assetStatus,
-          original: newVirtualAmpli[0].equipmentName,
-          status: newVirtualAmpli[0].assetStatus,
-          children: []
-        }
-      }
-
-      const child = this.getMigrationPreviewChild(this.equipmentToMigrate.newNodeCode + '00', this.equipmentToMigrate.migrationListNew, true)
-
-      if (child.length > 0) {
-        targetChild.children = child
-      } else {
-        let parentList2 = this.equipmentToMigrate.migrationListNew.filter(f => f.newPredecessor.substring(7, f.newPredecessor.length) === '000' &&
-          f.migrate === true && f.newPredecessor.substring(6, f.newPredecessor.length) !== '0000')
-        let newChild = []
-        for (let i = 0; i < parentList2.length; i++) {
-          let original = parentList2[i].equipmentName
-          if (original === '') {
+          if (promotedAmpli.length === 1) {
+            original = promotedAmpli[0].equipmentName
+          } else {
             original = 'NEW'
           }
-
-          let child2 = {
-            label: parentList2[i].newName,
-            original: original,
-            children: []
-          }
-          const child3 = this.getMigrationPreviewChild(parentList2[i].amplifierCode, this.equipmentToMigrate.migrationListNew, true)
-          child2.children = child3
-          newChild.push(child2)
         }
 
-        if (newChild.length > 0) {
-          targetChild.children = newChild
+        let targetTree = {
+          label: '[' + this.equipmentToMigrate.newHubCode + ']',
+          original: original,
+          header: 'root',
+          status: '',
+          children: []
+        }
+
+        let targetChildResult = []
+
+        // get WDM Code
+        let targetWDMCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'WDM' && f.migrate === true)
+        let targetWDM = {
+          label: '',
+          original: '',
+          status: '',
+          children: []
+        }
+        if (targetWDMCode.length > 0) {
+          targetWDM = {
+            label: targetWDMCode[0].newName,
+            original: targetWDMCode[0].equipmentName,
+            children: []
+          }
+        }
+
+        // get Fibernode
+        let targetFibernodeCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'FIBERNODE' && f.migrate === true)
+        let targetFibernode = {
+          label: '',
+          original: '',
+          status: '',
+          children: []
+        }
+        if (targetFibernodeCode.length > 0) {
+          targetFibernode = {
+            label: '[NODE] ' + targetFibernodeCode[0].newName + ' - ' + targetFibernodeCode[0].assetStatus,
+            original: targetFibernodeCode[0].equipmentName,
+            status: targetFibernodeCode[0].assetStatus,
+            children: []
+          }
+        }
+
+        // get Power Supply
+        let targetPSCode = this.equipmentToMigrate.migrationListNew.filter(f => f.productType === 'POWER SUPPLY' && f.migrate === true)
+        for (let i = 0; i < targetPSCode.length; i++) {
+          let psCode = targetPSCode[i].newName
+          let psCodeChild = {
+            label: '[PS] ' + psCode + ' - ' + targetPSCode[i].assetStatus,
+            original: targetPSCode[i].equipmentName,
+            status: targetPSCode[i].assetStatus,
+            children: []
+          }
+          targetFibernode.children.push(psCodeChild)
+        }
+
+        // get Virtual amplifier
+        let newVirtualAmpli = this.equipmentToMigrate.migrationListNew.filter(f => f.newName.substring(6, f.newName.length) === '0000' && f.migrate === true)
+        let targetChild = {
+          label: '[]',
+          original: '',
+          status: '',
+          children: []
+        }
+
+        if (newVirtualAmpli.length > 0) {
+          targetChild = {
+            label: '[VA] ' + newVirtualAmpli[0].newName + ' - ' + newVirtualAmpli[0].assetStatus,
+            original: newVirtualAmpli[0].equipmentName,
+            status: newVirtualAmpli[0].assetStatus,
+            children: []
+          }
+        }
+
+        const child = this.getMigrationPreviewChild(this.equipmentToMigrate.newNodeCode + '00', this.equipmentToMigrate.migrationListNew, true)
+
+        if (child.length > 0) {
+          targetChild.children = child
         } else {
-          let parentList3 = this.equipmentToMigrate.migrationListNew.filter(f => f.newPredecessor.substring(8, f.newPredecessor.length) === '00' &&
-            f.migrate === true && f.newPredecessor.substring(7, f.newPredecessor.length) !== '000')
-          let newChild2 = []
-          for (let i = 0; i < parentList3.length; i++) {
-            let original = parentList3[i].equipmentName
+          let parentList2 = this.equipmentToMigrate.migrationListNew.filter(f => f.newPredecessor.substring(7, f.newPredecessor.length) === '000' &&
+            f.migrate === true && f.newPredecessor.substring(6, f.newPredecessor.length) !== '0000')
+          let newChild = []
+          for (let i = 0; i < parentList2.length; i++) {
+            let original = parentList2[i].equipmentName
             if (original === '') {
               original = 'NEW'
             }
-            let child = {
-              label: parentList3[i].newName,
+
+            let child2 = {
+              label: parentList2[i].newName,
               original: original,
               children: []
             }
-            const child3 = this.getMigrationPreviewChild(parentList3[i].amplifierCode, this.equipmentToMigrate.migrationListNew, true)
-            child.children = child3
-            newChild2.push(child)
+            const child3 = this.getMigrationPreviewChild(parentList2[i].amplifierCode, this.equipmentToMigrate.migrationListNew, true)
+            child2.children = child3
+            newChild.push(child2)
           }
-          targetChild.children = newChild2
+
+          if (newChild.length > 0) {
+            targetChild.children = newChild
+          } else {
+            let parentList3 = this.equipmentToMigrate.migrationListNew.filter(f => f.newPredecessor.substring(8, f.newPredecessor.length) === '00' &&
+              f.migrate === true && f.newPredecessor.substring(7, f.newPredecessor.length) !== '000')
+            let newChild2 = []
+            for (let i = 0; i < parentList3.length; i++) {
+              let original = parentList3[i].equipmentName
+              if (original === '') {
+                original = 'NEW'
+              }
+              let child = {
+                label: parentList3[i].newName,
+                original: original,
+                children: []
+              }
+              const child3 = this.getMigrationPreviewChild(parentList3[i].amplifierCode, this.equipmentToMigrate.migrationListNew, true)
+              child.children = child3
+              newChild2.push(child)
+            }
+            targetChild.children = newChild2
+          }
         }
+
+        targetFibernode.children.push(targetChild)
+
+        if (targetWDMCode.length > 0) {
+          targetWDM.children.push(targetFibernode)
+          targetChildResult.push(targetWDM)
+        } else {
+          targetChildResult.push(targetFibernode)
+        }
+
+        targetTree.children = targetChildResult
+        this.$set(this.targetPreview, 0, targetTree)
+        this.$refs.targetPreview.expandAll()
       }
-
-      targetFibernode.children.push(targetChild)
-
-      if (targetWDMCode.length > 0) {
-        targetWDM.children.push(targetFibernode)
-        targetChildResult.push(targetWDM)
-      } else {
-        targetChildResult.push(targetFibernode)
-      }
-
-      targetTree.children = targetChildResult
-      this.$set(this.targetPreview, 0, targetTree)
-      this.$refs.targetPreview.expandAll()
     },
     doMigrationValidate () {
       // this.$q.loading.show()
@@ -1929,15 +1966,21 @@ export default {
       if (this.migrationStep === 1) {
         this.reloadMigrationList = true
       } else if (this.migrationStep === 2) {
-        this.$refs.destinationNode.validate()
-        var vDestinationNode = this.$refs.destinationNode.hasError
-        if (this.reloadMigrationList && !vDestinationNode) {
+        this.$refs.destinationNodeRef.validate()
+        this.$refs.newDescriptionRef.validate()
+        var vDestinationNode = this.$refs.destinationNodeRef.hasError
+        var vNewDescription = this.$refs.newDescriptionRef.hasError
+        if (this.reloadMigrationList && !vDestinationNode && !vNewDescription) {
           if (this.equipmentToMigrate.selectedMoveNodeOption === 'X') {
             this.migrationType = 'Split Node'
           } else if (this.equipmentToMigrate.selectedMoveNodeOption === 'N') {
             this.migrationType = 'Swap Node'
-          } else {
+          } else if (this.equipmentToMigrate.selectedMoveNodeOption === 'C') {
             this.migrationType = 'Change Service'
+          } else if (this.equipmentToMigrate.selectedMoveNodeOption === 'T') {
+            this.migrationType = 'Reroute'
+          } else if (this.equipmentToMigrate.selectedMoveNodeOption === 'R') {
+            this.migrationType = 'Revision'
           }
           this.doMigrationSetupNewHierarchy()
         } else {

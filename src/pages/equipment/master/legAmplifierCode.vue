@@ -1,8 +1,8 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER AMPLIFIER</font>
-    <div align="left" style="margin-bottom:30px;margin-top:10px;width:230px">
-      <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER AMPLIFIER</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER LEG AMPLIFIER</font>
+    <div align="left" style="margin-bottom:30px;margin-top:10px;width:280px">
+      <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER LEG AMPLIFIER</font>
       <div class="row">
         <div class="col-20" style="width: 32%">
           <q-separator color="orange-10" />
@@ -22,38 +22,45 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-select
+                rounded outlined
+                v-model="searchVal.hubCode"
+                stack-label
+                label="Hub Name"
+                color="orange-8"
+                :options="hubCodeList"
+                @input="getValueSelect()"
+              />
+            </div>
 
-              <div class="row" style="margin-buttom:20px">
-                <div class="col-15" style="margin-right: 10px; width: 22%">
-                  <q-select
-                    v-model="searchVal.hubCode"
-                    stack-label
-                    label="Hub Name"
-                    color="indigo-10"
-                    :options="hubCodeList"
-                    @input="getValueSelect()"
-                  />
-                </div>
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-input
+                rounded outlined
+                v-model="searchVal.amplifier"
+                stack-label
+                label="Amplifier Code"
+                oninput="this.value = this.value.toUpperCase()"
+                class="text-uppercase"
+                color="orange-8"/>
+            </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
-                  <q-input
-                  v-model="searchVal.amplifier"
-                  stack-label
-                  label="Amplifier Code"
-                  oninput="this.value = this.value.toUpperCase()"
-                  class="text-uppercase"
-                  color="indigo-10"/>
-                </div>
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-select
+                rounded outlined
+                v-model="searchVal.technology"
+                stack-label
+                label="Technology"
+                :options="technologyList"
+                color="orange-8"/>
+            </div>
 
-                <div class="col" style="width: 5%">
-                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
-                    <q-icon name="search"/>
-                    <q-tooltip>Search</q-tooltip>
-                  </q-btn>
-                </div>
-              </div>
-            </fieldset>
+            <div class="col" style="width: 5%">
+              <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                <q-icon name="search"/>
+                <q-tooltip>Search</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </q-expansion-item>
         <q-table
