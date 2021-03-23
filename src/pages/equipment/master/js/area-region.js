@@ -46,15 +46,6 @@ export default {
         }
       ],
       regionColumns: [
-
-        {
-          name: 'code',
-          label: 'Region Code',
-          field: 'code',
-          align: 'left',
-          style: 'width: 100px',
-          sortable: true
-        },
         {
           name: 'region',
           label: 'Region Name',
@@ -95,7 +86,7 @@ export default {
         areaName: ''
       },
       showForm: false,
-      formData: { id: '', areaName: '' }
+      formData: { id: 'AUTO GENERATE', areaName: '' }
     }
   },
 
@@ -155,7 +146,7 @@ export default {
         //   })
       } else {
         this.formData = {
-          id: '',
+          id: 'AUTO GENERATE',
           areaName: ''
         }
       }
@@ -165,7 +156,6 @@ export default {
     doAddNewRegion () {
       let newRegion = {}
 
-      this.$set(newRegion, 'code', '')
       this.$set(newRegion, 'region', '')
       this.$set(newRegion, 'recordStatus', 'A')
 
@@ -176,6 +166,9 @@ export default {
       this.showLoading()
       if (!dactivate) {
         this.formData.region = JSON.stringify(this.listOfRegion)
+      }
+      if (this.formData.id === 'AUTO GENERATE') {
+        this.formData.id = ''
       }
       this.$axios.post(`${process.env.urlPrefix}doSaveArea`, this.formData)
         .then((response) => {
@@ -225,6 +218,7 @@ export default {
         .then((response) => {
           this.modalUploadExcel = false
           this.$q.loading.hide()
+          this.doInitPage()
         })
         .catch((error) => {
           this.$q.loading.hide()

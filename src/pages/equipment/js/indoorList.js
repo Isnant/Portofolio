@@ -92,7 +92,7 @@ export default {
       },
       searchVal: {
         id: '',
-        equipmentCategory: 'Field',
+        equipmentCategory: 'Hub',
         productType: 'ALL',
         productSeries: 'ALL',
         hubCode: 'ALL',

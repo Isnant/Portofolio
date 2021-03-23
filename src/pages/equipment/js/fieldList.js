@@ -706,10 +706,11 @@ export default {
         }
       })
         .then((response) => {
+          console.log(response)
           if (response.data !== '') {
             this.subTypeList = response.data.map(data => ({
-              label: data.id.toUpperCase(),
-              value: data.id.toUpperCase()
+              label: data.subtype.toUpperCase(),
+              value: data.subtype.toUpperCase()
             }))
           } else {
             this.subTypeList = []

@@ -208,9 +208,9 @@
          <q-card-section>
           Download Template:
           <br>
-          <a href="/statics/template/productTypeExcelDownload.xlsx">Product Type</a>
+          <a href="/statics/template/Product Type - Form Upload.xlsx">Product Type</a>
           <br>
-          <a href="/statics/template/subTypeExcelDownload.xlsx">Sub Type</a>
+          <a href="/statics/template/Sub Type - Form Upload.xlsx">Sub Type</a>
         </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->

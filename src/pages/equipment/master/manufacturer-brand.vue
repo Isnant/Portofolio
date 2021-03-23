@@ -173,6 +173,12 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
+          Download Template:
+          <br>
+          <a href="/statics/template/Manufacturer - Form Upload.xlsx">Manufacturer</a>
+          <a style="margin-left:10px" href="/statics/template/Brand - Form Upload.xlsx">Brand</a>
+        </q-card-section>
+        <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
             <q-radio v-model="fileAttach.equipmentCategory" val="manufacturer" @input="getInitPage" label="Manufacturer" color="indigo-7" style="margin-right:10px"/>
             <q-radio v-model="fileAttach.equipmentCategory" val="brand" @input="getInitPage" label="Brand" color="indigo-7" style="margin-right:10px"/>

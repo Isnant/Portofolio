@@ -84,9 +84,15 @@
 
         <q-card-section>
           <div>
-            <q-input :readonly="formData.createdBy !== undefined" v-model="formData.id"
+            <q-input
+              v-model="formData.id"
+              readonly
+              class="text-italic"
+              stack-label
               label="Area Code"/>
-            <q-input v-model="formData.areaName"
+            <q-input
+              v-model="formData.areaName"
+              stack-label
               label="Area Name"/>
           </div>
           <br/>
@@ -154,6 +160,11 @@
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
+         <q-card-section>
+          Download Template:
+          <a style="margin-left:10px" href="/statics/template/Area - Form Upload.xlsx">Area</a>
+          <a style="margin-left:10px" href="/statics/template/Region - Form Upload.xlsx">Region</a>
+        </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
             <q-radio v-model="fileAttach.equipmentCategory" val="area" @input="getInitPage" label="Area" color="indigo-7" style="margin-right:10px"/>

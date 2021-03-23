@@ -33,15 +33,13 @@
             <!-- <legend class="legedn_search">Search</legend> -->
 
               <div class="row" style="width: 100%">
-                <div class="col-15" style="margin-right: 10px; width: 23%">
-                  <q-select
-                    rounded outlined
-                    color="orange-8"
-                    v-model="searchVal.equipmentStatus"
-                    label="Equipment Status"
-                    :options="equipmentStatusListSearch"
-                    @input="getDropdownValue('equipmentStatusSearch')"
-                  />
+                <div class="col-15" style="margin-right: 10px; width: 22%">
+                  <q-input
+                      rounded outlined
+                      v-model="searchVal.id"
+                      stack-label
+                      label="Equipment Id"
+                      color="orange-8"/>
                 </div>
 
                 <div class="col-15" style="margin-right: 10px; width: 23%">
@@ -97,18 +95,28 @@
               </div>
 
               <div class="row" style="margin-top:10px; width: 100%" >
-                <div class="col-15" style="margin-right: 10px; width: 25%">
+                <div class="col-15" style="margin-right: 10px; width: 22%">
                   <q-select
                     v-model="searchVal.assetStatus"
                     stack-label
-                    label="Asset Status"
+                    label="Equiptment Status"
                     rounded outlined
                     color="orange-8"
                     :options="assetStatusListSearch"
                     @input="getDropdownValue('assetStatusSearch')"
                   />
                 </div>
-                <div class="col-15" style="margin-right: 10px; width: 25%">
+                <div class="col-15" style="margin-right: 10px; width: 20%">
+                  <q-select
+                    rounded outlined
+                    color="orange-8"
+                    v-model="searchVal.equipmentStatus"
+                    label="Status"
+                    :options="equipmentStatusListSearch"
+                    @input="getDropdownValue('equipmentStatusSearch')"
+                  />
+                </div>
+                <div class="col-15" style="margin-right: 10px; width: 20%">
                   <q-select v-model="searchVal.hubCode"
                     :stack-label="true"
                     rounded outlined
