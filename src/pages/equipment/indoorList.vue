@@ -185,24 +185,49 @@
       </q-fab>
     </q-page-sticky>
 
+    <q-dialog v-model="modalUpload" persistent @before-hide="doHideButton()">
+      <q-card class="bg-white">
+        <q-bar class="bg-primary text-white">
+          <strong>Upload Equipment File</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+          <a href="/statics/template/Form Upload - Indoor.xlsx">Download Template</a>
+        </q-card-section>
+        <q-card-section>
+          <!-- <q-field style="padding-bottom: 20px;"> -->
+           <q-input
+              type="file"
+              @input="val => { doAttachFile(val[0]) }"
+            />
+            <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
+              <q-icon name="fas fa-file-upload"/>
+              <q-tooltip>Upload</q-tooltip>
+            </q-btn>
+          <!-- </q-field> -->
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="modalSuccess" persistent>
-          <q-card class="bg-white">
-            <q-bar class="bg-white text-indigo-10">
-              <strong></strong>
-              <q-space />
-              <q-btn dense flat icon="close" v-close-popup />
-            </q-bar>
-            <q-card-section>
-            <div align="center" class="text-green">{{succesMessage}}</div>
-            <div align="right" style="margin-top:20px">
-              <q-btn round color="orange-4" @click="doUploadAfterWarning()">
-                <q-icon name="fas fa-file-upload"/>
-                <q-tooltip>Upload Data</q-tooltip>
-              </q-btn>
-            </div>
-            </q-card-section>
-          </q-card>
-        </q-dialog>
+      <q-card class="bg-white">
+        <q-bar class="bg-white text-indigo-10">
+          <strong></strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+        <div align="center" class="text-green">{{succesMessage}}</div>
+        <div align="right" style="margin-top:20px">
+          <q-btn round color="orange-4" @click="doUploadAfterWarning()">
+            <q-icon name="fas fa-file-upload"/>
+            <q-tooltip>Upload Data</q-tooltip>
+          </q-btn>
+        </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
      <q-dialog v-model="modalError" persistent>
       <q-card class="bg-white">
@@ -619,31 +644,6 @@
             <q-tooltip>Submit</q-tooltip>
             </q-btn>
           </div>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="modalUpload" persistent @before-hide="doHideButton()">
-      <q-card class="bg-white">
-        <q-bar class="bg-primary text-white">
-          <strong>Upload Equipment File</strong>
-          <q-space />
-          <q-btn dense flat icon="close" v-close-popup />
-        </q-bar>
-        <q-card-section>
-          <a href="/statics/template/FieldTemplateExcel.xlsx">Download Template</a>
-        </q-card-section>
-        <q-card-section>
-          <!-- <q-field style="padding-bottom: 20px;"> -->
-           <q-input
-              type="file"
-              @input="val => { doAttachFile(val[0]) }"
-            />
-            <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
-              <q-icon name="fas fa-file-upload"/>
-              <q-tooltip>Upload</q-tooltip>
-            </q-btn>
-          <!-- </q-field> -->
-        </q-card-section>
       </q-card>
     </q-dialog>
 

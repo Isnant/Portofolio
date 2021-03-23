@@ -222,7 +222,22 @@ export default {
     getSelectValue () {
       this.instance.branch = this.instance.branch.value
     },
-
+    syncCrm () {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}syncEquipmentToCrm`)
+        .then((response) => {
+          // this.dataList = response.data
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
     doBeforeFormClose () {
       if (this.instance !== undefined) {
         delete this.instance.username
