@@ -136,7 +136,9 @@
           <q-btn dense flat icon="close" v-close-popup/>
         </q-bar>
         <q-card-section>
-          <q-input v-model="formData.id"
+          <q-input
+            v-model="formData.id"
+            class="text-italic"
             readonly
             stack-label label="Id"/>
           <q-input v-model="formData.hubCode"
@@ -167,6 +169,11 @@
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
+        <q-card-section>
+          <a href="/statics/template/Hub Code Service - Form Upload.xlsx">Download Template
+            <q-tooltip>Hub Code Service - Form Upload.xlsx</q-tooltip>
+          </a>
+        </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
             <q-input

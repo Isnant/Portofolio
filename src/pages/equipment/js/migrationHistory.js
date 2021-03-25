@@ -9,6 +9,8 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      productTypeListSearch: '',
+      migrationTypeList: ['ALL', 'Change Service', 'Change Code', 'Split Node', 'Reroute', 'Revision'],
       tableColumns: [
         {
           name: 'assetId',
@@ -114,7 +116,9 @@ export default {
         reqEndDate: '',
         createdBy: '',
         sourceCode: '',
-        newCode: ''
+        newCode: '',
+        migrationType: 'ALL',
+        productType: 'ALL'
       },
       showForm: false,
       formData: {
@@ -146,7 +150,7 @@ export default {
       if (authorities.findIndex(x => x === 'ROLE_06') === -1) {
         this.$router.push('/')
       }
-      this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryList`, {
+      this.$axios.get(`${process.env.urlPrefix}getMigrationHistoryInitData`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
@@ -156,12 +160,16 @@ export default {
           endDate: this.searchVal.reqEndDate,
           createdBy: this.searchVal.createdBy,
           sourceCode: this.searchVal.sourceCode,
-          newCode: this.searchVal.newCode
+          newCode: this.searchVal.newCode,
+          migrationType: this.searchVal.migrationType,
+          productType: this.searchVal.productType
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.doMainFillTableResult(response.data)
+          this.doMainFillTableResult(response.data.listOfMigrationHistory)
+          this.productTypeListSearch = response.data.listOfProductTypeSearch.filter(a => a.cascadeValue === 'Field')
+          this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
           // this.searchVal.reqStartDate = this.getFirstDate()
           // this.searchVal.reqEndDate = this.getCurrentDate()
         })
@@ -210,7 +218,9 @@ export default {
         endDate: this.searchVal.reqEndDate,
         createdBy: this.searchVal.createdBy,
         sourceCode: this.searchVal.sourceCode,
-        newCode: this.searchVal.newCode
+        newCode: this.searchVal.newCode,
+        migrationType: this.searchVal.migrationType,
+        productType: this.searchVal.productType
       }
       this.getMigrationHistoryList(params)
     },
@@ -224,7 +234,9 @@ export default {
         endDate: this.searchVal.reqEndDate,
         createdBy: this.searchVal.createdBy,
         sourceCode: this.searchVal.sourceCode,
-        newCode: this.searchVal.newCode
+        newCode: this.searchVal.newCode,
+        migrationType: this.searchVal.migrationType,
+        productType: this.searchVal.productType
       }
       this.getMigrationHistoryList(params)
     },
@@ -246,6 +258,12 @@ export default {
         }
       }
     },
+    getDropdownValue (type) {
+      // search bar
+      if (type === 'productTypeSearch') {
+        this.searchVal.productType = this.searchVal.productType.value
+      }
+    },
     downloadExcel (props) {
       // this.$q.loading.show()
       this.showLoading()
@@ -254,7 +272,11 @@ export default {
         params: {
           startDate: this.searchVal.reqStartDate,
           endDate: this.searchVal.reqEndDate,
-          createdBy: this.searchVal.createdBy
+          createdBy: this.searchVal.createdBy,
+          sourceCode: this.searchVal.sourceCode,
+          newCode: this.searchVal.newCode,
+          migrationType: this.searchVal.migrationType,
+          productType: this.searchVal.productType
         }
       })
         .then((response) => {

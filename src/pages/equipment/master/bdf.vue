@@ -125,8 +125,12 @@
         <q-card-section>
           <div class="row">
             <div class="col">
-              <q-input v-model="formData.bdfId" readonly
-                stack-label label="BDF Id"/>
+              <q-input
+                v-model="formData.bdfId"
+                readonly
+                stack-label
+                label="BDF Id"
+                class="text-italic"/>
               <q-input v-model="formData.bdfCode"
                 stack-label label="BDF Code"/>
               <q-input v-model="formData.bdfName"
@@ -178,6 +182,11 @@
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
+        <q-card-section>
+          <a href="/statics/template/BDF - Form Upload.xlsx">Download Template
+            <q-tooltip>BDF - Form Upload.xlsx</q-tooltip>
+          </a>
+        </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
             <q-input

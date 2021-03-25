@@ -162,8 +162,12 @@
         </q-bar>
          <q-card-section>
           Download Template:
-          <a style="margin-left:10px" href="/statics/template/Area - Form Upload.xlsx">Area</a>
-          <a style="margin-left:10px" href="/statics/template/Region - Form Upload.xlsx">Region</a>
+          <a style="margin-left:10px" href="/statics/template/Area - Form Upload.xlsx">Area
+            <q-tooltip>Area - Form Upload.xlsx</q-tooltip>
+          </a>
+          <a style="margin-left:10px" href="/statics/template/Region - Form Upload.xlsx">Region
+            <q-tooltip>Region - Form Upload.xlsx</q-tooltip>
+          </a>
         </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->

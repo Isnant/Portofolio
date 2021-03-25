@@ -7,22 +7,35 @@
         <q-btn
           flat
           round
-          color="orange-4"
+          color="white"
           @click="leftDrawerOpen = !leftDrawerOpen"
           aria-label="Menu">
           <q-icon name="menu" />
         </q-btn>
         <q-toolbar-title>
-
-          <div align="left" style="margin-top:10px">
-            <img src="statics/Seal5.png"  class="responsive"  width="250px">
+          <div align="left">
+            <img src="statics/seal header.png"  class="responsive"  width="1200px">
           </div>
-
         </q-toolbar-title>
         <q-toolbar-title shrink>
           <div style="margin-bottom:60px">
             <font size=2 style="margin-right:10px">{{userInfo.fullName}}</font>
-            <q-btn-dropdown rounded size="sm" color="indigo-5">
+            <q-btn
+              flat
+              color="white"
+              round size="sm">
+              <q-icon name="account_box" />
+              <q-tooltip>Profil</q-tooltip>
+            </q-btn>
+            <q-btn flat
+              color="white"
+              round
+              size="sm"
+              to="/login" >
+              <q-icon name="exit_to_app"/>
+              <q-tooltip>Logout</q-tooltip>
+            </q-btn>
+            <!-- <q-btn-dropdown rounded size="sm" color="indigo-4">
               <q-list>
                 <q-item clickable v-close-popup >
                   <q-item-section>
@@ -41,7 +54,7 @@
                   </q-item-section>
                 </q-item>
               </q-list>
-            </q-btn-dropdown>
+            </q-btn-dropdown> -->
           </div>
         </q-toolbar-title>
       </q-toolbar>

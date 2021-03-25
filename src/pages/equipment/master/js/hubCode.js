@@ -142,7 +142,7 @@ export default {
       },
       showForm: false,
       formData: {
-        hubId: '',
+        hubId: 'AUTO GENERATE',
         hubCode: '',
         hubName: '',
         hubCodeIt: '',
@@ -251,7 +251,9 @@ export default {
     doSave () {
       // this.$q.loading.show()
       this.showLoading()
-
+      if (this.formData.hubId === 'AUTO GENERATE') {
+        this.formData.hubId = ''
+      }
       this.$axios.post(`${process.env.urlPrefix}saveHubCode`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -368,7 +370,7 @@ export default {
     },
     clear () {
       this.formData = {
-        hubId: '',
+        hubId: 'AUTO GENERATE',
         hubCode: '',
         hubName: '',
         hubCodeIt: '',

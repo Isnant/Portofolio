@@ -22,12 +22,14 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%">
-            <div class="row" style="margin:10px">
-              <div class="col" style="margin-right:20px">
+            <div class="row" style="margin-bottom:10px">
+              <div class="col-15" style="margin-right:10px; width: 23%">
                 <q-input
                   v-model="searchVal.reqStartDate"
                   clearable
+                  rounded outlined
                   stack-label
+                  color="orange-8"
                   @input="doClearSearchVal('start')"
                   label="Start Date">
                   <template v-slot:prepend>
@@ -41,10 +43,12 @@
                   </template>
                 </q-input>
               </div>
-              <div class="col">
+              <div class="col-15" style="margin-right:10px; width: 23%">
                 <q-input
                   v-model="searchVal.reqEndDate"
+                  rounded outlined
                   stack-label
+                  color="orange-8"
                   clearable
                   @input="doClearSearchVal('end')"
                   label="End Date">
@@ -59,29 +63,57 @@
                   </template>
                 </q-input>
               </div>
-              <div class="col" style="margin-left:20px; margin-right:20px">
-                <q-input
-                v-model="searchVal.createdBy"
-                  @input="doClearSearchVal('createdBy')"
-                  stack-label
-                  clearable
-                  label="Created By">
-                </q-input>
-              </div>
-              <div class="col" style="margin-left:20px; margin-right:20px">
+              <div class="col-15" style="margin-right:10px; width: 23%">
                 <q-input
                   v-model="searchVal.sourceCode"
+                  rounded outlined
                   stack-label
+                  color="orange-8"
                   label="Source Code">
                 </q-input>
               </div>
-              <div class="col" style="margin-left:20px; margin-right:20px">
+              <div class="col-15" style="margin-right:10px; width: 23%">
                 <q-input
                   v-model="searchVal.newCode"
+                  rounded outlined
                   stack-label
+                  color="orange-8"
                   label="New Code">
                 </q-input>
               </div>
+            </div>
+            <div class="col-15" style="margin-right: 10px; width: 30%">
+              <q-select
+                v-model="searchVal.migrationType"
+                label="Product Type"
+                rounded outlined
+                stack-label
+                color="orange-8"
+                :options="migrationTypeList"
+              />
+            </div>
+            <div class="col-15" style="margin-right: 10px; width: 30%">
+              <q-select
+                v-model="searchVal.productType"
+                label="Product Type"
+                rounded outlined
+                stack-label
+                color="orange-8"
+                :options="productTypeListSearch"
+                @input="getDropdownValue('productTypeSearch')"
+              />
+            </div>
+            <div class="col" style="margin-right:20px">
+              <q-input
+                v-model="searchVal.createdBy"
+                @input="doClearSearchVal('createdBy')"
+                stack-label
+                rounded outlined
+                color="orange-8"
+                label="Created By">
+              </q-input>
+            </div>
+            <div class="row" style="margin:10px">
               <div class="col">
                 <q-btn round color="indigo-10" @click="doSearchByFilter()">
                   <q-icon name="search"/>

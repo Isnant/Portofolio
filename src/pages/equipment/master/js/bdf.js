@@ -128,7 +128,7 @@ export default {
         bdfName: ''
       },
       formData: {
-        bdfId: '',
+        bdfId: 'AUTO GENERATE',
         bdfCode: '',
         bdfName: '',
         areaName: '',
@@ -231,6 +231,9 @@ export default {
     doSave () {
       // this.$q.loading.show()
       this.showLoading()
+      if (this.formData.bdfId === 'AUTO GENERATE') {
+        this.formData.bdfId = ''
+      }
       this.$axios.post(`${process.env.urlPrefix}saveBdf`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -337,6 +340,7 @@ export default {
     },
     clear () {
       this.formData = {
+        bdfId: 'AUTO GENERATE',
         bdfCode: '',
         bdfName: '',
         areaName: '',

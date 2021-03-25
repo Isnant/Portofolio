@@ -112,7 +112,7 @@ export default {
       },
       showForm: false,
       formData: {
-        hubRoomId: '',
+        hubRoomId: 'AUTO GENERATE',
         hubCodeRoom: '',
         hubName: '',
         floor: '',
@@ -205,7 +205,9 @@ export default {
     doSave () {
       // this.$q.loading.show()
       this.showLoading()
-
+      if (this.formData.hubRoomId === 'AUTO GENERATE') {
+        this.formData.hubRoomId = ''
+      }
       this.$axios.post(`${process.env.urlPrefix}saveHubRoom`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -312,7 +314,7 @@ export default {
     },
     clear () {
       this.formData = {
-        hubRoomId: '',
+        hubRoomId: 'AUTO GENERATE',
         hubCodeRoom: '',
         hubName: '',
         floor: '',

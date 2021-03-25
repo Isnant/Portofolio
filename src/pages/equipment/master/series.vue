@@ -173,7 +173,7 @@
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
-         <q-card-section>
+        <q-card-section>
           <a href="/statics/template/productSeries.xlsx">Download Template</a>
         </q-card-section>
         <q-card-section>

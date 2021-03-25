@@ -23,7 +23,7 @@ export default {
         },
         {
           name: 'hubCode',
-          label: 'Hub Code',
+          label: 'Hub Code Service',
           field: 'hubCode',
           align: 'left',
           style: 'width: 100px',
@@ -103,7 +103,7 @@ export default {
       serviceSearchList: ['ALL', 'Analog', 'Digital', 'FTTH'],
       showForm: false,
       formData: {
-        id: '',
+        id: 'AUTO GENERATE',
         hubCode: '',
         hubName: '',
         service: '',
@@ -204,7 +204,9 @@ export default {
     doSave () {
       // this.$q.loading.show()
       this.showLoading()
-
+      if (this.formData.id === 'AUTO GENERATE') {
+        this.formData.id = ''
+      }
       this.$axios.post(`${process.env.urlPrefix}saveHubCodeService`, this.formData)
         .then((response) => {
           this.$q.loading.hide()
@@ -296,7 +298,7 @@ export default {
     },
     clear () {
       this.formData = {
-        id: '',
+        id: 'AUTO GENERATE',
         hubCode: '',
         hubCodeService: ''
       }
