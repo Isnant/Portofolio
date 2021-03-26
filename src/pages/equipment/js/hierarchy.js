@@ -10,6 +10,7 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      productTypeListSearch: [],
       tableColumns: [
         {
           name: 'productType',
@@ -79,7 +80,8 @@ export default {
         equipmentId: '',
         equipmentName: '',
         equipmentParent: '',
-        status: 'Active'
+        status: 'Active',
+        productType: 'ALL'
       },
       showForm: false,
       formData: {
@@ -111,7 +113,7 @@ export default {
       if (authorities.findIndex(x => x === 'ROLE_07') === -1) {
         this.$router.push('/')
       }
-      this.$axios.get(`${process.env.urlPrefix}getHierarchyList`, {
+      this.$axios.get(`${process.env.urlPrefix}getHierarchyInitData`, {
         params: {
           pageIndex: this.pagination.page - 1,
           pageSize: this.pagination.rowsPerPage,
@@ -120,12 +122,15 @@ export default {
           equipmentName: this.searchVal.equipmentName,
           equipmentParent: this.searchVal.equipmentParent,
           status: this.searchVal.status,
-          equipmentId: this.searchVal.equipmentId
+          equipmentId: this.searchVal.equipmentId,
+          productType: this.searchVal.productType
         }
       })
         .then((response) => {
           this.$q.loading.hide()
-          this.doMainFillTableResult(response.data)
+          this.doMainFillTableResult(response.data.listOfHierarchy)
+          this.productTypeListSearch = response.data.listOfProductTypeSearch.filter(a => a.cascadeValue === 'Field')
+          this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
           // this.searchVal.reqStartDate = this.getFirstDate()
           // this.searchVal.reqEndDate = this.getCurrentDate()
         })
@@ -173,7 +178,8 @@ export default {
         equipmentName: this.searchVal.equipmentName,
         equipmentParent: this.searchVal.equipmentParent,
         status: this.searchVal.status,
-        equipmentId: this.searchVal.equipmentId
+        equipmentId: this.searchVal.equipmentId,
+        productType: this.searchVal.productType
       }
       this.getHierarchyList(params)
     },
@@ -186,7 +192,8 @@ export default {
         equipmentName: this.searchVal.equipmentName,
         equipmentParent: this.searchVal.equipmentParent,
         status: this.searchVal.status,
-        equipmentId: this.searchVal.equipmentId
+        equipmentId: this.searchVal.equipmentId,
+        productType: this.searchVal.productType
       }
       this.getHierarchyList(params)
     },
@@ -201,6 +208,12 @@ export default {
         }
       }
       this.doSearchByFilter()
+    },
+    getDropdownValue (type) {
+      // search bar
+      if (type === 'productTypeSearch') {
+        this.searchVal.productType = this.searchVal.productType.value
+      }
     },
     doOpenForm (row) {
       // this.$q.loading.show()

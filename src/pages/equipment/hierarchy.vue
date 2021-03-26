@@ -27,6 +27,8 @@
                 <q-input
                   v-model="searchVal.equipmentId"
                   stack-label
+                  rounded outlined
+                  color="orange-8"
                   label="Equipment Id">
                 </q-input>
               </div>
@@ -34,16 +36,31 @@
                 <q-input
                   v-model="searchVal.equipmentName"
                   stack-label
+                  rounded outlined
+                  color="orange-8"
                   label="Equipment Name">
                 </q-input>
               </div>
-              <div class="col">
+              <div class="col" style="margin-right: 10px;">
                 <q-input
                   v-model="searchVal.equipmentParent"
                   stack-label
+                  rounded outlined
+                  color="orange-8"
                   label="Equipment Parent">
                 </q-input>
               </div>
+              <div class="col" style="margin-right: 10px;">
+                <q-select
+                  v-model="searchVal.productType"
+                  label="Product Type"
+                  rounded outlined
+                  stack-label
+                  color="orange-8"
+                  :options="productTypeListSearch"
+                  @input="getDropdownValue('productTypeSearch')"
+                />
+            </div>
               <div class="col">
                 <q-btn round color="indigo-10" @click="doSearchByFilter()">
                   <q-icon name="search"/>

@@ -4,6 +4,7 @@ export default {
   data () {
     return {
       dataList: [],
+      hostname: '',
       tableColumns: [
         {
           name: 'hostname',
@@ -58,7 +59,11 @@ export default {
       if (authorities.findIndex(x => x === 'ROLE_06') === -1) {
         this.$router.push('/')
       }
-      this.$axios.get(`${process.env.urlPrefix}getHostnameList`)
+      this.$axios.get(`${process.env.urlPrefix}getHostnameList`, {
+        params: {
+          hostname: this.hostname
+        }
+      })
         .then((response) => {
           this.dataList = response.data
           this.$q.loading.hide()
@@ -75,13 +80,8 @@ export default {
     downloadExcel (props) {
       // this.$q.loading.show()
       this.showLoading()
-      this.$axios.get(`${process.env.urlPrefix}migrationHistoryExcelDownload`, {
-        responseType: 'arraybuffer',
-        params: {
-          startDate: this.searchVal.reqStartDate,
-          endDate: this.searchVal.reqEndDate,
-          createdBy: this.searchVal.createdBy
-        }
+      this.$axios.get(`${process.env.urlPrefix}hostnameExcelDownload`, {
+        responseType: 'arraybuffer'
       })
         .then((response) => {
           this.$q.loading.hide()
@@ -89,7 +89,7 @@ export default {
           const link = document.createElement('a')
           link.href = url
           link.style = 'display: none'
-          link.download = 'migration_history.xlsx'
+          link.download = 'Problem Type Filter.xlsx'
           document.body.appendChild(link)
           link.click()
         })

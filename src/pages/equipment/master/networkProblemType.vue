@@ -17,6 +17,32 @@
     <div style="max-width: 400px">
       <q-card>
         <q-card-section>
+          <q-expansion-item
+            label="SEARCH"
+            header-class="bg-indigo-2 text-indigo-10"
+            style="margin-bottom:10px"
+            icon="search">
+            <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
+              <div class="row" style="width:700px;margin:10px">
+                <div class="col-15" style="margin-right:20px">
+                  <q-input
+                    v-model="hostname"
+                    rounded outlined
+                    color="orange-8"
+                    label="Hostname"
+                    stack-label>
+                  </q-input>
+                </div>
+
+                <div class="col-15">
+                  <q-btn round color="indigo-10" @click="doInitPage()">
+                    <q-icon name="search"/>
+                    <q-tooltip>Search</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </div>
+          </q-expansion-item>
           <q-table
             :data="dataList"
             :columns="tableColumns"
@@ -33,6 +59,9 @@
           </q-table>
         </q-card-section>
       </q-card>
+      <q-page-sticky position="top-right" :offset="[15, 30]">
+        <q-btn round color="orange-6" text-color="white" @click.native="downloadExcel"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
+      </q-page-sticky>
     </div>
   </q-page>
 </template>
