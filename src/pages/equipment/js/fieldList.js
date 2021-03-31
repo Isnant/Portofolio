@@ -702,7 +702,8 @@ export default {
       this.input.productType = this.input.productType.value
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
-          pid: this.input.productType
+          productType: this.input.productType,
+          eqCategory: 'Field'
         }
       })
         .then((response) => {
@@ -1713,7 +1714,7 @@ export default {
     },
     getMigrationPreviewChild (parent, list, migrate) {
       let rawChildren = list.filter(f => f.newPredecessor === parent &&
-        f.productType !== 'FIBERNODE' && f.migrate === migrate && f.newName.substring(6, f.newName.length) !== '0000')
+        f.productType !== 'FIBERNODE' && f.productType !== 'POWER SUPPLY' && f.migrate === migrate && f.newName.substring(6, f.newName.length) !== '0000')
       let result = []
 
       for (let i = 0; i < rawChildren.length; i++) {

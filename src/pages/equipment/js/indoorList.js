@@ -502,14 +502,23 @@ export default {
     },
     getSubType () {
       // this.$q.loading.show()
+      this.input.productType = this.input.productType.value
       this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
-          pid: this.input.productType
+          productType: this.input.productType,
+          eqCategory: 'Indoor'
         }
       })
         .then((response) => {
-          this.subTypeList = response.data.map(subType => subType.id)
+          if (response.data !== '') {
+            this.subTypeList = response.data.map(data => ({
+              label: data.subtype.toUpperCase(),
+              value: data.subtype.toUpperCase()
+            }))
+          } else {
+            this.subTypeList = []
+          }
           this.$q.loading.hide()
         })
         .catch((error) => {

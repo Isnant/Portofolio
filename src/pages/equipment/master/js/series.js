@@ -11,6 +11,9 @@ export default {
       productTypeList: [],
       filteredBrandList: [],
       subTypeList: [],
+      subTypeListResult: [],
+      subTypeForList: '',
+      productSubType: '',
       fileAttach: {
         fileName: '',
         file64: '',
@@ -144,7 +147,12 @@ export default {
           this.doMainFillTableResult(response.data.listOfProductSeries)
           this.manufacturerCodeList = response.data.listOfManufacturerDropdown
           this.listOfManufacturer = response.data.listOfManufacturer
-          this.productTypeList = response.data.listOfProductTypeDropdown.sort(this.compareValue)
+          this.productTypeList = response.data.listOfProductTypeDropdown.map(data => ({
+            label: data.value.toUpperCase() + ' (' + data.cascadeValue.toUpperCase() + ')',
+            value: data.value.toUpperCase(),
+            cascadeValue: data.cascadeValue
+          }))
+          // this.productTypeList = response.data.listOfProductTypeDropdown.sort(this.compareValue)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -278,18 +286,20 @@ export default {
       }
     },
     getSubType () {
-      // this.$q.loading.show()
       this.showLoading()
+      var category = this.formData.productType.cascadeValue
+      this.formData.productType = this.formData.productType.value
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
-          pid: this.formData.productType
+          productType: this.formData.productType,
+          eqCategory: category
         }
       })
         .then((response) => {
           if (response.data !== '') {
             this.subTypeList = response.data.map(data => ({
-              label: data.id.toUpperCase(),
-              value: data.id.toUpperCase()
+              label: data.subtype.toUpperCase(),
+              value: data.subtype.toUpperCase()
             }))
           } else {
             this.subTypeList = []
@@ -308,10 +318,10 @@ export default {
     getBrandValue () {
       this.formData.brand = this.formData.brand.value
     },
-    getProductTypeValue () {
-      this.formData.productType = this.formData.productType.value
-      this.getSubType()
-    },
+    // getProductTypeValue () {
+    //   this.formData.productType = this.formData.productType.value
+    //   this.getSubType()
+    // },
     getSubTypeValue () {
       this.formData.productSubType = this.formData.productSubType.value
     },

@@ -574,43 +574,27 @@ export default {
       // Network
       this.$refs.nEquipmentName.validate()
       this.$refs.nProductType.validate()
-      this.$refs.nProductSubType.validate()
-      this.$refs.nProductSeries.validate()
       this.$refs.nManufacturer.validate()
       this.$refs.nBrand.validate()
+      this.$refs.nStatusReason.validate()
       this.$refs.nQuantity.validate()
-      this.$refs.nHubAddress.validate()
       this.$refs.nBdfCode.validate()
       this.$refs.nDivision.validate()
       this.$refs.nDepartment.validate()
       this.$refs.nPropertyOf.validate()
-      this.$refs.nEquipmentStatus.validate()
-      this.$refs.nDescription.validate()
-      this.$refs.nItCode.validate()
 
       var n1 = this.$refs.nEquipmentName.hasError
       var n2 = this.$refs.nProductType.hasError
-      var n3 = this.$refs.nProductSubType.hasError
-      var n4 = this.$refs.nProductSeries.hasError
-      var n5 = this.$refs.nManufacturer.hasError
-      var n6 = this.$refs.nBrand.hasError
-      var n7 = this.$refs.nQuantity.hasError
-      var n9 = this.$refs.nHubAddress.hasError
-      var n10 = this.$refs.nBdfCode.hasError
-      var n11 = this.$refs.nDivision.hasError
-      var n12 = this.$refs.nDepartment.hasError
-      var n13 = this.$refs.nPropertyOf.hasError
-      var n14 = this.$refs.nEquipmentStatus.hasError
-      var n15 = this.$refs.nDescription.hasError
-      var n16 = this.$refs.nItCode.hasError
+      var n3 = this.$refs.nManufacturer.hasError
+      var n4 = this.$refs.nBrand.hasError
+      var n5 = this.$refs.nStatusReason.hasError
+      var n6 = this.$refs.nQuantity.hasError
+      var n7 = this.$refs.nBdfCode.hasError
+      var n8 = this.$refs.nPropertyOf.hasError
+      var n9 = this.$refs.nDivision.hasError
+      var n10 = this.$refs.nDepartment.hasError
 
-      if (this.input.hubCode === '') {
-        n9 = false
-      } else {
-        n10 = false
-      }
-
-      if (!n1 && !n2 && !n3 && !n4 && !n5 && !n6 && !n7 && !n9 && !n10 && !n11 && !n12 && !n13 && !n14 && !n15 && !n16) {
+      if (!n1 && !n2 && !n3 && !n4 && !n5 && !n6 && !n7 && !n8 && !n9 && !n10) {
         this.doSaveEquipment()
       }
     },
@@ -834,11 +818,19 @@ export default {
       this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}getSubType`, {
         params: {
-          pid: this.input.productType
+          productType: this.input.productType,
+          eqCategory: 'Network'
         }
       })
         .then((response) => {
-          this.subTypeList = response.data.map(subType => subType.id)
+          if (response.data !== '') {
+            this.subTypeList = response.data.map(data => ({
+              label: data.subtype.toUpperCase(),
+              value: data.subtype.toUpperCase()
+            }))
+          } else {
+            this.subTypeList = []
+          }
           this.$q.loading.hide()
         })
         .catch((error) => {

@@ -230,8 +230,10 @@
           <div class="col" style="width:30%">
             <q-select
               v-model="input.equipmentUploadStatus"
+              ref="fEquipmentUploadStatus"
+              :rules="[val => !! val || 'Equipment Status is required']"
               stack-label
-              label="Asset Status"
+              label="Equipment Status*"
               color="purple-6"
               :options="assetStatusList"
               @input="getDropdownValue('assetStatusForm')"/>
@@ -250,8 +252,8 @@
                 label="Equipment Category"
                 readonly
                 tabindex="1"/>
-              <q-input v-model="input.equipmentName" ref="fEquipmentName"
-                readonly
+              <q-input v-model="input.equipmentName"
+                ref="nEquipmentName"
                 :rules="[val => !! val || 'Equipment Name is required']"
                 :stack-label="true"
                 label="Equipment Name*"
@@ -261,7 +263,8 @@
                 :stack-label="true"
                 label="Description"
                 tabindex="3"/>
-              <q-select v-model="input.productType" ref="fProductType"
+              <q-select v-model="input.productType"
+                ref="nProductType"
                 :rules="[val => !! val || 'Product Type is required']"
                 :stack-label="true"
                 label="Product Type*"
@@ -269,25 +272,12 @@
                 @input="getProductTypeValue()"
                 tabindex="4"
                 style="margin-top:20px"/>
-
-              <!-- <div v-if="input.technology === 'FTTH'">
-                <q-select v-model="input.productSubType"
-                  :stack-label="true"
-                  :options="subTypeList"
-                  @input="getSubTypeValue()"
-                  label="Product Sub Type"
-                  style="margin-bottom:20px"
-                  tabindex="5"/>
-              </div> -->
-              <!-- <div v-else> -->
               <q-select v-model="input.productSubType"
                 :stack-label="true"
                 :options="subTypeList"
                 label="Product Sub Type"
                 tabindex="5"/>
-              <!-- </div> -->
-              <q-select v-model="input.productSeries" ref="fProductSeries"
-                :rules="[val => !! val || 'Product Series is required']"
+              <q-select v-model="input.productSeries"
                 :stack-label="true"
                 :options="filteredProductSeries"
                 @input="getDropdownValue('productSeriesForm')"
@@ -307,20 +297,16 @@
                   </q-item>
                 </template>
               </q-select>
-              <!-- <q-input v-model="input.productSeries" ref="fProductSeries"
-                :rules="[val => !! val || 'Product Series is required']"
-                :stack-label="true"
-                label="Product Series*"
-                tabindex="6"
-                style="margin-top:20px"/> -->
-              <q-select v-model="input.manufacturer" ref="fManufacturer"
+              <q-select v-model="input.manufacturer"
+                ref="nManufacturer"
                 :rules="[val => !! val || 'Manufacturer is required']"
                 :stack-label="true"
                 label="Manufacturer*"
                 :options="manufacturerList"
                 @input="getManufacturerValue()"
                 tabindex="7"/>
-              <q-select v-model="input.brand" ref="fBrand"
+              <q-select v-model="input.brand"
+                ref="nBrand"
                 :rules="[val => !! val || 'Brand is required']"
                 :stack-label="true"
                 label="Brand*"
@@ -337,8 +323,9 @@
                 :options="equipmentStatusList"
                 tabindex="42"
                 @input="getDropdownValue('equipmentStatusForm')"/>
-              <q-select v-model="input.statusReason" ref="fStatusReason"
-              :rules="[val => !! val || 'Status Reason is required']"
+              <q-select v-model="input.statusReason"
+                ref="nStatusReason"
+                :rules="[val => !! val || 'Status Reason is required']"
                 :stack-label="true"
                 label="Status Reason*"
                 tabindex="42"
@@ -354,7 +341,7 @@
                 label="Serial Number Internal"
                 tabindex="10"
                 style="margin-top:20px"/>
-              <q-input v-model="input.quantity" ref="fQuantity"
+              <q-input v-model="input.quantity" ref="nQuantity"
                 :rules="[val => !! val || 'Quantity is required']"
                 :stack-label="true"
                 label="Quantity*"
@@ -386,10 +373,11 @@
                 label="Slot"
                 tabindex="14"
                 style="margin-top:20px"/>
-              <q-select v-model="input.hubCode" ref="fHubCode"
-                :rules="[val => !! val || 'Hub Code is required']"
+            </div>
+            <div class="col" style="margin-right:10px">
+              <q-select v-model="input.hubCode"
                 :stack-label="true"
-                label="Hub Code*"
+                label="Hub Code"
                 tabindex="15"
                 :options="hubCodeList"
                 @input="getDropdownValue('hubCodeForm')"
@@ -399,146 +387,15 @@
                 label="Hub Code Room"
                 tabindex="16"
                 :options="hubCodeRoomList"
-                @input="getDropdownValue('hubCodeRoomForm')"/>
+                @input="getDropdownValue('hubCodeRoomForm')"
+                style="margin-top:20px"/>
               <q-input v-model="input.bdfCode"
+                ref="nBdfCode"
+                :rules="[val => !! val || 'Bdf Code is required']"
                 :stack-label="true"
-                label="BDF Code"
+                label="BDF Code*"
                 tabindex="17"
                 style="margin-top:20px"/>
-              <q-input v-model="input.wdmCode"
-                :stack-label="true"
-                label="WDM Code"
-                tabindex="17"
-                style="margin-top:20px"/>
-            </div>
-            <div class="col" style="margin-right:10px">
-              <div v-if="input.productType === 'FIBERNODE'">
-                <q-input v-show="blueNodeCode" v-model="input.nodeCode" ref="fNodeCodeBlue"
-                  :rules="[val => !! val || 'Node Code is required']"
-                  :stack-label="true"
-                  label="Node Code / FDT Code*"
-                  tabindex="18"
-                  @input="changeColorNodeCode"
-                  style="margin-top:20px">
-                </q-input>
-                <q-input v-show="orangeNodeCode" v-model="input.nodeCode" ref="fNodeCodeOrange"
-                  color="orange"
-                  :stack-label="true"
-                  label="Node Code / FDT Code*"
-                  :rules="[val => !! val || 'Node Code is required']"
-                  tabindex="18"
-                  @input="changeColorNodeCode"
-                  style="margin-top:20px">
-                  <template v-slot:hint>
-                    <font class="text-orange">Input Node Code in 8 characters.</font>
-                  </template>
-                </q-input>
-              </div>
-              <div v-else>
-                <q-input v-model="input.nodeCode" ref="fNodeCodeElse"
-                  :rules="[val => !! val || 'Node Code is required']"
-                  :stack-label="true"
-                  label="Node Code / FDT Code*"
-                  @input="nodeInput"
-                  tabindex="18"
-                  style="margin-top:20px">
-                </q-input>
-              </div>
-
-              <div v-if="input.technology === 'FTTH' || input.productType === 'WDM' ">
-                <q-input v-model="input.psCode"
-                  :stack-label="true"
-                  label="Power Supply Code"
-                  style="margin-bottom:20px"
-                  tabindex="19"/>
-              </div>
-              <div v-else>
-                <div v-if="input.productType === 'POWER SUPPLY' || input.productType === 'POWER SUPPLY INDOOR'">
-                  <q-input v-show="bluePsCode" v-model="input.psCode" ref="fPowerSupplyCodeBlue"
-                    :rules="[val => !! val || 'Power Supply Code is required']"
-                    :stack-label="true"
-                    label="Power Supply Code*"
-                    @input="changeColorPsCode"
-                    tabindex="19"/>
-                  <q-input v-show="orangePsCode" v-model="input.psCode" ref="fPowerSupplyCodeOrange"
-                    :rules="[val => !! val || 'Power Supply Code is required']"
-                    :stack-label="true"
-                    label="Power Supply Code*"
-                    color="orange"
-                    @input="changeColorPsCode"
-                    tabindex="19">
-                    <template v-slot:hint>
-                      <font class="text-orange">{{psCodeWarningText}}</font>
-                    </template>
-                  </q-input>
-                </div>
-                <div v-else>
-                  <q-input v-model="input.psCode" ref="fPowerSupplyCodeElse"
-                    :rules="[val => !! val || 'Power Supply Code is required']"
-                    :stack-label="true"
-                    label="Power Supply Code*"
-                    tabindex="19"/>
-                </div>
-              </div>
-
-              <div v-if="input.productType === 'AMPLIFIER' || input.productType === 'AMPLIFIER INDOOR'">
-                <q-input v-show="blueAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCodeBlue"
-                  :rules="[val => !! val || 'Amplifier Code is required']"
-                  :stack-label="true"
-                  label="Amplifier Code / Splitter FTTH Code*"
-                  @input="changeColorAmplifierCode"
-                  tabindex="20"/>
-                <q-input v-show="orangeAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCodeOrange"
-                  :rules="[val => !! val || 'Amplifier Code is required']"
-                  :stack-label="true"
-                  label="Amplifier Code / Splitter FTTH Code*"
-                  @input="changeColorAmplifierCode"
-                  color="orange"
-                  tabindex="20">
-                  <template v-slot:hint>
-                    <font class="text-orange">{{amplifierCodeWarningText}}</font>
-                  </template>
-                </q-input>
-                <!-- <q-input v-model="input.service" ref="fService"
-                  :rules="[val => !! val || 'Service is required']"
-                  :stack-label="true"
-                  label="Service*"
-                  tabindex="21"/> -->
-              </div>
-              <div v-else>
-                <q-input v-model="input.amplifierCode"
-                  :stack-label="true"
-                  label="Amplifier Code / Splitter FTTH Code"
-                  tabindex="20"/>
-              </div>
-
-              <q-input v-model="input.fatCode"
-                :stack-label="true"
-                label="FAT Code"
-                tabindex="14"
-                style="margin-top:20px"/>
-
-              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
-                <q-input v-model="input.predecessor"
-                  :stack-label="true"
-                  label="Predecessor"
-                  tabindex="43"
-                  style="margin-top:20px;margin-bottom:20px"/>
-              </div>
-              <div v-else>
-                <q-input v-model="input.predecessor" ref="fPredecessor"
-                :rules="[val => !! val || 'Predecessor is required']"
-                :stack-label="true"
-                label="Predecessor*"
-                tabindex="43"
-                style="margin-top:20px"/>
-              </div>
-
-              <q-input v-model="input.itCode" ref="fItCode"
-                :rules="[val => !! val || 'IT Code is required']"
-                :stack-label="true"
-                label="IT Code*"
-                tabindex="44"/>
             </div>
           </div>
         </q-expansion-item>
@@ -572,8 +429,7 @@
                   </q-icon>
                 </template>
               </q-input>
-              <q-input v-model="input.installationDate" ef="mInstallationDate"
-                :rules="[val => !! val || 'Installation Date is required']"
+              <q-input v-model="input.installationDate"
                 :stack-label="true"
                 label="Installation Date*"
                 tabindex="36"
@@ -590,25 +446,11 @@
                 :stack-label="true"
                 label="Installed By"
                 tabindex="37"/>
-              <q-select v-model="input.service" ref="fService"
-                :rules="[val => !! val || 'Service is required']"
-                :stack-label="true"
-                label="Service*"
-                tabindex="21"
-                :options="serviceList"
-                @input="getDropdownValue('serviceForm')"
-                style="margin-top:20px"/>
-              <q-select v-model="input.technology" ref="fTechnology"
-                :rules="[val => !! val || 'Technology is required']"
-                :stack-label="true"
-                label="Technology*"
-                tabindex="22"
-                :options="technologyList"
-                @input="getDropdownValue('technologyForm')"/>
               <q-input v-model="input.ipAddress"
                 :stack-label="true"
                 label="IP Address"
-                tabindex="23"/>
+                tabindex="23"
+                style="margin-top:20px"/>
               <q-input v-model="input.macAddress"
                 :stack-label="true"
                 label="MAC Address"
@@ -621,40 +463,18 @@
                 style="margin-top:20px"/>
             </div>
             <div class="col">
-              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
-                <q-input v-model="input.capacity"
-                  :stack-label="true"
-                  label="Capacity"
-                  tabindex="25"
-                  style="margin-top:20px; margin-bottom:20px"/>
-              </div>
-              <div v-else>
-                <q-input v-model="input.capacity" ref="fCapacity"
-                  :rules="[val => !! val || 'Capacity is required']"
-                  :stack-label="true"
-                  label="Capacity*"
-                  tabindex="25"
-                  style="margin-top:20px"/>
-              </div>
-
-              <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
-                <q-select v-model="input.capacityUnits"
-                  :stack-label="true"
-                  label="Capacity Units"
-                  tabindex="26"
-                  :options="capacityUnitsList"
-                  @input="getDropdownValue('capacityUnitsForm')"
-                  style="margin-bottom:20px"/>
-              </div>
-              <div v-else>
-                <q-select v-model="input.capacityUnits" ref="fCapacityUnits"
-                  :rules="[val => !! val || 'Capacity Units is required']"
-                  :stack-label="true"
-                  label="Capacity Units*"
-                  tabindex="26"
-                  :options="capacityUnitsList"
-                  @input="getDropdownValue('capacityUnitsForm')"/>
-              </div>
+              <q-input v-model="input.capacity"
+                :stack-label="true"
+                label="Capacity*"
+                tabindex="25"
+                style="margin-top:20px"/>
+              <q-select v-model="input.capacityUnits"
+                :stack-label="true"
+                label="Capacity Units"
+                tabindex="26"
+                :options="capacityUnitsList"
+                @input="getDropdownValue('capacityUnitsForm')"
+                style="margin-bottom:20px"/>
 
               <q-input v-model="input.usedCapacity"
                 :stack-label="true"
@@ -685,16 +505,6 @@
                 label="No Of Port Rear"
                 tabindex="32"
                 style="margin-top:20px"/>
-              <q-input v-model="input.homepassed"
-                :stack-label="true"
-                label="Homepassed"
-                tabindex="32"
-                style="margin-top:20px"/>
-              <q-input v-model="input.internetAccount"
-                :stack-label="true"
-                label="Internet Account"
-                tabindex="32"
-                style="margin-top:20px"/>
             </div>
           </div>
         </q-expansion-item>
@@ -709,7 +519,8 @@
                 :stack-label="true"
                 label="PIC"
                 tabindex="38"/>
-              <q-select v-model="input.division" ref="fDivision"
+              <q-select v-model="input.division"
+                ref="nDivision"
                 :rules="[val => !! val || 'Division is required']"
                 :stack-label="true"
                 label="Division*"
@@ -719,14 +530,16 @@
                 style="margin-top:20px"/>
             </div>
             <div class="col">
-              <q-select v-model="input.department" ref="fDepartment"
+              <q-select v-model="input.department"
+                ref="nDepartment"
                 :rules="[val => !! val || 'Department is required']"
                 :stack-label="true"
                 label="Department*"
                 tabindex="40"
                 :options="departmentList"
                 @input="getDropdownValue('departmentForm')"/>
-              <q-select v-model="input.propertyOf" ref="fPropertyOf"
+              <q-select v-model="input.propertyOf"
+                ref="nPropertyOf"
                 :rules="[val => !! val || 'Property Of is required']"
                 :stack-label="true"
                 label="Property Of*"
@@ -734,98 +547,6 @@
                 :options="propertyOfList"
                 @input="getDropdownValue('propertyOf')"/>
             </div>
-          </div>
-        </q-expansion-item>
-        <q-expansion-item
-          label="Detail Location"
-          header-class="bg-indigo-5 text-white"
-          style="margin-bottom:10px"
-          icon="dashboard">
-          <div class="row" style="margin:20px">
-            <div class="col" style="margin-right:10px">
-                <q-input v-model="input.buildingName"
-                  :stack-label="true"
-                  label="Building Name"
-                  tabindex="45"/>
-                <q-input v-model="input.tower"
-                  :stack-label="true"
-                  label="Tower"
-                  tabindex="46"
-                  style="margin-top:20px"/>
-                <q-input v-model="input.floor"
-                  :stack-label="true"
-                  label="Floor"
-                  tabindex="47"
-                  style="margin-top:20px"/>
-                <q-input v-model="input.complexName"
-                  :stack-label="true"
-                  label="Complex Name"
-                  tabindex="48"
-                  style="margin-top:20px"/>
-                <q-input v-model="input.normalDistance"
-                  :stack-label="true"
-                  label="Normal Distance"
-                  tabindex="54"
-                  style="margin-top:20px"/>
-              </div>
-              <div class="col" style="margin-right:10px">
-                <q-input v-model="input.streetName"
-                  :stack-label="true"
-                  label="Street Name"
-                  tabindex="49"/>
-                <q-input v-model="input.streetNumber"
-                  :stack-label="true"
-                  label="Street Number"
-                  tabindex="50"
-                  style="margin-top:20px"/>
-                <q-input v-model="input.kelurahan"
-                  :stack-label="true"
-                  label="District"
-                  tabindex="51"
-                  style="margin-top:20px"/>
-                <q-input v-model="input.postalCode"
-                  :stack-label="true"
-                  label="Postal Code"
-                  tabindex="52"
-                  style="margin-top:20px"/>
-                <q-input v-model="input.direction"
-                  :stack-label="true"
-                  label="Direction"
-                  tabindex="53"
-                  style="margin-top:20px"/>
-                <q-input v-model="input.updateDistanceDate"
-                  :stack-label="true"
-                  label="Update Distance Date"
-                  tabindex="55"
-                  style="margin-top:20px">
-                  <template v-slot:after>
-                    <q-icon name="event">
-                      <q-popup-proxy ref="qUpdateDistanceDate" transition-show="scale" transition-hide="scale">
-                        <q-date v-model="input.updateDistanceDate" mask="DD/MM/YYYY" @input="() => $refs.qUpdateDistanceDate.hide()" />
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input>
-              </div>
-            </div>
-        </q-expansion-item>
-        <q-expansion-item
-          label="Migration History"
-          header-class="bg-indigo-5 text-white"
-          style="margin-bottom:10px"
-          icon="grading">
-          <div class="row" style="margin:20px">
-            <q-table
-              :data="migrationHistoryList"
-              :columns="migrationColumns"
-              :pagination.sync="pagination"
-              table-header-class="text-white bg-indigo-8"
-              row-key="id"
-              dense>
-              <q-td slot="body-cell-historyDate" slot-scope="props">
-                {{ props.row.historyDate | formatDate}}
-              </q-td>
-            </q-table>
           </div>
         </q-expansion-item>
         <q-separator></q-separator>
@@ -838,7 +559,7 @@
             style="margin-top:20px"/>
         </div>
           <div align="right" style="margin:20px">
-            <q-btn rounded @click.native="saveEquipment" color="warning" icon="save">
+            <q-btn round @click.native="saveEquipment" color="orange-5" icon="save">
             <q-tooltip>Submit</q-tooltip>
             </q-btn>
           </div>
