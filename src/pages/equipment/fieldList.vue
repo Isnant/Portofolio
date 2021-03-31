@@ -223,7 +223,7 @@
                     </q-btn>
                   </q-item-section>
                 </q-item>
-                <q-item clickable v-show="cell.row.productType == 'FIBERNODE' && parseInt(cell.row.equipmentName.substring(3), 10) > 10" v-close-popup>
+                <q-item clickable v-show="cell.row.productType == 'FIBERNODE'" v-close-popup>
                   <q-item-section>
                     <q-btn color="indigo-6" round size="sm" @click="doMainOpenMigrationForm(cell)">
                       <q-icon name="fas fa-exchange-alt" />
@@ -983,6 +983,13 @@
                 </div>
               </q-td>
             </q-table>
+            </q-card-section>
+            <q-card-section>
+              <div align="right">
+                <q-btn round color="orange-9" text-color="white" @click.native="errorExcelDownload()">
+                  <q-icon name="get_app"/><q-tooltip>Download to Excel File</q-tooltip>
+                </q-btn>
+              </div>
             </q-card-section>
           </q-card>
         </q-dialog>

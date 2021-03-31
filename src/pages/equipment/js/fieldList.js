@@ -865,6 +865,7 @@ export default {
       var vCapacity = false
       var vCapacityUnits = false
       var vPredecessor = false
+      var vCombination = false
 
       if (this.input.technology !== 'FTTH' && this.input.productType !== 'FIBERNODE' && this.input.productType !== 'WDM') {
         this.$refs.fCapacity.validate()
@@ -914,7 +915,77 @@ export default {
         vNodeCode = this.$refs.fNodeCodeElse.hasError
       }
 
-      if (!vEquipmentName && !vProductType && !vProductSeries && !vManufacturer && !vBrand && !vQuantity && !vHubCode && !vDivision && !vDepartment) {
+      var nodeCode = this.input.nodeCode.substring(0, 6)
+      var psCode = this.input.psCode.substring(0, 6)
+
+      if (this.input.productType === 'AMPLIFIER') {
+        var psAmp = this.input.equipmentName.substring(0, 6)
+        var nodeAmp = this.input.equipmentName.substring(0, 6)
+        if (this.input.equipmentName !== this.input.amplifierCode) {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Amplifier Code: ' + this.input.amplifierCode
+          })
+          vCombination = true
+        }
+        if (nodeAmp !== nodeCode) {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Node Code: ' + this.input.nodeCode
+          })
+          vCombination = true
+        }
+        if (psAmp !== psCode) {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Power Supply Code: ' + this.input.psCode
+          })
+          vCombination = true
+        }
+      }
+      if (this.input.productType === 'POWER SUPPLY') {
+        var nodePs = this.input.equipmentName.substring(0, 6)
+        if (this.input.equipmentName !== psCode) {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Power Supply Code: ' + this.input.psCode
+          })
+          vCombination = true
+        }
+        if (nodePs !== nodeCode) {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Node Code: ' + this.input.nodeCode
+          })
+          vCombination = true
+        }
+      }
+      if (this.input.productType === 'FIBERNODE') {
+        var psNode = this.input.equipmentName.substring(0, 6)
+        if (this.input.equipmentName !== nodeCode) {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Node Code: ' + this.input.nodeCode
+          })
+          vCombination = true
+        }
+        if (psNode !== psCode) {
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Power Supply Code: ' + this.input.psCode
+          })
+          vCombination = true
+        }
+      }
+
+      if (!vEquipmentName && !vCombination && !vProductType && !vProductSeries && !vManufacturer && !vBrand && !vQuantity && !vHubCode && !vDivision && !vDepartment) {
         if (!vPropertyOf && !vStatusReason && !vService && !vTechnology && !vItCode && !vPowerSupplyCode && !vAmplifierCode && !vCapacity && !vCapacityUnits && !vPredecessor && !vNodeCode) {
           this.doSaveEquipment()
         }
@@ -2069,6 +2140,31 @@ export default {
           link.href = url
           link.style = 'display: none'
           link.download = 'field_excel_download.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    errorExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}errorDownloadExcel`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'error field upload.xlsx'
           document.body.appendChild(link)
           link.click()
         })
