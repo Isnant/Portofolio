@@ -140,7 +140,7 @@
                 <q-select
                   rounded outlined
                   v-model="searchVal.bdfCode"
-                  label="BDF Code"
+                  label="BDF Name"
                   color="orange-8"
                   :options="filteredBdfCode"
                   @input="getDropdownValue('bdfCodeSearch')"

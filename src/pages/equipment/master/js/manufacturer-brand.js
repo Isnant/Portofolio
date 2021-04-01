@@ -8,6 +8,7 @@ export default {
       modalUploadExcel: false,
       modalDownloadExcel: false,
       downloadType: 'manufacturer',
+      description: '',
       fileAttach: {
         fileName: '',
         file64: '',
@@ -123,19 +124,11 @@ export default {
           })
         })
     },
-    getManufacturerBrandList (props) {
+    getManufacturerBrandList (params) {
       // this.$q.loading.show()
       this.showLoading()
-      this.pagination.sortBy = props.pagination.sortBy
-      this.pagination.descending = props.pagination.descending
-
       this.$axios.get(`${process.env.urlPrefix}getManufacturerBrandList`, {
-        params: {
-          pageIndex: props.pagination.page - 1,
-          pageSize: props.pagination.rowsPerPage,
-          sortBy: props.pagination.sortBy,
-          descending: props.pagination.descending
-        }
+        params: params
       })
         .then((response) => {
           this.$q.loading.hide()
@@ -152,6 +145,27 @@ export default {
             message: error
           })
         })
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        description: this.description
+      }
+      this.getManufacturerBrandList(params)
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending,
+        description: this.description
+      }
+      this.getManufacturerBrandList(params)
     },
     doOpenForm (pid) {
       if (pid === false) {

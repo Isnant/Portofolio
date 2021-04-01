@@ -120,6 +120,37 @@ export default {
           })
         })
     },
+    getPagedAreaList (params) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}getPagedArea/`, {
+        params: params
+      })
+        .then((response) => {
+          this.list = response.data.content
+          this.pagination.rowsNumber = response.data.totalElements
+          this.pagination.page = response.data.number + 1
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    doSearchByFilter () {
+      const params = {
+        pageIndex: this.pagination.page - 1,
+        pageSize: this.pagination.rowsPerPage,
+        searchVal: this.searchVal,
+        sortBy: this.pagination.sortBy,
+        descending: this.pagination.descending
+      }
+      this.getPagedAreaList(params)
+    },
     doOpenForm (cell) {
       if (cell !== undefined) {
         this.formData = JSON.parse(JSON.stringify(cell.row))

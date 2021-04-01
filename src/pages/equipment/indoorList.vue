@@ -315,7 +315,7 @@
               ref="fAssetStatus"
               :rules="[val => !! val || 'Asset Status is required']"
               stack-label
-              label="Asset Status*"
+              label="Equipment Status*"
               color="purple-6"
               :options="assetStatusList"
               @input="getDropdownValue('assetStatusForm')"/>

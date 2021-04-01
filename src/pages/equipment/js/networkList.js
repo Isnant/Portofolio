@@ -156,7 +156,7 @@ export default {
         },
         {
           name: 'bdfCode',
-          label: 'BDF Code',
+          label: 'BDF Name',
           field: 'bdfCode',
           align: 'left',
           sortable: true
