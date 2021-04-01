@@ -144,14 +144,19 @@
           <q-input v-model="formData.hubCode"
             stack-label
             label="Hub Code"/>
-          <q-input v-model="formData.hubName"
-            stack-label label="Hub Name"/>
+          <q-select
+            stack-label
+            v-model="formData.hubName"
+            label="Hub Name"
+            :options="hubCodeList"
+            @input="getSelectValue('hubName')"
+          />
           <q-input v-model="formData.ftax"
             stack-label label="Ftax"/>
           <q-select v-model="formData.service"
             :options="serviceList"
             stack-label label="Service"
-            @input="getSelectValue()"/>
+            @input="getSelectValue('service')"/>
           <div style="text-align: right; margin-top:20px">
             <q-btn round color="primary" @click.native="doSave()" size="small">
               <q-icon name="fas fa-save"/>

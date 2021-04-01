@@ -51,7 +51,7 @@
             :columns="tableColumns"
             :pagination.sync="pagination"
             table-header-class="text-indigo-10 bg-indigo-2"
-            @request="getManufacturerBrandList"
+            @request="doMainEquipmentChangePage"
             row-key="id"
             dense>
 

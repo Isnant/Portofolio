@@ -301,6 +301,33 @@ export default {
           })
         })
     },
+    doToggleStatus (cell) {
+      cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'
+      this.instance = cell.row
+      this.instance.roleNames = null
+      this.$axios.post(`${process.env.urlPrefix}doSaveUser`, this.instance)
+        .then((response) => {
+          this.$q.loading.hide()
+
+          this.$q.notify({
+            color: 'positive',
+            icon: 'done',
+            message: 'User ' + this.instance.username + ' saved'
+          })
+
+          this.doBeforeFormClose()
+          this.isFormVisible = false
+          this.getInitPage()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
     compare (a, b) {
       const labelA = a.label.toUpperCase()
       const labelB = b.label.toUpperCase()

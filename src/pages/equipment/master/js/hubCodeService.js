@@ -130,7 +130,8 @@ export default {
         .then((response) => {
           this.$q.loading.hide()
           this.doMainFillTableResult(response.data.listOfHubCodeService)
-          this.serviceList = response.data.listOfService
+          this.serviceList = response.data.listOfService.sort(this.compareValue)
+          this.hubCodeList = response.data.listOfHubCode.sort(this.compareValue)
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -235,8 +236,13 @@ export default {
       this.formData = cell.row
       this.doSave()
     },
-    getSelectValue () {
-      this.formData.service = this.formData.service.value
+    getSelectValue (type) {
+      if (type === 'service') {
+        this.formData.service = this.formData.service.value
+      }
+      if (type === 'hubName') {
+        this.formData.hubName = this.formData.hubName.value
+      }
     },
     doAttachFile (file) {
       let fr = new FileReader()
@@ -291,6 +297,17 @@ export default {
             message: error
           })
         })
+    },
+    compareValue (a, b) {
+      const labelA = a.value.toUpperCase()
+      const labelB = b.value.toUpperCase()
+      let comparison = 0
+      if (labelA > labelB) {
+        comparison = 1
+      } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
     },
     doRefresh () {
       this.clear()

@@ -7,10 +7,14 @@ export default {
       listOfBrand: [],
       listOfManufacturer: [],
       manufacturerCodeList: [],
+      manufacturerCodeListSearch: [],
       modalUploadExcel: false,
       productTypeList: [],
+      productTypeListSearch: [],
       filteredBrandList: [],
+      filteredBrandListSearch: [],
       subTypeList: [],
+      subTypeListSearch: [],
       subTypeListResult: [],
       subTypeForList: '',
       productSubType: '',
@@ -111,7 +115,11 @@ export default {
         rowsPerPage: 0
       },
       searchVal: {
-        series: ''
+        series: '',
+        manufacturer: 'ALL',
+        brand: 'ALL',
+        productType: 'ALL',
+        productSubType: 'ALL'
       },
       showForm: false,
       formData: {
@@ -139,20 +147,27 @@ export default {
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
-          series: this.searchVal.series
+          searchVal: this.searchVal
         }
       })
         .then((response) => {
           this.$q.loading.hide()
           this.doMainFillTableResult(response.data.listOfProductSeries)
-          this.manufacturerCodeList = response.data.listOfManufacturerDropdown
           this.listOfManufacturer = response.data.listOfManufacturer
+
+          this.manufacturerCodeList = response.data.listOfManufacturerDropdown
+          this.manufacturerCodeList = this.manufacturerCodeList.sort(this.compareValue)
+          this.manufacturerCodeListSearch = this.manufacturerCodeList
+          this.manufacturerCodeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+
           this.productTypeList = response.data.listOfProductTypeDropdown.map(data => ({
             label: data.value.toUpperCase() + ' (' + data.cascadeValue.toUpperCase() + ')',
             value: data.value.toUpperCase(),
             cascadeValue: data.cascadeValue
           }))
-          // this.productTypeList = response.data.listOfProductTypeDropdown.sort(this.compareValue)
+          this.productTypeList = this.productTypeList.sort(this.compareValue)
+          this.productTypeListSearch = this.productTypeList
+          this.productTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
         })
         .catch((error) => {
           this.$q.loading.hide()
@@ -195,7 +210,7 @@ export default {
         pageSize: rowsPerPage,
         sortBy: sortBy,
         descending: descending,
-        series: this.searchVal.series
+        searchVal: this.searchVal
       }
       this.getProductSeriesList(params)
     },
@@ -205,7 +220,7 @@ export default {
         pageSize: this.pagination.rowsPerPage,
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
-        series: this.searchVal.series
+        searchVal: this.searchVal
       }
       this.getProductSeriesList(params)
     },
@@ -271,18 +286,43 @@ export default {
           })
         })
     },
-    getBrand () {
-      this.formData.manufacturer = this.formData.manufacturer.value
-      var brand = this.listOfManufacturer.filter(v => v.description.indexOf(this.formData.manufacturer) > -1)[0].brand
-      if (brand !== null) {
-        var brandList = JSON.parse(brand)
-        this.filteredBrandList = brandList.map(data => ({
-          label: data.brand.toUpperCase(),
-          value: data.brand.toUpperCase()
-        }))
-      } else {
-        this.filteredBrandList = []
-        this.formData.brand = ''
+    getBrand (type) {
+      if (type === 'form') {
+        this.formData.manufacturer = this.formData.manufacturer.value
+        var brand = this.listOfManufacturer.filter(v => v.description.indexOf(this.formData.manufacturer) > -1)[0].brand
+        if (brand !== null) {
+          var brandList = JSON.parse(brand)
+          this.filteredBrandList = brandList.map(data => ({
+            label: data.brand.toUpperCase(),
+            value: data.brand.toUpperCase()
+          }))
+        } else {
+          this.filteredBrandList = []
+          this.formData.brand = ''
+        }
+      } else if (type === 'search') {
+        if (this.searchVal.manufacturer.value !== 'ALL') {
+          this.searchVal.manufacturer = this.searchVal.manufacturer.value
+          var brandSearch = this.listOfManufacturer.filter(v => v.description.indexOf(this.searchVal.manufacturer) > -1)[0].brand
+          if (brandSearch !== null) {
+            var brandSearchList = JSON.parse(brandSearch)
+            this.filteredBrandListSearch = brandSearchList.map(data => ({
+              label: data.brand.toUpperCase(),
+              value: data.brand.toUpperCase()
+            }))
+            this.filteredBrandListSearch.unshift({ label: 'ALL', value: 'ALL' })
+            this.searchVal.brand = 'ALL'
+          } else {
+            this.filteredBrandListSearch = []
+            this.filteredBrandListSearch.unshift({ label: 'ALL', value: 'ALL' })
+            this.searchVal.brand = 'ALL'
+          }
+        } else {
+          this.searchVal.manufacturer = this.searchVal.manufacturer.value
+          this.filteredBrandListSearch = []
+          this.filteredBrandListSearch.unshift({ label: 'ALL', value: 'ALL' })
+          this.searchVal.brand = 'ALL'
+        }
       }
     },
     getSubType () {
@@ -315,15 +355,61 @@ export default {
           this.$q.loading.hide()
         })
     },
-    getBrandValue () {
-      this.formData.brand = this.formData.brand.value
+    getSubTypeSearch () {
+      this.showLoading()
+      if (this.searchVal.productType.value !== 'ALL') {
+        var category = this.searchVal.productType.cascadeValue
+        this.searchVal.productType = this.searchVal.productType.value
+        this.$axios.get(`${process.env.urlPrefix}getSubType`, {
+          params: {
+            productType: this.searchVal.productType,
+            eqCategory: category
+          }
+        })
+          .then((response) => {
+            if (response.data !== '') {
+              this.subTypeListSearch = response.data.map(data => ({
+                label: data.subtype.toUpperCase(),
+                value: data.subtype.toUpperCase()
+              }))
+              this.subTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+              this.searchVal.productSubType = 'ALL'
+            } else {
+              this.subTypeListSearch = []
+              this.subTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+              this.searchVal.productSubType = 'ALL'
+            }
+            this.$q.loading.hide()
+          })
+          .catch((error) => {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: error
+            })
+            this.$q.loading.hide()
+          })
+      } else {
+        this.searchVal.productType = this.searchVal.productType.value
+        this.subTypeListSearch = []
+        this.subTypeListSearch.unshift({ label: 'ALL', value: 'ALL' })
+        this.searchVal.productSubType = 'ALL'
+        this.$q.loading.hide()
+      }
     },
-    // getProductTypeValue () {
-    //   this.formData.productType = this.formData.productType.value
-    //   this.getSubType()
-    // },
-    getSubTypeValue () {
-      this.formData.productSubType = this.formData.productSubType.value
+    getBrandValue (type) {
+      if (type === 'form') {
+        this.formData.brand = this.formData.brand.value
+      } else if (type === 'search') {
+        this.searchVal.brand = this.searchVal.brand.value
+      }
+    },
+    getSubTypeValue (type) {
+      if (type === 'search') {
+        this.searchVal.productSubType = this.searchVal.productSubType.value
+      } else if (type === 'form') {
+        this.formData.productSubType = this.formData.productSubType.value
+      }
     },
     doToggleStatus (cell) {
       cell.row.recordStatus = cell.row.recordStatus === 'I' ? 'A' : 'I'

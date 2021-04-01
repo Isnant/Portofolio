@@ -22,25 +22,58 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
-              <div class="row" style="width:700px;margin:10px">
-                <div class="col" style="margin-right:20px">
-                  <q-input
-                    v-model="searchVal.series"
-                    color="indigo-9"
-                    label="Product Series"
-                    stack-label>
-                  </q-input>
-                </div>
+            <div class="col-15" style="margin-right:10px;width:17%">
+              <q-input
+                rounded outlined
+                v-model="searchVal.series"
+                color="orange-5"
+                label="Product Series"
+                stack-label>
+              </q-input>
+            </div>
+            <div class="col-15" style="margin-right:10px; width:17%">
+              <q-select v-model="searchVal.manufacturer"
+                stack-label
+                rounded outlined
+                color="orange-5"
+                label="Manufacturer"
+                :options="manufacturerCodeListSearch"
+                @input="getBrand('search')"/>
+            </div>
+            <div class="col-15" style="margin-right:10px; width:17%">
+              <q-select v-model="searchVal.brand"
+                stack-label
+                rounded outlined
+                color="orange-5"
+                label="Brand"
+                :options="filteredBrandListSearch"
+                @input="getBrandValue('search')"/>
+            </div>
+            <div class="col-15" style="margin-right:10px; width:17%">
+              <q-select v-model="searchVal.productType"
+                stack-label
+                rounded outlined
+                color="orange-5"
+                label="Product Type"
+                :options="productTypeList"
+                @input="getSubTypeSearch()"/>
+            </div>
+            <div class="col-15" style="margin-right:10px; width:17%">
+              <q-select v-model="searchVal.productSubType"
+                stack-label
+                rounded outlined
+                color="orange-5"
+                label="Sub Type"
+                :options="subTypeListSearch"
+                @input="getSubTypeValue('search')"/>
+            </div>
 
-                <div class="col">
-                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
-                    <q-icon name="search"/>
-                    <q-tooltip>Search</q-tooltip>
-                  </q-btn>
-                </div>
-              </div>
-            </fieldset>
+            <div class="col-15" style="margin-right:10px; width:5%">
+              <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                <q-icon name="search"/>
+                <q-tooltip>Search</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </q-expansion-item>
         <div style="max-width: 1000px">
@@ -136,12 +169,12 @@
                 stack-label
                 label="Manufacturer Code"
                 :options="manufacturerCodeList"
-                @input="getBrand()"/>
+                @input="getBrand('form')"/>
             <q-select v-model="formData.brand"
                 stack-label
                 label="Brand"
                 :options="filteredBrandList"
-                 @input="getBrandValue()"/>
+                 @input="getBrandValue('form')"/>
             <q-select v-model="formData.productType"
                 stack-label
                 label="Product Type"
@@ -151,7 +184,7 @@
                 stack-label
                 label="Sub Type"
                 :options="subTypeList"
-                 @input="getSubTypeValue()"/>
+                 @input="getSubTypeValue('form')"/>
             <q-input v-model="formData.unit"
               stack-label label="Unit"/>
           </div>

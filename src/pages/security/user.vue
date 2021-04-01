@@ -68,16 +68,36 @@
         </div>
       </q-td>
       <q-td slot="body-cell-action" align="center" slot-scope="props">
-            <div>
+        <q-btn-dropdown rounded size="sm" color="indigo-10">
+          <q-list>
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-btn color="indigo-6" round size="sm" @click.native="showForm(props.row.username)">
+                  <q-icon name="fas fa-edit" />
+                  <q-tooltip>Edit</q-tooltip>
+                </q-btn>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
+                  <q-icon :name="props.row.recordStatus === 'A' ?  'fas fa-stop-circle' : 'fas fa-play-circle'" />
+                  <q-tooltip>{{ props.row.recordStatus === 'A' ? 'Deactivate' : 'Activate' }}</q-tooltip>
+                </q-btn>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+            <!-- <div>
               <q-btn round size="sm" icon="edit" class="bg-blue-10 text-white" @click.native="showForm(props.row.username)"/>
-            </div>
-        </q-td>
+            </div> -->
+      </q-td>
     </q-table>
-    <div>
+    <!-- <div>
       <q-btn icon="add" round color="orange-5" @click="syncCrm()">
         <q-tooltip>Sync CRM</q-tooltip>
       </q-btn>
-    </div>
+    </div> -->
 
     <q-page-sticky position="top-right" :offset="[30, 30]">
       <q-btn icon="add" round color="orange-5" @click="showForm()">
