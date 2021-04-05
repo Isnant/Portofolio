@@ -949,7 +949,7 @@ export default {
       }
       if (this.input.productType === 'POWER SUPPLY') {
         var nodePs = this.input.equipmentName.substring(0, 6)
-        if (this.input.equipmentName !== psCode) {
+        if (this.input.equipmentName !== this.input.psCode) {
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
@@ -968,7 +968,7 @@ export default {
       }
       if (this.input.productType === 'FIBERNODE') {
         var psNode = this.input.equipmentName.substring(0, 6)
-        if (this.input.equipmentName !== nodeCode) {
+        if (this.input.equipmentName !== this.input.nodeCode) {
           this.$q.notify({
             color: 'negative',
             icon: 'report_problem',
