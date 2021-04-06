@@ -445,21 +445,6 @@
               icon="location_on">
               <div class="row" style="margin:20px">
                 <div class="col" style="margin-right:10px">
-                  <q-input v-model="input.rack"
-                    :stack-label="true"
-                    label="Rack"
-                    tabindex="12"
-                    style="margin-top:20px"/>
-                  <q-input v-model="input.chassis"
-                    :stack-label="true"
-                    label="Chassis"
-                    tabindex="13"
-                    style="margin-top:20px"/>
-                  <q-input v-model="input.slot"
-                    :stack-label="true"
-                    label="Slot"
-                    tabindex="14"
-                    style="margin-top:20px"/>
                   <q-select v-model="input.hubCode" ref="fHubCode"
                     :rules="[val => !! val || 'Hub Code is required']"
                     :stack-label="true"
@@ -468,24 +453,21 @@
                     :options="hubCodeList"
                     @input="getDropdownValue('hubCodeForm')"
                     style="margin-top:20px"/>
-                  <q-select v-model="input.hubCodeRoom"
+                  <!-- <q-select v-model="input.hubCodeRoom"
                     :stack-label="true"
                     label="Hub Code Room"
                     tabindex="16"
                     :options="hubCodeRoomList"
-                    @input="getDropdownValue('hubCodeRoomForm')"/>
+                    @input="getDropdownValue('hubCodeRoomForm')"/> -->
                   <q-input v-model="input.bdfCode"
                     :stack-label="true"
                     label="BDF Code"
-                    tabindex="17"
-                    style="margin-top:20px"/>
+                    tabindex="17"/>
                   <q-input v-model="input.wdmCode"
                     :stack-label="true"
                     label="WDM Code"
                     tabindex="17"
                     style="margin-top:20px"/>
-                </div>
-                <div class="col" style="margin-right:10px">
                   <div v-if="input.productType === 'FIBERNODE'">
                     <q-input v-show="blueNodeCode" v-model="input.nodeCode" ref="fNodeCodeBlue"
                       :rules="[val => !! val || 'Node Code is required']"
@@ -529,13 +511,15 @@
                   <div v-else>
                     <div v-if="input.productType === 'POWER SUPPLY' || input.productType === 'POWER SUPPLY INDOOR'">
                       <q-input v-show="bluePsCode" v-model="input.psCode" ref="fPowerSupplyCodeBlue"
-                        :rules="[val => !! val || 'Power Supply Code is required']"
+                        :rules="[val => !! val || 'Power Supply Code is required',
+                         val => val.length < 8 || 'Please use maximum 7 character']"
                         :stack-label="true"
                         label="Power Supply Code*"
                         @input="changeColorPsCode"
                         tabindex="19"/>
                       <q-input v-show="orangePsCode" v-model="input.psCode" ref="fPowerSupplyCodeOrange"
-                        :rules="[val => !! val || 'Power Supply Code is required']"
+                        :rules="[val => !! val || 'Power Supply Code is required',
+                         val => val.length < 8 || 'Please use maximum 7 character']"
                         :stack-label="true"
                         label="Power Supply Code*"
                         color="orange"
@@ -548,13 +532,15 @@
                     </div>
                     <div v-else>
                       <q-input v-model="input.psCode" ref="fPowerSupplyCodeElse"
-                        :rules="[val => !! val || 'Power Supply Code is required']"
+                        :rules="[val => !! val || 'Power Supply Code is required',
+                         val => val.length < 8 || 'Please use maximum 7 character']"
                         :stack-label="true"
                         label="Power Supply Code*"
                         tabindex="19"/>
                     </div>
                   </div>
-
+                </div>
+                <div class="col" style="margin-right:10px">
                   <div v-if="input.productType === 'AMPLIFIER' || input.productType === 'AMPLIFIER INDOOR'">
                     <q-input v-show="blueAmplifierCode" v-model="input.amplifierCode" ref="fAmplifierCodeBlue"
                       :rules="[val => !! val || 'Amplifier Code is required']"
@@ -583,7 +569,8 @@
                     <q-input v-model="input.amplifierCode"
                       :stack-label="true"
                       label="Amplifier Code / Splitter FTTH Code"
-                      tabindex="20"/>
+                      tabindex="20"
+                      style="margin-top:20px"/>
                   </div>
 
                   <q-input v-model="input.fatCode"
@@ -688,13 +675,13 @@
                     label="MAC Address"
                     tabindex="24"
                     style="margin-top:20px"/>
+                </div>
+                <div class="col">
                   <q-input v-model="input.customerType"
                     :stack-label="true"
                     label="Customer Type"
                     tabindex="24"
                     style="margin-top:20px"/>
-                </div>
-                <div class="col">
                   <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
                     <q-input v-model="input.capacity"
                       :stack-label="true"
@@ -759,7 +746,7 @@
                     label="No Of Port Rear"
                     tabindex="32"
                     style="margin-top:20px"/>
-                  <q-input v-model="input.homepassed"
+                  <!-- <q-input v-model="input.homepassed"
                     :stack-label="true"
                     label="Homepassed"
                     tabindex="32"
@@ -768,7 +755,7 @@
                     :stack-label="true"
                     label="Internet Account"
                     tabindex="32"
-                    style="margin-top:20px"/>
+                    style="margin-top:20px"/> -->
                 </div>
               </div>
             </q-expansion-item>
