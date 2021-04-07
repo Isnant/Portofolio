@@ -406,6 +406,7 @@
                   <q-select
                     v-model="input.equipmentStatus"
                     stack-label
+                    readonly
                     label="Status"
                     color="purple-6"
                     :options="equipmentStatusList"
@@ -746,7 +747,7 @@
                     label="No Of Port Rear"
                     tabindex="32"
                     style="margin-top:20px"/>
-                  <!-- <q-input v-model="input.homepassed"
+                  <q-input v-model="input.homepassed"
                     :stack-label="true"
                     label="Homepassed"
                     tabindex="32"
@@ -755,7 +756,7 @@
                     :stack-label="true"
                     label="Internet Account"
                     tabindex="32"
-                    style="margin-top:20px"/> -->
+                    style="margin-top:20px"/>
                 </div>
               </div>
             </q-expansion-item>
