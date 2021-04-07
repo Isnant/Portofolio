@@ -15,7 +15,7 @@
       </div>
     </div>
     <!-- <h4 style="margin-top: 0px; margin-bottom: 20px">Master :: Building</h4> -->
-    <q-card style="width: 80%">
+    <q-card style="width:100%">
       <q-card-section>
         <q-expansion-item
           label="SEARCH"
@@ -23,37 +23,35 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
-              <div class="row" style="margin-buttom:20px">
-                <div class="col-15" style="margin-right: 10px; width: 30%">
-                  <q-select
-                    v-model="searchVal.hubCode"
-                    stack-label
-                    label="HUB NAME"
-                    color="indigo-10"
-                    :options="hubCodeList"
-                    @input="getValueSelect()"
-                  />
-                </div>
+            <div class="col-15" style="margin-right: 10px; width: 30%">
+              <q-select
+                rounded outlined
+                v-model="searchVal.hubCode"
+                stack-label
+                label="HUB NAME"
+                color="orange-5"
+                :options="hubCodeList"
+                @input="getValueSelect()"
+              />
+            </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 30%">
-                  <q-input
-                  v-model="searchVal.nodeCode"
-                  stack-label
-                  label="Node Name"
-                  oninput="this.value = this.value.toUpperCase()"
-                  class="text-uppercase"
-                  color="indigo-10"/>
-                </div>
+            <div class="col-15" style="margin-right: 10px; width: 30%">
+              <q-input
+              rounded outlined
+              v-model="searchVal.nodeCode"
+              stack-label
+              label="Node Name"
+              oninput="this.value = this.value.toUpperCase()"
+              class="text-uppercase"
+              color="orange-5"/>
+            </div>
 
-                <div class="col" style="width: 5%">
-                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
-                    <q-icon name="search"/>
-                    <q-tooltip>Search</q-tooltip>
-                  </q-btn>
-                </div>
-              </div>
-            </fieldset>
+            <div class="col" style="width: 5%">
+              <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                <q-icon name="search"/>
+                <q-tooltip>Search</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </q-expansion-item>
         <q-table

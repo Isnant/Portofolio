@@ -5,6 +5,7 @@ export default {
     return {
       dataList: [],
       hubCodeList: [],
+      hubCodeListFiltered: [],
       serviceList: [],
       modalUploadExcel: false,
       fileAttach: {
@@ -97,7 +98,7 @@ export default {
       },
       searchVal: {
         hubCode: '',
-        hubName: '',
+        hubName: 'All',
         service: 'ALL'
       },
       serviceSearchList: ['ALL', 'Analog', 'Digital', 'FTTH'],
@@ -243,6 +244,15 @@ export default {
       if (type === 'hubName') {
         this.formData.hubName = this.formData.hubName.value
       }
+      if (type === 'hubNameSearch') {
+        this.searchVal.hubName = this.searchVal.hubName.value
+      }
+    },
+    doHubNameFilter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.hubCodeListFiltered = this.hubCodeList.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
     },
     doAttachFile (file) {
       let fr = new FileReader()

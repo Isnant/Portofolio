@@ -22,44 +22,62 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <div class="row" style="margin-buttom:20px;">
-              <div class="col-15" style="margin-right: 10px; width: 30%">
-                <q-input
-                  rounded outlined
-                  v-model="searchVal.hubName"
-                  stack-label
-                  label="Hub Name"
-                  color="orange-8"/>
-              </div>
-
-              <div class="col-15" style="margin-right: 10px; width: 30%">
-                <q-input
-                  rounded outlined
-                  v-model="searchVal.hubCode"
-                  stack-label
-                  label="Hub Code"
-                  color="orange-8"/>
-              </div>
-
-              <div class="col-15" style="margin-right: 10px; width: 30%">
+            <div class="col-15" style="margin-right: 10px; width: 30%">
+              <!-- <q-input
+                rounded outlined
+                v-model="searchVal.hubName"
+                stack-label
+                label="Hub Name"
+                color="orange-8"/> -->
                 <q-select
-                  rounded outlined
-                  stack-label
-                  color="orange-8"
-                  v-model="searchVal.service"
-                  label="Service"
-                  :options="serviceSearchList"
-                />
-              </div>
-
-              <div class="col" style="width: 5%">
-                <q-btn round color="indigo-10" @click="doSearchByFilter()">
-                  <q-icon name="search"/>
-                  <q-tooltip>Search</q-tooltip>
-                </q-btn>
-              </div>
-
+                stack-label
+                rounded outlined
+                v-model="searchVal.hubName"
+                label="Hub Name"
+                :options="hubCodeListFiltered"
+                @filter="doHubNameFilter"
+                @input="getSelectValue('hubNameSearch')"
+                use-input
+                fill-input
+                hide-selected
+                input-debounce="500">
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        No results
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
             </div>
+
+            <div class="col-15" style="margin-right: 10px; width: 30%">
+              <q-input
+                rounded outlined
+                v-model="searchVal.hubCode"
+                stack-label
+                label="Hub Code"
+                color="orange-8"/>
+            </div>
+
+            <div class="col-15" style="margin-right: 10px; width: 30%">
+              <q-select
+                rounded outlined
+                stack-label
+                color="orange-8"
+                v-model="searchVal.service"
+                label="Service"
+                :options="serviceSearchList"
+              />
+            </div>
+
+            <div class="col" style="width: 5%">
+              <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                <q-icon name="search"/>
+                <q-tooltip>Search</q-tooltip>
+              </q-btn>
+            </div>
+
           </div>
         </q-expansion-item>
 
