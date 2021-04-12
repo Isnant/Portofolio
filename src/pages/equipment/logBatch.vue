@@ -22,42 +22,78 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
-              <div class="row" style="width:700px;margin:10px">
-                <div class="col" style="margin-right:20px">
-                  <q-input
-                    v-model="searchVal.id"
-                    color="indigo-9"
-                    label="Batch"
-                    stack-label>
-                  </q-input>
-                </div>
-                <div class="col" style="margin-right:20px">
-                  <q-input
-                    v-model="searchVal.fileName"
-                    color="indigo-9"
-                    label="File Name"
-                    stack-label>
-                  </q-input>
-                </div>
-                <div class="col" style="margin-right:20px">
-                  <q-select
-                    v-model="searchVal.equipmentCategory"
-                    color="indigo-9"
-                    label="Equipment Category"
-                    :options="equipmentCategoryList"
-                    stack-label>
-                  </q-select>
-                </div>
+            <div class="col" style="margin-right:10px">
+              <q-input
+                rounded outlined
+                v-model="searchVal.id"
+                color="orange-8"
+                label="Batch"
+                stack-label>
+              </q-input>
+            </div>
+            <div class="col" style="margin-right:10px">
+              <q-input
+                rounded outlined
+                v-model="searchVal.fileName"
+                color="orange-8"
+                label="File Name"
+                stack-label>
+              </q-input>
+            </div>
+            <div class="col" style="margin-right:10px">
+              <q-select
+                rounded outlined
+                v-model="searchVal.equipmentCategory"
+                color="orange-8"
+                label="Equipment Category"
+                :options="equipmentCategoryList"
+                stack-label>
+              </q-select>
+            </div>
+            <div class="col">
+              <q-input
+                rounded outlined
+                v-model="searchVal.startDate"
+                readonly
+                stack-label
+                label="Upload Date">
+                <template v-slot:prepend>
+                  <q-icon name="event" style="margin-top:12px">
+                    <q-popup-proxy ref="qStartDate" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="searchVal.startDate" mask="YYYY/MM/DD" @input="doStartDate()" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+            <div class="col-25; text-bold" style="margin-right: 10px; margin-top:25px;margin-left: 10px">
+              s/d
+            </div>
+            <div class="col" style="margin-right: 10px">
+              <q-input
+                rounded outlined
+                v-model="searchVal.endDate"
+                readonly stack-label
+                label="">
+                <template v-slot:prepend>
+                  <q-icon name="event" style="margin-top:12px">
+                    <q-popup-proxy ref="qEndDate" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="searchVal.endDate"
+                      mask="YYYY/MM/DD"
+                      @input="() => $refs.qEndDate.hide()"
+                      :options="optionsEndDate" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
 
-                <div class="col">
-                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
-                    <q-icon name="search"/>
-                    <q-tooltip>Search</q-tooltip>
-                  </q-btn>
-                </div>
-              </div>
-            </fieldset>
+            <div class="col">
+              <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                <q-icon name="search"/>
+                <q-tooltip>Search</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </q-expansion-item>
 
@@ -91,6 +127,9 @@
         </div>
       </q-card-section>
     </q-card>
+    <q-page-sticky position="top-right" :offset="[15, 30]">
+      <q-btn round color="orange-6" text-color="white" @click.native="downloadExcelButtom"><q-icon name="fas fa-file-excel"/><q-tooltip>Download Excel</q-tooltip></q-btn>
+    </q-page-sticky>
   </q-page>
 </template>
 

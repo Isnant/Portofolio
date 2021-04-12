@@ -163,7 +163,7 @@
           :data="listOfEquipment"
           :columns="equipmentListColumns"
           :pagination.sync="equipmentPagination"
-          :rows-per-page-options="[10, 20, 50]"
+          :rows-per-page-options="[10, 20, 50, 100, 200]"
           table-header-class="text-indigo-7 bg-indigo-2"
           @request="doMainEquipmentChangePage"
           row-key="id"
@@ -201,7 +201,9 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <a href="/statics/template/Form Upload - Indoor.xlsx">Download Template</a>
+          <a href="/statics/template/Form Upload - Indoor v2.xlsx">Download Template
+            <q-tooltip>Form Upload - Indoor v2.xlsx</q-tooltip>
+          </a>
         </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
@@ -226,6 +228,7 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
+        <div align="center" class="text-green"><q-icon size="50px" name="check"></q-icon></div>
         <div align="center" class="text-green">{{succesMessage}}</div>
         <div align="right" style="margin-top:20px">
           <q-btn round color="orange-4" @click="doUploadAfterWarning()">
@@ -255,6 +258,13 @@
             </div>
           </q-td>
          </q-table>
+        </q-card-section>
+        <q-card-section>
+          <div align="right">
+            <q-btn round color="orange-9" text-color="white" @click.native="IndoorErrorExcelDownload()">
+              <q-icon name="get_app"/><q-tooltip>Download to Excel File</q-tooltip>
+            </q-btn>
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>

@@ -200,8 +200,9 @@ export default {
       modalUploadTxt: false,
       modalUploadPreviewTxt: false,
       modalAddNewAsset: false,
-      modalErrorExcel: false,
-      modalWarningExcel: false,
+      modalError: false,
+      modalWarning: false,
+      modalSuccess: false,
       addHub: true,
       modalAddField: false,
       modalAddNetwork: false,
@@ -389,6 +390,7 @@ export default {
     doMainFillTableResult (pagedEquipment) {
       this.listOfEquipment = pagedEquipment.content
       this.equipmentPagination.rowsNumber = pagedEquipment.totalElements
+      this.equipmentPagination.rowsPerPage = pagedEquipment.pageable.pageSize
       this.equipmentPagination.page = pagedEquipment.number + 1
     },
     doMainInitPage () {
@@ -651,24 +653,84 @@ export default {
           this.listOfError = response.data
           this.listOfError.sort(this.compare)
           if (this.listOfError[0].messageStatus === 'error') {
-            this.modalErrorExcel = true
+            this.modalError = true
           } else if (this.listOfError[0].messageStatus === 'warning') {
-            this.modalWarningExcel = true
+            this.modalWarning = true
+          } else if (this.listOfError[0].messageStatus === 'success') {
+            this.$q.loading.hide()
+            this.modalSuccess = true
+            this.succesMessage = this.listOfError[0].message
+          } else {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'info',
+              message: this.listOfError[0].message
+            })
+          }
+          this.modalUploadExcel = false
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    doUploadAfterWarning () {
+      // this.$q.loading.show()
+      this.showUploadLoading()
+      this.$axios.post(`${process.env.urlPrefix}uploadNetworkAfterWarning`)
+        .then((response) => {
+          this.$q.loading.hide()
+          this.listOfError = response.data
+          this.listOfError.sort(this.compare)
+          if (this.listOfError[0].messageStatus === 'error') {
+            this.modalError = true
+          } else if (this.listOfError[0].messageStatus === 'warning') {
+            this.modalWarning = true
           } else {
             this.$q.notify({
               color: 'positive',
               icon: 'info',
               message: this.listOfError[0].message
             })
+            this.modalWarning = false
+            this.modalSuccess = false
           }
-          this.modalUploadExcel = false
           this.doRefresh()
           this.doMainInitPage()
         })
         .catch((error) => {
           this.$q.loading.hide()
-
           this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    networkErrorExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}networkErrorExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'Error Network Upload - Excel Downlod.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
             color: 'negative',
             icon: 'report_problem',
             message: error
@@ -690,7 +752,7 @@ export default {
           const link = document.createElement('a')
           link.href = url
           link.style = 'display: none'
-          link.download = 'network_excel_download.xlsx'
+          link.download = 'Network Equipment - Excel Download.xlsx'
           document.body.appendChild(link)
           link.click()
         })

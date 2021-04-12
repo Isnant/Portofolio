@@ -580,6 +580,31 @@ export default {
           })
         })
     },
+    IndoorErrorExcelDownload (props) {
+      // this.$q.loading.show()
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}IndoorErrorExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'Error Indoor Upload - Excel Downlod.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
     compare (a, b) {
       const statusA = a.messageStatus.toUpperCase()
       const statusB = b.messageStatus.toUpperCase()

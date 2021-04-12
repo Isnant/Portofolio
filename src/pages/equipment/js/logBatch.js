@@ -1,4 +1,5 @@
 import showLoading from './loading.js'
+import moment from 'moment'
 export default {
   mixins: [showLoading],
   data () {
@@ -9,7 +10,7 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
-      equipmentCategoryList: ['Field', 'Indoor', 'Network'],
+      equipmentCategoryList: ['Field', 'Hub', 'Network'],
       tableColumns: [
         {
           name: 'id',
@@ -91,7 +92,10 @@ export default {
       searchVal: {
         id: '',
         fileName: '',
-        equipmentCategory: ''
+        equipmentCategory: '',
+        startDate: '',
+        endDate: ''
+
       },
       showForm: false,
       formData: {
@@ -118,7 +122,9 @@ export default {
         descending: this.pagination.descending,
         id: this.searchVal.id,
         equipmentCategory: this.searchVal.equipmentCategory,
-        fileName: this.searchVal.fileName
+        fileName: this.searchVal.fileName,
+        startDate: this.searchVal.startDate,
+        endDate: this.searchVal.endDate
       }
       this.getLogBatchList(params)
     },
@@ -161,7 +167,9 @@ export default {
         descending: descending,
         id: this.searchVal.id,
         equipmentCategory: this.searchVal.equipmentCategory,
-        fileName: this.searchVal.fileName
+        fileName: this.searchVal.fileName,
+        startDate: this.searchVal.startDate,
+        endDate: this.searchVal.endDate
       }
       this.getLogBatchList(params)
     },
@@ -173,7 +181,9 @@ export default {
         descending: this.pagination.descending,
         id: this.searchVal.id,
         equipmentCategory: this.searchVal.equipmentCategory,
-        fileName: this.searchVal.fileName
+        fileName: this.searchVal.fileName,
+        startDate: this.searchVal.startDate,
+        endDate: this.searchVal.endDate
       }
       this.getLogBatchList(params)
     },
@@ -273,6 +283,37 @@ export default {
             message: error
           })
         })
+    },
+    downloadExcelButtom (props) {
+      this.$q.loading.show()
+      this.$axios.get(`${process.env.urlPrefix}logBatchExcelDownload`, {
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          this.$q.loading.hide()
+          const url = window.URL.createObjectURL(new Blob([response.data]), { type: '' })
+          const link = document.createElement('a')
+          link.href = url
+          link.style = 'display: none'
+          link.download = 'Log Batch - Excel Download.xlsx'
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    doStartDate () {
+      this.$refs.qStartDate.hide()
+      // this.searchVal.endDate = this.searchVal.startDate
+    },
+    optionsEndDate (date) {
+      return date >= moment(this.searchVal.startDate).format('YYYY/MM/DD')
     },
     clear () {
       this.formData = {

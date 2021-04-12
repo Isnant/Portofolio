@@ -30,7 +30,7 @@
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="right">
             <div class="row" style="width: 100%">
-              <div class="col-15" style="margin-right: 10px; width: 22%">
+              <div class="col-15" style="margin-right: 10px; width: 20%">
                <q-input
                   rounded outlined
                   v-model="searchVal.id"
@@ -39,7 +39,7 @@
                   color="orange-8"/>
               </div>
 
-              <div class="col-15" style="margin-right: 10px; width: 23%">
+              <div class="col-15" style="margin-right: 10px; width: 20%">
                 <q-input
                   rounded outlined
                   v-model="searchVal.equipmentName"
@@ -48,7 +48,7 @@
                   color="orange-8"/>
               </div>
 
-              <div class="col-15" style="margin-right: 10px; width: 23%">
+              <div class="col-15" style="margin-right: 10px; width: 20%">
                 <q-select
                   rounded outlined
                   v-model="searchVal.productType"
@@ -58,7 +58,7 @@
                   @input="getDropdownValue('productTypeSearch')"/>
               </div>
 
-              <div class="col-15" style="margin-right: 10px; width: 27%">
+              <div class="col-15" style="margin-right: 10px; width: 20%">
                 <q-select v-model="searchVal.productSeries"
                   rounded outlined
                   :stack-label="true"
@@ -87,10 +87,19 @@
                   productSeriesList
                 /> -->
               </div>
+              <div class="col-12" style="width: 13%">
+                <q-input
+                  v-model="searchVal.logBatch"
+                  label="Log Batch"
+                  rounded outlined
+                  color="orange-8"
+                  stack-label
+                />
+              </div>
             </div>
 
             <div class="row" style="margin-top:10px; width:100%">
-              <div class="col-15" style="margin-right: 10px; width: 22%">
+              <div class="col-15" style="margin-right: 10px; width: 20%">
                 <q-select
                   rounded outlined
                   v-model="searchVal.equipmentStatus"
@@ -174,7 +183,7 @@
           :data="listOfEquipment"
           :columns="equipmentListColumns"
           :pagination.sync="equipmentPagination"
-          :rows-per-page-options="[10, 20, 50]"
+          :rows-per-page-options="[10, 20, 50, 100, 200]"
           table-header-class="bg-indigo-2 text-indigo-10"
           @request="doMainEquipmentChangePage"
           row-key="id"
@@ -574,7 +583,9 @@
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <a href="/statics/template/Form Upload - Network.xlsx">Download Template</a>
+          <a href="/statics/template/Form Upload - Network v2.xlsx">Download Template
+            <q-tooltip>Form Upload - Network v2.xlsx</q-tooltip>
+          </a>
         </q-card-section>
         <q-card-section>
           <!-- <q-field style="padding-bottom: 20px;"> -->
@@ -593,10 +604,30 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="modalErrorExcel" persistent>
+    <q-dialog v-model="modalSuccess" persistent>
+      <q-card class="bg-white">
+        <q-bar class="bg-white text-indigo-10">
+          <strong></strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+        <div align="center" class="text-green"><q-icon size="50px" name="check"></q-icon></div>
+        <div align="center" class="text-green">{{succesMessage}}</div>
+        <div align="right" style="margin-top:20px">
+          <q-btn round color="orange-4" @click="doUploadAfterWarning()">
+            <q-icon name="fas fa-file-upload"/>
+            <q-tooltip>Upload Data</q-tooltip>
+          </q-btn>
+        </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="modalError" persistent>
       <q-card class="bg-white">
         <q-bar class="bg-negative text-white">
-          <!-- <strong>Error</strong> -->
+          <strong>Error</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
@@ -604,25 +635,28 @@
         <q-table
           :data="listOfError"
           :columns="errorListColumn"
-          table-header-class="bg-red-2 text-indigo-10"
           dense>
           <q-td slot="body-cell-message" slot-scope="props">
-            <div v-if="props.row.messageStatus === 'error'" class="text-red bg-white">
-              {{ props.row.message }}
-            </div>
-            <div v-else class="text-orange bg-white">
+            <div class="text-red bg-white">
               {{ props.row.message }}
             </div>
           </q-td>
         </q-table>
         </q-card-section>
+        <q-card-section>
+          <div align="right">
+            <q-btn round color="orange-9" text-color="white" @click.native="networkErrorExcelDownload()">
+              <q-icon name="get_app"/><q-tooltip>Download to Excel File</q-tooltip>
+            </q-btn>
+          </div>
+        </q-card-section>
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="modalWarningExcel" persistent>
+    <q-dialog v-model="modalWarning" persistent>
       <q-card class="bg-white">
         <q-bar class="bg-orange text-white">
-          <!-- <strong>Warning</strong> -->
+          <strong>Warning</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
@@ -630,7 +664,6 @@
         <q-table
           :data="listOfError"
           :columns="errorListColumn"
-          table-header-class="bg-orange-2 text-indigo-10"
           dense>
           <q-td slot="body-cell-message" slot-scope="props">
             <div class="text-orange bg-white">
@@ -639,7 +672,7 @@
           </q-td>
         </q-table>
         <div align="right" style="margin-top:20px">
-          <q-btn round color="orange-6" @click="doUploadAfterWarning()">
+          <q-btn round color="primary" @click="doUploadAfterWarning()">
             <q-icon name="fas fa-file-upload"/>
             <q-tooltip>Upload Data</q-tooltip>
           </q-btn>

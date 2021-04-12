@@ -2140,7 +2140,7 @@ export default {
           const link = document.createElement('a')
           link.href = url
           link.style = 'display: none'
-          link.download = 'field_excel_download.xlsx'
+          link.download = 'Field Equipment - Excel Downlod.xlsx.xlsx'
           document.body.appendChild(link)
           link.click()
         })
@@ -2165,7 +2165,7 @@ export default {
           const link = document.createElement('a')
           link.href = url
           link.style = 'display: none'
-          link.download = 'error field upload.xlsx'
+          link.download = 'Error Field Upload - Excel Downlod.xlsx'
           document.body.appendChild(link)
           link.click()
         })

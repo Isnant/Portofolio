@@ -203,7 +203,7 @@
           :data="listOfEquipment"
           :columns="equipmentListColumns"
           :pagination.sync="equipmentPagination"
-          :rows-per-page-options="[10, 20, 50, 100, 'All']"
+          :rows-per-page-options="[10, 20, 50, 100, 200]"
           table-header-class="bg-indigo-2 text-indigo-10"
           @request="doMainEquipmentChangePage"
           :selected-rows-label="getSelectedString"
@@ -915,7 +915,9 @@
               <q-btn dense flat icon="close" v-close-popup />
             </q-bar>
             <q-card-section>
-              <a href="/statics/template/Form Upload - Field.xlsx">Download Template</a>
+              <a href="/statics/template/Form Upload - Field v2.xlsx">Download Template
+                <q-tooltip>Form Upload - Field v2.xlsx</q-tooltip>
+              </a>
             </q-card-section>
             <q-card-section>
               <!-- <q-field style="padding-bottom: 20px;"> -->
@@ -942,6 +944,7 @@
               <q-btn dense flat icon="close" v-close-popup />
             </q-bar>
             <q-card-section>
+            <div align="center" class="text-green"><q-icon size="50px" name="check"></q-icon></div>
             <div align="center" class="text-green">{{succesMessage}}</div>
             <div align="right" style="margin-top:20px">
               <q-btn round color="orange-4" @click="doUploadAfterWarning()">
