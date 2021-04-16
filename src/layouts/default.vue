@@ -1,34 +1,34 @@
 <template>
   <div class="q-pa-md">
   <q-layout view="hHh Lpr lff">
-    <q-header class="bg-indigo-4" elevated>
+    <q-header class="bg-indigo-2" elevated>
       <q-toolbar
         color="indigo-3">
         <q-btn
           flat
           round
-          color="white"
+          color="indigo-4"
           @click="leftDrawerOpen = !leftDrawerOpen"
           aria-label="Menu">
           <q-icon name="menu" />
         </q-btn>
         <q-toolbar-title>
           <div align="left">
-            <img src="statics/seal header.png"  class="responsive"  width="1200px">
+            <img src="statics/sealhead3.png"  class="responsive"  width="1200px">
           </div>
         </q-toolbar-title>
         <q-toolbar-title shrink>
-          <div style="margin-bottom:60px">
-            <font size=2 style="margin-right:10px">{{userInfo.fullName}}</font>
+          <div style="margin-bottom:10px">
+            <font size=2 color="indigo-5" style="margin-right:10px">{{userInfo.fullName}}</font>
             <q-btn
               flat
-              color="white"
+              color="indigo-5"
               round size="sm">
               <q-icon name="account_box" />
               <q-tooltip>Profil</q-tooltip>
             </q-btn>
             <q-btn flat
-              color="white"
+              color="indigo-5"
               round
               size="sm"
               to="/login" >
@@ -66,8 +66,15 @@
       bordered
       :breakpoint="500"
     >
-     <q-scroll-area class="fit">
-      <q-list padding class="menu-list" style="margin-top:10px">
+     <q-scroll-area class="fit" >
+      <q-list
+        link
+        inset-delimiter
+        multiline
+        separator
+        padding
+        class="menu-list"
+        style="margin-top:10px">
         <!-- <div align="right" style="margin-left:40px;margin-top:10px;margin-right:40px;margin-bottom:10px;width:220px">
           <q-separator color="grey-2"/>
         </div> -->
@@ -140,7 +147,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Area - Region</q-item-label>
+              <q-item-label class="text-white">Area - Region</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -151,7 +158,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Hub Code</q-item-label>
+              <q-item-label class="text-white">Hub Code</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -162,7 +169,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Hub Room</q-item-label>
+              <q-item-label class="text-white">Hub Room</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -173,7 +180,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Hub Code Service</q-item-label>
+              <q-item-label class="text-white">Hub Code Service</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -184,7 +191,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Product Type - Sub Type</q-item-label>
+              <q-item-label class="text-white">Product Type - Sub Type</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -195,7 +202,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Manufacturer - Brand</q-item-label>
+              <q-item-label class="text-white">Manufacturer - Brand</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -206,7 +213,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>BDF</q-item-label>
+              <q-item-label class="text-white">BDF</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -217,7 +224,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Product Series</q-item-label>
+              <q-item-label class="text-white">Product Series</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -228,7 +235,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Node</q-item-label>
+              <q-item-label class="text-white">Node</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -239,7 +246,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Power Supply</q-item-label>
+              <q-item-label class="text-white">Power Supply</q-item-label>
             </q-item-section>
           </q-item>
            <q-item
@@ -250,7 +257,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Amplifier</q-item-label>
+              <q-item-label class="text-white">Amplifier</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -261,7 +268,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Leg Amplifier</q-item-label>
+              <q-item-label class="text-white">Leg Amplifier</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -272,7 +279,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Problem Type</q-item-label>
+              <q-item-label class="text-white">Problem Type</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -283,7 +290,7 @@
               <q-icon name="sticky_note_2" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Others</q-item-label>
+              <q-item-label  class="text-white">Others</q-item-label>
             </q-item-section>
           </q-item>
         </q-expansion-item>
@@ -292,8 +299,6 @@
             expand-separator
             icon="fas fa-user-shield"
             label="Security"
-            header-class="text-white"
-            expand-icon-class="text-white"
             v-show="menu.security"
           >
           <q-item to="/secRole" style="padding-left: 70px" active-class="my-menu-link">
@@ -315,6 +320,11 @@
         </q-expansion-item>
       </q-list>
       </q-scroll-area>
+      <div align="right" style="margin-left:20px;margin-top:20px;width:250px">
+        <q-separator color="orange-4"/>
+        <q-separator color="orange-4"/>
+        <q-separator color="orange-4"/>
+      </div>
     </q-drawer>
     <q-page-container>
       <router-view />
@@ -327,10 +337,10 @@
 <style>
 .my-menu-link {
   color: white;
-  background: #df933d;
+  background: #f1b672;
 }
 .menu_right {
   background-color: #040218;
-  color: white;
+  color: rgb(188, 208, 243);
 }
 </style>

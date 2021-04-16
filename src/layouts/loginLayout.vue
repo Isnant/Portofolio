@@ -1,10 +1,13 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="bg-indigo-5" :reveal="true" :reveal-offset="100" elevated>
+    <q-header class="bg-indigo-2" :reveal="true" :reveal-offset="100" elevated>
       <q-toolbar
-        color="indigo-5">
+        color="indigo-3">
         <q-toolbar-title align="center">
-            <font color="white" size=4 class="text-bold" style="margin-bottom:50px">SYSTEM FOR EQUIPMENT AND LOCATION</font>
+          <div align="center">
+            <img src="statics/sealhead4.png"  class="responsive"  width="900px">
+          </div>
+            <!-- <font color="white" size=4 class="text-bold" style="margin-bottom:50px">SYSTEM FOR EQUIPMENT AND LOCATION</font> -->
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

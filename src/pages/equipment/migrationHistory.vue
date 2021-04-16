@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">EQUIPMENT/ MIGRATION HISTORY</font>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT <q-icon name="double_arrow"></q-icon> MIGRATION HISTORY</font>
     <div align="left" style="margin-bottom:30px;width:240px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MIGRATION HISTORY</font>
        <div class="row">
@@ -9,8 +9,8 @@
           <q-separator color="orange-10" />
         </div>
         <div class="col">
-          <q-separator color="purple-10" />
-          <q-separator color="purple-10" />
+          <q-separator color="indigo-10" />
+          <q-separator color="indigo-10" />
         </div>
       </div>
     </div>
@@ -29,6 +29,7 @@
                   clearable
                   rounded outlined
                   stack-label
+                  class="searchform"
                   color="orange-8"
                   @input="doClearSearchVal('start')"
                   label="Start Date">
@@ -48,6 +49,7 @@
                   v-model="searchVal.reqEndDate"
                   rounded outlined
                   stack-label
+                  class="searchform"
                   color="orange-8"
                   clearable
                   @input="doClearSearchVal('end')"
@@ -68,6 +70,7 @@
                   v-model="searchVal.sourceCode"
                   rounded outlined
                   stack-label
+                  class="searchform"
                   color="orange-8"
                   label="Source Code">
                 </q-input>
@@ -77,6 +80,7 @@
                   v-model="searchVal.newCode"
                   rounded outlined
                   stack-label
+                  class="searchform"
                   color="orange-8"
                   label="New Code">
                 </q-input>
@@ -88,6 +92,7 @@
                 label="Product Type"
                 rounded outlined
                 stack-label
+                class="searchform"
                 color="orange-8"
                 :options="migrationTypeList"
               />
@@ -98,6 +103,7 @@
                 label="Product Type"
                 rounded outlined
                 stack-label
+                class="searchform"
                 color="orange-8"
                 :options="productTypeListSearch"
                 @input="getDropdownValue('productTypeSearch')"
@@ -109,6 +115,7 @@
                 @input="doClearSearchVal('createdBy')"
                 stack-label
                 rounded outlined
+                class="searchform"
                 color="orange-8"
                 label="Created By">
               </q-input>

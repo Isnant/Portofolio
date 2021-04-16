@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">EQUIPMENT/ INDOOR EQUIPMENT</font>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT <q-icon name="double_arrow"></q-icon> INDOOR EQUIPMENT</font>
     <div align="left" style="margin-bottom:30px; width:230px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">INDOOR EQUIPMENT</font>
       <div class="row">
@@ -9,8 +9,8 @@
           <q-separator color="orange-10" />
         </div>
         <div class="col">
-          <q-separator color="purple-10" />
-          <q-separator color="purple-10" />
+          <q-separator color="indigo-10" />
+          <q-separator color="indigo-10" />
         </div>
       </div>
     </div>
@@ -39,6 +39,7 @@
                       v-model="searchVal.id"
                       stack-label
                       label="Equipment Id"
+                      class="searchform"
                       color="orange-8"/>
                 </div>
 
@@ -49,6 +50,7 @@
                     stack-label
                     oninput="this.value = this.value.toUpperCase()"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"/>
                 </div>
 
@@ -57,6 +59,7 @@
                   v-model="searchVal.productType"
                   label="Product Type"
                   rounded outlined
+                  class="searchform"
                   color="orange-8"
                   :options="productTypeListSearch"
                   @input="getDropdownValue('productTypeSearch')"
@@ -67,6 +70,7 @@
                   <q-select v-model="searchVal.productSeries"
                     :stack-label="true"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     :options="filteredProductSeries"
                     @input="getDropdownValue('productSeriesSearch')"
@@ -101,6 +105,7 @@
                     stack-label
                     label="Equiptment Status"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     :options="assetStatusListSearch"
                     @input="getDropdownValue('assetStatusSearch')"
@@ -109,6 +114,7 @@
                 <div class="col-15" style="margin-right: 10px; width: 20%">
                   <q-select
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     v-model="searchVal.equipmentStatus"
                     label="Status"
@@ -120,6 +126,7 @@
                   <q-select v-model="searchVal.hubCode"
                     :stack-label="true"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     :options="filteredHubCode"
                     @input="getDropdownValue('hubCodeSearch')"
@@ -138,11 +145,12 @@
                     </template>
                   </q-select>
                 </div>
-                <div class="col-15" style="width: 25%">
+                <div class="col-15" style="width: 25%; margin-right: 10px;">
                   <q-input
                     v-model="searchVal.logBatch"
                     label="Log Batch"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     stack-label
                   />
@@ -707,6 +715,11 @@ fieldset legend{
 .legedn_search {
   border-color:  #8f1869;
   border-style: solid;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

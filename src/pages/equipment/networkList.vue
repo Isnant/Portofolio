@@ -1,7 +1,7 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey" >EQUIPMENT/ NETWORK EQUIPMENT</font>
-    <div align="left" style="margin-bottom:30px; width:260px; margin-top:10px">
+    <font size="1" class="text-bold" color="grey" >EQUIPMENT <q-icon name="double_arrow"></q-icon> NETWORK EQUIPMENT</font>
+    <div align="left" style="margin-bottom:30px; width:260px;">
       <font size="5" class="text-bold" style="margin-bottom: 10px">NETWORK EQUIPMENT</font>
       <div class="row">
         <div class="col-20" style="width: 32%">
@@ -9,8 +9,8 @@
           <q-separator color="orange-10" />
         </div>
         <div class="col">
-          <q-separator color="purple-10" />
-          <q-separator color="purple-10" />
+          <q-separator color="indigo-10" />
+          <q-separator color="indigo-10" />
         </div>
       </div>
     </div>
@@ -36,6 +36,7 @@
                   v-model="searchVal.id"
                   stack-label
                   label="Equipment Id"
+                  class="searchform"
                   color="orange-8"/>
               </div>
 
@@ -45,6 +46,7 @@
                   v-model="searchVal.equipmentName"
                   stack-label
                   label="Equipment Name"
+                  class="searchform"
                   color="orange-8"/>
               </div>
 
@@ -53,6 +55,7 @@
                   rounded outlined
                   v-model="searchVal.productType"
                   label="Product Type"
+                  class="searchform"
                   color="orange-8"
                   :options="productTypeListSearch"
                   @input="getDropdownValue('productTypeSearch')"/>
@@ -62,6 +65,7 @@
                 <q-select v-model="searchVal.productSeries"
                   rounded outlined
                   :stack-label="true"
+                  class="searchform"
                   color="orange-8"
                   :options="filteredProductSeries"
                   @input="getDropdownValue('productSeriesSearch')"
@@ -91,6 +95,7 @@
                 <q-input
                   v-model="searchVal.logBatch"
                   label="Log Batch"
+                  class="searchform"
                   rounded outlined
                   color="orange-8"
                   stack-label
@@ -105,6 +110,7 @@
                   v-model="searchVal.equipmentStatus"
                   stack-label
                   label="Status"
+                  class="searchform"
                   color="orange-8"
                   :options="equipmentStatusListSearch"
                   @input="getDropdownValue('equipmentStatusSearch')"
@@ -117,6 +123,7 @@
                   v-model="searchVal.assetStatus"
                   stack-label
                   label="Equipment Status"
+                  class="searchform"
                   color="orange-8"
                   :options="assetStatusListSearch"
                   @input="getDropdownValue('assetStatusSearch')"
@@ -127,6 +134,7 @@
                   rounded outlined
                   :stack-label="true"
                   color="orange-8"
+                  class="searchform"
                   :options="filteredHubCode"
                   @input="getDropdownValue('hubCodeSearch')"
                   @filter="doHubCodeFilter"
@@ -151,6 +159,7 @@
                   v-model="searchVal.bdfCode"
                   label="BDF Name"
                   color="orange-8"
+                  class="searchform"
                   :options="filteredBdfCode"
                   @input="getDropdownValue('bdfCodeSearch')"
                   @filter="doBdfFilter"
@@ -802,6 +811,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

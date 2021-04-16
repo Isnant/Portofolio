@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">EQUIPMENT > FIELD EQUIPMENT</font>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT <q-icon name="double_arrow"></q-icon> FIELD EQUIPMENT</font>
     <div align="left" style="margin-bottom:30px; width:210px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">FIELD EQUIPMENT</font>
       <div class="row">
@@ -9,8 +9,8 @@
           <q-separator color="orange-10" />
         </div>
         <div class="col">
-          <q-separator color="purple-10" />
-          <q-separator color="purple-10" />
+          <q-separator color="indigo-10" />
+          <q-separator color="indigo-10" />
         </div>
       </div>
     </div>
@@ -41,6 +41,7 @@
                     stack-label
                     oninput="this.value = this.value.toUpperCase()"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"/>
                 </div>
 
@@ -50,6 +51,7 @@
                   label="Product Type"
                   rounded outlined
                   color="orange-8"
+                  class="searchform"
                   :options="productTypeListSearch"
                   @input="getDropdownValue('productTypeSearch')"
                   />
@@ -59,6 +61,7 @@
                   <q-select v-model="searchVal.productSeries"
                     :stack-label="true"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     :options="filteredProductSeries"
                     @input="getDropdownValue('productSeriesSearch')"
@@ -89,6 +92,7 @@
                   <q-select v-model="searchVal.hubCode"
                     :stack-label="true"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     :options="filteredHubCode"
                     @input="getDropdownValue('hubCodeSearch')"
@@ -113,6 +117,7 @@
                     v-model="searchVal.logBatch"
                     label="Log Batch"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     stack-label
                   />
@@ -126,6 +131,7 @@
                     stack-label
                     label="Equipment Status"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     :options="assetStatusListSearch"
                     @input="getDropdownValue('assetStatusSearch')"
@@ -134,6 +140,7 @@
                  <div class="col-12" style="margin-right: 10px; width: 15%">
                   <q-select
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     v-model="searchVal.equipmentStatus"
                     label="Status"
@@ -147,6 +154,7 @@
                     v-model="searchVal.bdfCode"
                     label="BDF Code"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"
                     :options="filteredBdfCode"
                     @input="getDropdownValue('bdfCodeSearch')"
@@ -169,6 +177,7 @@
                   <q-input
                     v-model="searchVal.nodeCode"
                     label="Node Code"
+                    class="searchform"
                     rounded outlined
                     color="orange-8"
                     oninput="this.value = this.value.toUpperCase()"
@@ -181,6 +190,7 @@
                     v-model="searchVal.technology"
                     stack-label
                     label="Technology"
+                    class="searchform"
                     rounded outlined
                     color="orange-8"
                     :options="technologyListSearch"
@@ -1548,5 +1558,10 @@ fieldset legend{
 .legedn_search {
   border-color:  #8f1869;
   border-style: solid;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
