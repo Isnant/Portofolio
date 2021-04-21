@@ -1730,8 +1730,36 @@ export default {
           status: rawChildren[i].assetStatus,
           children: []
         }
+        if (rawChildren[i].assetStatus === 'Inactive') {
+          child.children = this.getMigrationPreviewInactiveChild(rawChildren[i].equipmentName, list, migrate)
+        } else {
+          child.children = this.getMigrationPreviewChild(rawChildren[i].amplifierCode, list, migrate)
+        }
 
-        child.children = this.getMigrationPreviewChild(rawChildren[i].amplifierCode, list, migrate)
+        result.push(child)
+      }
+
+      return result
+    },
+    getMigrationPreviewInactiveChild (parent, list, migrate) {
+      let rawChildren = list.filter(f => f.originalPredecessor === parent)
+      let result = []
+
+      for (let i = 0; i < rawChildren.length; i++) {
+        let original = rawChildren[i].equipmentName
+
+        if (original === '') {
+          original = 'NEW'
+        }
+
+        let child = {
+          label: rawChildren[i].newName + ' - ' + rawChildren[i].assetStatus,
+          original: original,
+          status: rawChildren[i].assetStatus,
+          children: []
+        }
+
+        child.children = this.getMigrationPreviewInactiveChild(rawChildren[i].equipmentName, list, migrate)
 
         result.push(child)
       }
