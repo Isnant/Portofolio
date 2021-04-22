@@ -1431,7 +1431,7 @@
                       <q-card-section>
                         <q-tree
                           :nodes="sourcePreview"
-                          node-key="original"
+                          node-key="label"
                           ref="sourcePreview"
                           default-expand-all
                         >
@@ -1454,7 +1454,7 @@
                       <q-card-section>
                         <q-tree
                           :nodes="targetPreview"
-                          node-key="original"
+                          node-key="label"
                           ref="targetPreview"
                           default-expand-all
                         >

@@ -1490,10 +1490,12 @@ export default {
         row.newName = this.getMigrationEquipmentPrefix(row) + row.equipmentName.substring(6, row.equipmentName.length)
         row.newPredecessor = this.getMigrationEquipmentPrefix(row) + row.predecessor.substring(6, row.predecessor.length)
         row.newPsCode = this.getMigrationEquipmentPrefix(row)
+        row.assetStatus = 'Update'
       } else {
         row.newName = row.equipmentName
         row.newPredecessor = row.predecessor
         row.newPsCode = row.psCode
+        row.assetStatus = ''
       }
       // this.doMigrationAssignNewName()
     },
@@ -1502,7 +1504,7 @@ export default {
     },
     doInactive (row) {
       if (row.assetStatus !== 'Inactive') {
-        row.newName = '[-]'
+        row.newName = '[' + row.newName + ' - I]'
         row.assetStatus = 'Inactive'
       } else {
         row.newName = this.getMigrationEquipmentPrefix(row) + row.equipmentName.substring(6, row.equipmentName.length)
@@ -1541,48 +1543,11 @@ export default {
           message: cellRow.newName + ' already used. Please use another.'
         })
       }
-      // if ((cellRow.newName.length === 6) || (cellRow.newName.length === 7)) {
-      //   if (cellRow.productType !== 'PS') {
-      //     this.$q.notify({
-      //       color: 'negative',
-      //       icon: 'report_problem',
-      //       message: 'Cannot change ' + cellRow.productType + ' to PS'
-      //     })
-
-      //     cellRow.newName = cellRow.newName + '0000'
-      //     if (cellRow.productType === 'FIBERNODE') {
-      //       cellRow.newName = cellRow.newName.substring(0, 8)
-      //     } else {
-      //       cellRow.newName = cellRow.newName.substring(0, 10)
-      //     }
-      //   }
-      // } else if (cellRow.newName.length === 9) {
-      //   cellRow.newName = cellRow.newName + '0'
-      // }
-
-      // if (cellRow.newName.length === 8) {
-      //   cellRow.productType = 'FIBERNODE'
-      //   cellRow.predecessor = ''
-      // } else if (cellRow.newName.length === 10) {
-      //   cellRow.productType = 'AMPLIFIER'
-      //   cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
-      // } else if (cellRow.newName.length === 6) {
-      //   cellRow.productType = 'POWER SUPPLY'
-      //   cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
-      // }
-      // else if (cellRow.newName.substring(cellRow.newName.length - 3) === '000') {
-      //   cellRow.productType = 'AMPLI 1'
-      //   cellRow.predecessor = cellRow.newName.substring(0, 6) + '0000'
-      // } else if (cellRow.newName.substring(cellRow.newName.length - 2) === '00') {
-      //   cellRow.productType = 'AMPLI 2'
-      //   cellRow.predecessor = cellRow.newName.substring(0, 7) + '000'
-      // } else if (cellRow.newName.substring(cellRow.newName.length - 1) === '0') {
-      //   cellRow.productType = 'AMPLI 3'
-      //   cellRow.predecessor = cellRow.newName.substring(0, 8) + '00'
-      // } else if (cellRow.newName.length === 10) {
-      //   cellRow.productType = 'AMPLI 4'
-      //   cellRow.predecessor = cellRow.newName.substring(0, 9) + '0'
-      // }
+      if (cellRow.newName !== cellRow.equipmentName) {
+        cellRow.assetStatus = 'Update'
+      } else {
+        cellRow.assetStatus = ''
+      }
     },
     doMigrationChangePredecessor (cellRow) {
       cellRow.newPredecessor = this.getMigrationEquipmentPrefix(cellRow) + cellRow.newPredecessorNumber
