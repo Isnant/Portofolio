@@ -106,9 +106,7 @@ export default {
         params: params
       })
         .then((response) => {
-          this.list = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.doMainFillTableResult(response.data)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -127,9 +125,7 @@ export default {
         params: params
       })
         .then((response) => {
-          this.list = response.data.content
-          this.pagination.rowsNumber = response.data.totalElements
-          this.pagination.page = response.data.number + 1
+          this.doMainFillTableResult(response.data)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -140,6 +136,23 @@ export default {
             message: error
           })
         })
+    },
+    doMainFillTableResult (data) {
+      this.list = data.content
+      this.pagination.rowsNumber = data.totalElements
+      this.pagination.rowsPerPage = data.pageable.pageSize
+      this.pagination.page = data.number + 1
+    },
+    doMainEquipmentChangePage (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const params = {
+        pageIndex: page - 1,
+        pageSize: rowsPerPage,
+        sortBy: sortBy,
+        descending: descending,
+        searchVal: this.searchVal
+      }
+      this.getPagedAreaList(params)
     },
     doSearchByFilter () {
       const params = {

@@ -93,11 +93,11 @@
             </div> -->
       </q-td>
     </q-table>
-    <div>
+    <!-- <div>
       <q-btn icon="add" round color="orange-5" @click="syncCrm()">
         <q-tooltip>Sync CRM</q-tooltip>
       </q-btn>
-    </div>
+    </div> -->
 
     <q-page-sticky position="top-right" :offset="[30, 30]">
       <q-btn icon="add" round color="orange-5" @click="showForm()">
