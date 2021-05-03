@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">EQUIPMENT/ FIELD HIERARCHY</font>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT <q-icon name="double_arrow"></q-icon> FIELD HIERARCHY</font>
      <div align="left" style="margin-bottom:30px; width:200px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">FIELD HIERARCHY</font>
       <div class="row">
@@ -28,6 +28,7 @@
                   v-model="searchVal.equipmentId"
                   stack-label
                   rounded outlined
+                  class="searchform"
                   color="orange-8"
                   label="Equipment Id">
                 </q-input>
@@ -37,6 +38,7 @@
                   v-model="searchVal.equipmentName"
                   stack-label
                   rounded outlined
+                  class="searchform"
                   color="orange-8"
                   label="Equipment Name">
                 </q-input>
@@ -46,6 +48,7 @@
                   v-model="searchVal.equipmentParent"
                   stack-label
                   rounded outlined
+                  class="searchform"
                   color="orange-8"
                   label="Equipment Parent">
                 </q-input>
@@ -56,6 +59,7 @@
                   label="Product Type"
                   rounded outlined
                   stack-label
+                  class="searchform"
                   color="orange-8"
                   :options="productTypeListSearch"
                   @input="getDropdownValue('productTypeSearch')"
@@ -185,6 +189,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

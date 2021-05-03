@@ -4,7 +4,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/default.vue'),
     children: [
-      { path: '', component: () => import('pages/equipment/fieldList.vue') },
+      { path: '', component: () => import('pages/equipment/main.vue') },
       { path: '/fieldEq', component: () => import('pages/equipment/fieldList.vue') },
       { path: '/indoorEq', component: () => import('pages/equipment/indoorList.vue') },
       { path: '/networkEq', component: () => import('pages/equipment/networkList.vue') },

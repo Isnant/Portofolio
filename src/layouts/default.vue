@@ -23,7 +23,8 @@
             <q-btn
               flat
               color="indigo-5"
-              round size="sm">
+              round size="sm"
+              to="/">
               <q-icon name="account_box" />
               <q-tooltip>Profil</q-tooltip>
             </q-btn>

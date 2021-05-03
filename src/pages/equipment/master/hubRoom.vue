@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA  >  HUB ROOM LIST</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> HUB ROOM LIST</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:180px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">HUB ROOM LIST</font>
       <div class="row">
@@ -32,6 +32,7 @@
                     <q-input
                     v-model="searchVal.hubName"
                     stack-label
+                    class="searchform"
                     label="Hub Name"
                     rounded outlined
                     color="orange-8"/>

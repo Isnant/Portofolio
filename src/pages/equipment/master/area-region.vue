@@ -1,6 +1,6 @@
 <template>
   <q-page >
-    <font size="1" class="text-bold" color="grey">MASTER DATA > AREA - REGION LIST</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> AREA - REGION LIST</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:225px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">AREA - REGION LIST</font>
       <div class="row">
@@ -31,6 +31,7 @@
                     <q-input
                     v-model="searchVal.areaName"
                     stack-label
+                    class="searchform"
                     label="Area Name"
                     rounded outlined
                     color="orange-8"/>
@@ -270,6 +271,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">EQUIPMENT/ UPLOAD LOG BATCH</font>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT <q-icon name="double_arrow"></q-icon> UPLOAD LOG BATCH</font>
     <div align="left" style="margin-bottom:30px;width:230px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">UPLOAD LOG BATCH</font>
       <div class="row">
@@ -26,6 +26,7 @@
               <q-input
                 rounded outlined
                 v-model="searchVal.id"
+                class="searchform"
                 color="orange-8"
                 label="Batch"
                 stack-label>
@@ -35,6 +36,7 @@
               <q-input
                 rounded outlined
                 v-model="searchVal.fileName"
+                class="searchform"
                 color="orange-8"
                 label="File Name"
                 stack-label>
@@ -44,6 +46,7 @@
               <q-select
                 rounded outlined
                 v-model="searchVal.equipmentCategory"
+                class="searchform"
                 color="orange-8"
                 label="Equipment Category"
                 :options="equipmentCategoryList"
@@ -54,6 +57,7 @@
               <q-input
                 rounded outlined
                 v-model="searchVal.startDate"
+                class="searchform"
                 readonly
                 stack-label
                 label="Upload Date">
@@ -73,6 +77,7 @@
               <q-input
                 rounded outlined
                 v-model="searchVal.endDate"
+                class="searchform"
                 readonly stack-label
                 label="">
                 <template v-slot:prepend>
@@ -159,6 +164,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

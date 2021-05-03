@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER MANUFACTURER - BRAND</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> MASTER MANUFACTURER - BRAND</font>
     <div align="left" style="margin-bottom:30px;width:400px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER MANUFACTURER - BRAND</font>
       <div class="row">
@@ -33,6 +33,7 @@
                     stack-label
                     label="Description"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"/>
                   </div>
 
@@ -269,6 +270,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

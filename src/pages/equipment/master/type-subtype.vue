@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA > PRODUCT TYPE - SUB TYPE</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> PRODUCT TYPE - SUB TYPE</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:310px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">PRODUCT TYPE - SUB TYPE</font>
       <div class="row">
@@ -27,6 +27,7 @@
                   rounded outlined
                   v-model="searchVal.productType"
                   stack-label
+                  class="searchform"
                   label="Product Type"
                   color="orange-8"/>
               </div>
@@ -36,6 +37,7 @@
                   rounded outlined
                   stack-label
                   color="orange-8"
+                  class="searchform"
                   v-model="searchVal.category"
                   label="Equipment Category"
                   :options="categorySearchList"
@@ -281,6 +283,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

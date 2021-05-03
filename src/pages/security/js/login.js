@@ -19,7 +19,7 @@ export default {
           const userToken = localStorage.getItem('user-token')
           const authorities = JSON.parse(atob(userToken.split('.')[1])).authorities
           if (authorities.length !== 0) {
-            this.$router.push('/fieldEq')
+            this.$router.push('/')
           } else {
             this.$q.notify({
               color: 'negative',

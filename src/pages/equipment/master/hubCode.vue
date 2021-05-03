@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA > HUB CODE LIST</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> HUB CODE LIST</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:175px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">HUB CODE LIST</font>
       <div class="row">
@@ -31,25 +31,28 @@
                     stack-label
                     label="Hub Code"
                     rounded outlined
+                    class="searchform"
                     color="orange-8"/>
                 </div>
 
                 <div class="col-20" style="margin-right: 10px">
                   <q-input
-                  v-model="searchVal.hubName"
-                  stack-label
-                  label="Hub Name"
-                  rounded outlined
-                  color="orange-8"/>
+                    v-model="searchVal.hubName"
+                    stack-label
+                    class="searchform"
+                    label="Hub Name"
+                    rounded outlined
+                    color="orange-8"/>
                 </div>
 
                 <div class="col-20" style="margin-right: 10px">
                   <q-input
-                  v-model="searchVal.area"
-                  stack-label
-                  label="Area Name"
-                  rounded outlined
-                  color="orange-8"/>
+                    v-model="searchVal.area"
+                    stack-label
+                    label="Area Name"
+                    rounded outlined
+                    class="searchform"
+                    color="orange-8"/>
                 </div>
 
                 <div class="col" style="width: 5%">
@@ -251,6 +254,12 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

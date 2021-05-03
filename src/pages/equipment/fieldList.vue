@@ -590,7 +590,7 @@
                     tabindex="14"
                     style="margin-top:20px"/>
 
-                  <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM'">
+                  <div v-if="input.technology === 'FTTH' || input.productType === 'FIBERNODE' || input.productType === 'WDM' || input.productType === 'POWER SUPPLY'">
                     <q-input v-model="input.predecessor"
                       :stack-label="true"
                       label="Predecessor"
@@ -910,7 +910,7 @@
                 style="margin-top:20px"/>
             </div>
               <div align="right" style="margin:20px">
-                <q-btn rounded @click.native="saveEquipment" color="warning" icon="save">
+                <q-btn round @click.native="saveEquipment" color="orange" icon="save">
                 <q-tooltip>Submit</q-tooltip>
                 </q-btn>
               </div>

@@ -11,7 +11,7 @@ export default {
         indoorEquipment: false,
         networkEquipmet: false,
         migrationHistory: false,
-        fieldHierarchy: true,
+        fieldHierarchy: false,
         equipmentUploadLog: false,
         masterData: false,
         security: false
