@@ -1,6 +1,6 @@
 <template>
   <q-page >
-    <font size="1" class="text-bold" color="grey">MASTER DATA / OTHERS</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> OTHERS</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:210px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">OTHERS MASTER</font>
       <div class="row">
@@ -47,6 +47,8 @@
                 <q-input v-model="formSearch.jobstatusName"
                 :label=columnName
                 color="indigo-10"
+                class="searchform"
+                rounded outlined
                 clearable
                 @input="clearSearch"
                 @keydown.enter.prevent="getContent()"
@@ -229,5 +231,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>

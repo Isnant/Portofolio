@@ -136,7 +136,7 @@
     <q-dialog v-model="showForm" persistent>
 
       <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+        <q-bar class="bg-indigo-10 text-white">
           <strong>Detail Hierarchy</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>

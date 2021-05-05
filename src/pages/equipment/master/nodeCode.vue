@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER NODE</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> MASTER NODE</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:180px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER NODE</font>
       <div class="row">
@@ -29,6 +29,7 @@
                 v-model="searchVal.hubCode"
                 stack-label
                 label="HUB NAME"
+                class="searchform"
                 color="orange-5"
                 :options="hubCodeList"
                 @input="getValueSelect()"
@@ -42,7 +43,7 @@
               stack-label
               label="Node Name"
               oninput="this.value = this.value.toUpperCase()"
-              class="text-uppercase"
+              class="text-uppercase; searchform"
               color="orange-5"/>
             </div>
 
@@ -115,7 +116,7 @@
     <q-dialog v-model="showForm" persistent  @before-hide="clear()">
 
       <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+        <q-bar class="bg-indigo-10 text-white">
           <strong>Node Detail</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>
@@ -215,6 +216,12 @@ fieldset legend{
 .fieldset_search {
   border-color:  #1d0f50;
   border-style: solid;
+}
+
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

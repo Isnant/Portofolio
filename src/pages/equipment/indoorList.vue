@@ -203,7 +203,7 @@
 
     <q-dialog v-model="modalUpload" persistent @before-hide="doHideButton()">
       <q-card class="bg-white">
-        <q-bar class="bg-primary text-white">
+        <q-bar class="bg-indigo-10 text-white">
           <strong>Upload Equipment File</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup />

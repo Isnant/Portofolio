@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">EQUIPMENT/ PROBLEM TYPE</font>
+    <font size="1" class="text-bold" color="grey">EQUIPMENT <q-icon name="double_arrow"></q-icon> PROBLEM TYPE</font>
     <div align="left" style="margin-bottom:30px;width:180px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">PROBLEM TYPE</font>
        <div class="row">
@@ -29,6 +29,7 @@
                     v-model="hostname"
                     rounded outlined
                     color="orange-8"
+                    class="searchform"
                     label="Hostname"
                     stack-label>
                   </q-input>
@@ -92,6 +93,12 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

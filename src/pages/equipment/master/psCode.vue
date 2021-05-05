@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA /MASTER POWER SUPPLY</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> MASTER POWER SUPPLY</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:280px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER POWER SUPPLY</font>
       <div class="row">
@@ -22,38 +22,36 @@
           style="margin-bottom:10px"
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%" align="left">
-            <fieldset class="fieldset_search" style="width: 100%; margin:10px">
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-select
+                v-model="searchVal.hubCode"
+                stack-label
+                label="HUB NAME"
+                rounded outlined
+                class="searchform"
+                color="orange-8"
+                :options="hubCodeList"
+                @input="getValueSelect()"
+              />
+            </div>
 
-              <div class="row" style="margin-buttom:20px">
-                <div class="col-15" style="margin-right: 10px; width: 22%">
-                  <q-select
-                    v-model="searchVal.hubCode"
-                    stack-label
-                    label="HUB NAME"
-                    color="indigo-10"
-                    :options="hubCodeList"
-                    @input="getValueSelect()"
-                  />
-                </div>
+            <div class="col-15" style="margin-right: 10px; width: 22%">
+              <q-input
+              v-model="searchVal.psCode"
+              stack-label
+              rounded outlined
+              class="text-uppercase; searchform"
+              label="PS Name"
+              oninput="this.value = this.value.toUpperCase()"
+              color="orange-8"/>
+            </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 22%">
-                  <q-input
-                  v-model="searchVal.psCode"
-                  stack-label
-                  label="PS Name"
-                  oninput="this.value = this.value.toUpperCase()"
-                  class="text-uppercase"
-                  color="indigo-10"/>
-                </div>
-
-                <div class="col" style="width: 5%">
-                  <q-btn round color="indigo-10" @click="doSearchByFilter()">
-                    <q-icon name="search"/>
-                    <q-tooltip>Search</q-tooltip>
-                  </q-btn>
-                </div>
-              </div>
-            </fieldset>
+            <div class="col" style="width: 5%">
+              <q-btn round color="indigo-10" @click="doSearchByFilter()">
+                <q-icon name="search"/>
+                <q-tooltip>Search</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </q-expansion-item>
         <q-table
@@ -97,7 +95,7 @@
     <q-dialog v-model="showForm" persistent>
 
       <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+        <q-bar class="bg-indigo-10 text-white">
           <strong>Power Supply Detail</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>
@@ -180,6 +178,12 @@ fieldset legend{
 .fieldset_search {
   border-color:  #1d0f50;
   border-style: solid;
+}
+
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

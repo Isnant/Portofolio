@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER PRODUCT SERIES</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> MASTER PRODUCT SERIES</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:300px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER PRODUCT SERIES</font>
       <div class="row">
@@ -27,6 +27,7 @@
                 rounded outlined
                 v-model="searchVal.series"
                 color="orange-5"
+                class="searchform"
                 label="Product Series"
                 stack-label>
               </q-input>
@@ -35,6 +36,7 @@
               <q-select v-model="searchVal.manufacturer"
                 stack-label
                 rounded outlined
+                class="searchform"
                 color="orange-5"
                 label="Manufacturer"
                 :options="manufacturerCodeListSearch"
@@ -44,6 +46,7 @@
               <q-select v-model="searchVal.brand"
                 stack-label
                 rounded outlined
+                class="searchform"
                 color="orange-5"
                 label="Brand"
                 :options="filteredBrandListSearch"
@@ -53,6 +56,7 @@
               <q-select v-model="searchVal.productType"
                 stack-label
                 rounded outlined
+                class="searchform"
                 color="orange-5"
                 label="Product Type"
                 :options="productTypeList"
@@ -62,6 +66,7 @@
               <q-select v-model="searchVal.productSubType"
                 stack-label
                 rounded outlined
+                class="searchform"
                 color="orange-5"
                 label="Sub Type"
                 :options="subTypeListSearch"
@@ -260,6 +265,11 @@ fieldset legend{
 .fieldset_search {
   border-color:  #1d0f50;
   border-style: solid;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

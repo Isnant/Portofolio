@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER BDF</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> MASTER BDF</font>
     <div align="left" style="margin-bottom:30px; margin-top:10px; width:150px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER BDF</font>
       <div class="row">
@@ -28,6 +28,7 @@
                     v-model="searchVal.bdfCode"
                     stack-label
                     label="BDF Code"
+                    class="searchform"
                     color="orange-8"/>
                 </div>
 
@@ -37,6 +38,7 @@
                   v-model="searchVal.bdfName"
                   stack-label
                   label="BDF Name"
+                    class="searchform"
                   color="orange-8"/>
                 </div>
 
@@ -233,6 +235,12 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 

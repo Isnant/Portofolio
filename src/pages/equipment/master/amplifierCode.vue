@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <font size="1" class="text-bold" color="grey">MASTER DATA / MASTER AMPLIFIER</font>
+    <font size="1" class="text-bold" color="grey">MASTER DATA <q-icon name="double_arrow"></q-icon> MASTER AMPLIFIER</font>
     <div align="left" style="margin-bottom:30px;margin-top:10px;width:230px">
       <font size="5" class="text-bold" style="margin-bottom: 10px">MASTER AMPLIFIER</font>
       <div class="row">
@@ -28,6 +28,7 @@
                 v-model="searchVal.hubCode"
                 stack-label
                 label="Hub Name"
+                class="searchform"
                 color="orange-8"
                 :options="hubCodeList"
                 @input="getValueSelect()"
@@ -41,7 +42,7 @@
                 stack-label
                 label="Amplifier Code"
                 oninput="this.value = this.value.toUpperCase()"
-                class="text-uppercase"
+                class="text-uppercase; searchform"
                 color="orange-8"/>
             </div>
 
@@ -52,6 +53,7 @@
                 stack-label
                 label="Technology"
                 :options="technologyList"
+                class="searchform"
                 color="orange-8"/>
             </div>
 
@@ -124,7 +126,7 @@
     <q-dialog v-model="showForm" persistent>
 
       <q-card class="bg-white">
-        <q-bar class="bg-blue-7 text-white">
+        <q-bar class="bg-indigo-10 text-white">
           <strong>Amplifier Detail</strong>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup/>
@@ -209,6 +211,11 @@ fieldset legend{
   -webkit-box-shadow:-0px -1px 2px #F1F1F1;
   font-weight: bold;
   font-size: 14px;
+}
+.searchform {
+  border-color:  #eebf93;
+  border-style: solid;
+  -webkit-border-radius: 35px;
 }
 </style>
 
