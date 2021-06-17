@@ -102,7 +102,8 @@ export default {
         equipmentStatus: 'ALL',
         equipmentName: '',
         logBatch: '',
-        technology: 'ALL'
+        technology: 'ALL',
+        wdmCode: ''
       },
       equipmentListColumns: [
         {

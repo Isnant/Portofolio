@@ -34,7 +34,7 @@
 
               <div class="row" style="width: 100%">
 
-                <div class="col-12" style="margin-right: 10px; width: 20%">
+                <div class="col-12" style="margin-right: 10px; width: 17%">
                   <q-input
                     v-model="searchVal.equipmentName"
                     label="Equipment Name"
@@ -45,7 +45,7 @@
                     color="orange-8"/>
                 </div>
 
-                <div class="col-15" style="margin-right: 10px; width: 20%">
+                <div class="col-15" style="margin-right: 10px; width: 17%">
                   <q-select
                   v-model="searchVal.productType"
                   label="Product Type"
@@ -57,7 +57,7 @@
                   />
                 </div>
 
-                <div class="col-12" style="margin-right: 10px; width: 22%">
+                <div class="col-12" style="margin-right: 10px; width: 17%">
                   <q-select v-model="searchVal.productSeries"
                     :stack-label="true"
                     rounded outlined
@@ -110,6 +110,17 @@
                       </q-item>
                     </template>
                   </q-select>
+                </div>
+
+                <div class="col-12" style="margin-right: 10px; width: 13%">
+                  <q-input
+                    v-model="searchVal.wdmCode"
+                    label="Wdm Code"
+                    rounded outlined
+                    class="searchform"
+                    color="orange-8"
+                    stack-label
+                  />
                 </div>
 
                 <div class="col-12" style="width: 13%">
