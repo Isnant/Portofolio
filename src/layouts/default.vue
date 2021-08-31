@@ -80,6 +80,7 @@
           <q-separator color="grey-2"/>
         </div> -->
         <div align="right" style="margin-left:20px;margin-bottom:20px;width:250px">
+          <div align ="center"><font size=5>DEVELOPMENT</font></div>
           <q-separator color="orange-4"/>
           <q-separator color="orange-4"/>
           <q-separator color="orange-4"/>
@@ -295,6 +296,22 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
+        <q-expansion-item
+          icon="library_books"
+          label="Report"
+        >
+          <q-item
+            to="/rEquipmentReport"
+            :inset-level="1"
+            active-class="my-menu-link">
+            <q-item-section avatar>
+              <q-icon name="sticky_note_2" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-white">Equipment Report</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
          <q-expansion-item
             :header-inset-level="0"
             expand-separator
@@ -325,6 +342,12 @@
         <q-separator color="orange-4"/>
         <q-separator color="orange-4"/>
         <q-separator color="orange-4"/>
+      </div>
+      <div align="left" style="margin:10px">
+        <font size="1" align="right" class="text-white">
+          -v{{ major}}{{minor}}{{patch}}-
+        <q-tooltip>{{lastVersionDate}}</q-tooltip>
+        </font>
       </div>
     </q-drawer>
     <q-page-container>

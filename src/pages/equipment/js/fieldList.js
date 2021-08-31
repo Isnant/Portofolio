@@ -968,7 +968,7 @@ export default {
         }
       }
       if (this.input.productType === 'FIBERNODE') {
-        var psNode = this.input.equipmentName.substring(0, 6)
+        // var psNode = this.input.equipmentName.substring(0, 6)
         if (this.input.equipmentName !== this.input.nodeCode) {
           this.$q.notify({
             color: 'negative',
@@ -977,14 +977,14 @@ export default {
           })
           vCombination = true
         }
-        if (psNode !== psCode) {
-          this.$q.notify({
-            color: 'negative',
-            icon: 'report_problem',
-            message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Power Supply Code: ' + this.input.psCode
-          })
-          vCombination = true
-        }
+        // if (psNode !== psCode) {
+        //   this.$q.notify({
+        //     color: 'negative',
+        //     icon: 'report_problem',
+        //     message: 'Equipment Name ' + this.input.equipmentName + ' No Match with Power Supply Code: ' + this.input.psCode
+        //   })
+        //   vCombination = true
+        // }
       }
 
       if (!vEquipmentName && !vCombination && !vProductType && !vProductSeries && !vManufacturer && !vBrand && !vQuantity && !vHubCode && !vDivision && !vDepartment) {

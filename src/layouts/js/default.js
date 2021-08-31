@@ -6,6 +6,10 @@ export default {
     return {
       leftDrawerOpen: false,
       userInfo: {},
+      major: '1.',
+      minor: '1.',
+      patch: '1',
+      lastVersionDate: '26/08/2021 05:00',
       menu: {
         fieldEquipment: false,
         indoorEquipment: false,

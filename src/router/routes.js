@@ -27,6 +27,7 @@ const routes = [
       { path: '/mLegAmplifierCode', component: () => import('pages/equipment/master/legAmplifierCode.vue') },
       { path: '/mProblemType', component: () => import('pages/equipment/master/networkProblemType.vue') },
       { path: '/mOthers', component: () => import('pages/equipment/master/others.vue') },
+      { path: '/rEquipmentReport', component: () => import('pages/equipment/report/equipmentReport.vue') },
       { path: '/secRole', name: 'securityRole', component: () => import('pages/security/role.vue') },
       { path: '/secUser', name: 'securityUser', component: () => import('pages/security/user.vue') }
     ]
