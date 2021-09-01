@@ -6,6 +6,8 @@ export default {
       dataList: [],
       eqCategoryList: ['All', 'Field', 'Indoor', 'Network'],
       hubCodeList: [],
+      filteredHubCodeList: [],
+      regionList: [],
       tableColumns: [
         {
           name: 'equipmentCategory',
@@ -16,8 +18,16 @@ export default {
           sortable: true
         },
         {
+          name: 'region',
+          label: 'Region',
+          field: 'region',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
           name: 'hubCode',
-          label: 'Hub Code',
+          label: 'Hub Name',
           field: 'hubCode',
           align: 'left',
           style: 'width: 200px',
@@ -47,7 +57,8 @@ export default {
       },
       searchVal: {
         eqCategory: 'All',
-        hubCode: 'All'
+        hubCode: 'All',
+        region: 'All'
       },
       showForm: false
     }
@@ -63,12 +74,15 @@ export default {
       this.$axios.get(`${process.env.urlPrefix}getReportEquipment`, {
         params: {
           eqCategory: this.searchVal.eqCategory,
-          hubCode: this.searchVal.hubCode
+          hubCode: this.searchVal.hubCode,
+          region: this.searchVal.region
         }
       })
         .then((response) => {
           this.doMainFillTableResult(response.data.listOfReportEquipment)
           this.hubCodeList = response.data.listOfHubCode.sort(this.compareLabel)
+          this.filteredHubCodeList = this.hubCodeList
+          this.regionList = this.hubCodeList.map(data => data.cascadeValue).filter(this.distinct).sort(this.compare)
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -89,7 +103,17 @@ export default {
     getSelectValue () {
       this.searchVal.hubCode = this.searchVal.hubCode.value
     },
+    filterHubCode () {
+      if (this.searchVal.region === 'All') {
+        this.filteredHubCodeList = this.hubCodeList
+      } else {
+        this.searchVal.hubCode = 'All'
+        this.filteredHubCodeList = this.hubCodeList.filter(a => a.cascadeValue === this.searchVal.region)
+        this.filteredHubCodeList.unshift({ label: 'All', value: 'All' })
+      }
+    },
     downloadExcel () {
+      this.showLoading()
       this.$axios.get(`${process.env.urlPrefix}reportEquipmentExcelDownload`, {
         responseType: 'arraybuffer'
       })
@@ -119,6 +143,18 @@ export default {
       if (labelA > labelB) {
         comparison = 1
       } else if (labelA < labelB) {
+        comparison = -1
+      }
+      return comparison
+    },
+    distinct (value, index, self) {
+      return self.indexOf(value) === index
+    },
+    compare (a, b) {
+      let comparison = 0
+      if (a > b) {
+        comparison = 1
+      } else if (a < b) {
         comparison = -1
       }
       return comparison

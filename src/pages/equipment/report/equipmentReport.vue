@@ -33,11 +33,20 @@
               </div>
               <div class="col" style="margin-right:10px">
                 <q-select
+                  v-model="searchVal.region"
+                  stack-label
+                  :options="regionList"
+                  @input="filterHubCode()"
+                  label="Region">
+                </q-select>
+              </div>
+              <div class="col" style="margin-right:10px">
+                <q-select
                   v-model="searchVal.hubCode"
                   stack-label
-                  :options="hubCodeList"
+                  :options="filteredHubCodeList"
                   @input="getSelectValue()"
-                  label="Equipment Category">
+                  label="Hub Name">
                 </q-select>
               </div>
               <div class="col">
