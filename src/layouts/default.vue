@@ -80,7 +80,7 @@
           <q-separator color="grey-2"/>
         </div> -->
         <div align="right" style="margin-left:20px;margin-bottom:20px;width:250px">
-          <!-- <div align ="center"><font size=5>DEVELOPMENT</font></div> -->
+          <div align ="center"><font size=5>DEVELOPMENT</font></div>
           <q-separator color="orange-4"/>
           <q-separator color="orange-4"/>
           <q-separator color="orange-4"/>
