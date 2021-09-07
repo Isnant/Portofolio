@@ -118,7 +118,8 @@ export default {
         sourceCode: '',
         newCode: '',
         migrationType: 'ALL',
-        productType: 'ALL'
+        productType: 'ALL',
+        equipmentId: ''
       },
       showForm: false,
       formData: {
@@ -156,13 +157,7 @@ export default {
           pageSize: this.pagination.rowsPerPage,
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending,
-          startDate: this.searchVal.reqStartDate,
-          endDate: this.searchVal.reqEndDate,
-          createdBy: this.searchVal.createdBy,
-          sourceCode: this.searchVal.sourceCode,
-          newCode: this.searchVal.newCode,
-          migrationType: this.searchVal.migrationType,
-          productType: this.searchVal.productType
+          searchVal: this.searchVal
         }
       })
         .then((response) => {
@@ -214,13 +209,7 @@ export default {
         pageSize: rowsPerPage,
         sortBy: sortBy,
         descending: descending,
-        startDate: this.searchVal.reqStartDate,
-        endDate: this.searchVal.reqEndDate,
-        createdBy: this.searchVal.createdBy,
-        sourceCode: this.searchVal.sourceCode,
-        newCode: this.searchVal.newCode,
-        migrationType: this.searchVal.migrationType,
-        productType: this.searchVal.productType
+        searchVal: this.searchVal
       }
       this.getMigrationHistoryList(params)
     },
@@ -230,13 +219,7 @@ export default {
         pageSize: this.pagination.rowsPerPage,
         sortBy: this.pagination.sortBy,
         descending: this.pagination.descending,
-        startDate: this.searchVal.reqStartDate,
-        endDate: this.searchVal.reqEndDate,
-        createdBy: this.searchVal.createdBy,
-        sourceCode: this.searchVal.sourceCode,
-        newCode: this.searchVal.newCode,
-        migrationType: this.searchVal.migrationType,
-        productType: this.searchVal.productType
+        searchVal: this.searchVal
       }
       this.getMigrationHistoryList(params)
     },

@@ -179,6 +179,11 @@
                 label="Hub Code"/>
               <q-input v-model="formData.hubName"
                 stack-label label="Hub Name"/>
+              <q-select v-model="formData.hubType"
+                stack-label
+                label="Hub Type"
+                :options="hubTypeList"
+                @input="getSelectValue('hubType')"/>
               <q-input v-model="formData.hubCodeIt"
                 stack-label label="Hub Code It"/>
               <q-select v-model="formData.areaName"
@@ -193,14 +198,15 @@
                 :options="filteredRegionList"/>
               <q-input v-model="formData.city"
                 stack-label label="City"/>
-               <q-input style="max-height: 112px"
+
+            </div>
+            <div class="col" style="margin-left:20px">
+              <q-input style="max-height: 112px"
                 v-model="formData.address"
                 type="textarea"
                 :max-height="10"
                 stack-label label="Address"
               />
-            </div>
-            <div class="col" style="margin-left:20px">
               <q-input v-model="formData.postalCode"
                 stack-label label="Postal Code"/>
               <q-input v-model="formData.phone"

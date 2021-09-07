@@ -286,6 +286,12 @@ export default {
       } else if (this.input.attributename === 'assetStatus') {
         this.columnName = 'Asset Status Name'
         this.masterName = 'Asset Status'
+      } else if (this.input.attributename === 'hubType') {
+        this.columnName = 'Hub Type Name'
+        this.masterName = 'Hub Type'
+      } else if (this.input.attributename === 'bdfType') {
+        this.columnName = 'BDF Type Name'
+        this.masterName = 'BDF Type'
       }
 
       this.masterFormLabel = this.masterName + ' Form'

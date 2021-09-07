@@ -108,6 +108,14 @@
                         </q-btn>
                       </q-item-section>
                     </q-item>
+                     <q-item>
+                      <q-item-section>
+                        <q-btn color="indigo-6" round size="sm" @click.native="history(props)">
+                          <q-icon name="history" color="white"/>
+                          <q-tooltip>History</q-tooltip>
+                        </q-btn>
+                      </q-item-section>
+                    </q-item>
                     <!-- <q-item clickable v-close-popup>
                       <q-item-section>
                         <q-btn color="indigo-6" round size="sm" @click="doToggleStatus(props)">
@@ -158,6 +166,27 @@
         </q-card>
       </q-card>
 
+    </q-dialog>
+
+    <q-dialog v-model="historyHierarchyForm" persistent @before-hide="clear()">
+      <q-card class="bg-white" style="width: 300px; max-width: 80vw;">
+        <q-bar class="bg-indigo-10 text-white">
+          <strong>History Hierarchy</strong>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+          <q-card-section style="max-height: 50vh">
+            <div align="center">
+              <br>
+              <font size="2" class="text-bold">Created:</font><br>
+              <font size="2">{{input.createdBy || '-'}}</font><br>
+              <font size="2">{{input.createdDate}}</font><br><br>
+              <font size="2" class="text-bold">Modified:</font><br>
+              <font size="2">{{input.modifiedBy || '-'}}</font><br>
+               <font size="2">{{input.lastModified}}</font>
+            </div>
+          </q-card-section>
+      </q-card>
     </q-dialog>
 
   </q-page>

@@ -1,4 +1,5 @@
 import showLoading from './loading.js'
+import moment from 'moment'
 export default {
   mixins: [showLoading],
   data () {
@@ -11,6 +12,8 @@ export default {
       listOfRegion: [],
       listOfAreaForRegion: [],
       productTypeListSearch: [],
+      historyHierarchyForm: false,
+      input: '',
       tableColumns: [
         {
           name: 'productType',
@@ -260,6 +263,16 @@ export default {
         result.push(child)
       }
       return result
+    },
+    history (cell) {
+      if (cell !== undefined) {
+        this.input = JSON.parse(JSON.stringify(cell.row))
+        this.input.createdDate = moment(this.input.createdDate).format('DD/MM/YYYY HH:mm')
+        this.input.lastModified = moment(this.input.lastModified).format('DD/MM/YYYY HH:mm')
+      } else {
+        this.clear()
+      }
+      this.historyHierarchyForm = true
     }
   },
   beforeMount () {

@@ -9,6 +9,7 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      bdfTypeList: [],
       modalUploadExcel: false,
       fileAttach: {
         fileName: '',
@@ -36,6 +37,14 @@ export default {
           name: 'bdfName',
           label: 'BDF Name',
           field: 'bdfName',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'bdfType',
+          label: 'BDF Type',
+          field: 'bdfType',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -131,6 +140,7 @@ export default {
         bdfId: 'AUTO GENERATE',
         bdfCode: '',
         bdfName: '',
+        bdfType: '',
         areaName: '',
         regionName: '',
         city: '',
@@ -160,6 +170,7 @@ export default {
           this.$q.loading.hide()
           this.doMainFillTableResult(response.data.listOfBDF)
           this.areaList = response.data.listOfAreaDropdown
+          this.bdfTypeList = response.data.listOfBdfType
           this.listOfAreaForRegion = response.data.listOfArea
         })
         .catch((error) => {
@@ -278,6 +289,9 @@ export default {
     },
     doRegion () {
       this.formData.regionName = this.formData.regionName.value
+    },
+    getBdfTypeValue () {
+      this.formData.bdfType = this.formData.bdfType.value
     },
     doAttachFile (file) {
       let fr = new FileReader()

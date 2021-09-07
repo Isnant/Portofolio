@@ -50,7 +50,7 @@
                 </q-select>
               </div>
               <div class="col">
-                <q-btn round color="indigo-10" @click="doInitPage()">
+                <q-btn round color="indigo-10" @click="getReportEquipmentList()">
                   <q-icon name="search"/>
                   <q-tooltip>Search</q-tooltip>
                 </q-btn>
@@ -94,12 +94,20 @@
                 </q-btn-dropdown>
               </div>
             </q-td>
-            <q-td slot="body-cell-recordStatus" slot-scope="props">
-              <div v-if="props.row.recordStatus === 'A'">
-                <q-icon name="done" color="primary"  style="font-size: 20px;"/>
+            <q-td slot="body-cell-productType" slot-scope="props">
+              <div v-if="props.row.productType === 'SUM'">
+                <div class="text-bold">{{props.row.productType}}</div>
               </div>
               <div v-else>
-                <q-icon name="clear" color="negative"  style="font-size: 20px;"/>
+                <div >{{props.row.productType}}</div>
+              </div>
+            </q-td>
+            <q-td slot="body-cell-equipmentSum" slot-scope="props">
+              <div v-if="props.row.productType === 'SUM'">
+                <div class="text-bold" align="right">{{props.row.equipmentSum}}</div>
+              </div>
+              <div v-else>
+                <div align="right">{{props.row.equipmentSum}}</div>
               </div>
             </q-td>
           </q-table>

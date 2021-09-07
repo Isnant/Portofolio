@@ -71,7 +71,7 @@ export default {
         this.searchVal.eqCategory = 'Hub'
       }
       this.showLoading()
-      this.$axios.get(`${process.env.urlPrefix}getReportEquipment`, {
+      this.$axios.get(`${process.env.urlPrefix}getReportEquipmentInitPage`, {
         params: {
           eqCategory: this.searchVal.eqCategory,
           hubCode: this.searchVal.hubCode,
@@ -83,6 +83,28 @@ export default {
           this.hubCodeList = response.data.listOfHubCode.sort(this.compareLabel)
           this.filteredHubCodeList = this.hubCodeList
           this.regionList = this.hubCodeList.map(data => data.cascadeValue).filter(this.distinct).sort(this.compare)
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.$q.loading.hide()
+          this.$q.notify({
+            color: 'negative',
+            icon: 'report_problem',
+            message: error
+          })
+        })
+    },
+    getReportEquipmentList () {
+      this.showLoading()
+      this.$axios.get(`${process.env.urlPrefix}getReportEquipmentList`, {
+        params: {
+          eqCategory: this.searchVal.eqCategory,
+          hubCode: this.searchVal.hubCode,
+          region: this.searchVal.region
+        }
+      })
+        .then((response) => {
+          this.doMainFillTableResult(response.data)
           this.$q.loading.hide()
         })
         .catch((error) => {

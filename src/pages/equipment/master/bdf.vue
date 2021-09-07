@@ -137,6 +137,11 @@
                 stack-label label="BDF Code"/>
               <q-input v-model="formData.bdfName"
                 stack-label label="BDF Name"/>
+              <q-select v-model="formData.bdfType"
+                stack-label
+                label="BDF Type"
+                :options="bdfTypeList"
+                @input="getBdfTypeValue()"/>
               <q-select v-model="formData.areaName"
                 stack-label
                 label="Area Name"

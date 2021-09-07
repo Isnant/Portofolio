@@ -9,6 +9,7 @@ export default {
       filteredRegionList: [],
       listOfRegion: [],
       listOfAreaForRegion: [],
+      hubTypeList: [],
       modalUploadExcel: false,
       fileAttach: {
         fileName: '',
@@ -36,6 +37,14 @@ export default {
           name: 'hubName',
           label: 'Hub Name',
           field: 'hubName',
+          align: 'left',
+          style: 'width: 200px',
+          sortable: true
+        },
+        {
+          name: 'hubType',
+          label: 'Hub Type',
+          field: 'hubType',
           align: 'left',
           style: 'width: 200px',
           sortable: true
@@ -152,7 +161,8 @@ export default {
         address: '',
         postalCode: '',
         phone: '',
-        remarks: ''
+        remarks: '',
+        hubType: ''
       }
     }
   },
@@ -176,6 +186,7 @@ export default {
           this.$q.loading.hide()
           this.doMainFillTableResult(response.data.listOfHubCode)
           this.areaList = response.data.listOfAreaDropdown
+          this.hubTypeList = response.data.listOfHubType
           this.listOfAreaForRegion = response.data.listOfArea
         })
         .catch((error) => {
@@ -307,6 +318,9 @@ export default {
       }
       if (value === 'region') {
         this.formData.regionName = this.formData.regionName.value
+      }
+      if (value === 'hubType') {
+        this.formData.hubType = this.formData.hubType.value
       }
     },
     doAttachFile (file) {

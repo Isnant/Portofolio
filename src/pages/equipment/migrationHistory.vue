@@ -23,7 +23,17 @@
           icon="search">
           <div class="row bg-orange-1" style="padding: 10px; width:100%">
             <div class="row" style="margin-bottom:10px">
-              <div class="col-15" style="margin-right:10px; width: 23%">
+              <div class="col-15" style="margin-right:10px; width: 18%">
+                <q-input
+                  v-model="searchVal.equipmentId"
+                  rounded outlined
+                  stack-label
+                  class="searchform"
+                  color="orange-8"
+                  label="Equipment Id">
+                </q-input>
+              </div>
+              <div class="col-15" style="margin-right:10px; width: 20%">
                 <q-input
                   v-model="searchVal.reqStartDate"
                   clearable
@@ -44,7 +54,7 @@
                   </template>
                 </q-input>
               </div>
-              <div class="col-15" style="margin-right:10px; width: 23%">
+              <div class="col-15" style="margin-right:10px; width: 20%">
                 <q-input
                   v-model="searchVal.reqEndDate"
                   rounded outlined
@@ -65,7 +75,7 @@
                   </template>
                 </q-input>
               </div>
-              <div class="col-15" style="margin-right:10px; width: 23%">
+              <div class="col-15" style="margin-right:10px; width: 18%">
                 <q-input
                   v-model="searchVal.sourceCode"
                   rounded outlined
@@ -75,7 +85,7 @@
                   label="Source Code">
                 </q-input>
               </div>
-              <div class="col-15" style="margin-right:10px; width: 23%">
+              <div class="col-15" style="margin-right:10px; width: 18%">
                 <q-input
                   v-model="searchVal.newCode"
                   rounded outlined
@@ -89,7 +99,7 @@
             <div class="col-15" style="margin-right: 10px; width: 30%">
               <q-select
                 v-model="searchVal.migrationType"
-                label="Product Type"
+                label="Migration Type"
                 rounded outlined
                 stack-label
                 class="searchform"
