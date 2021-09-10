@@ -9,7 +9,7 @@ export default {
       major: '1.',
       minor: '1.',
       patch: '1',
-      lastVersionDate: '07/09/2021 05:00',
+      lastVersionDate: '09/09/2021 05:00',
       menu: {
         fieldEquipment: false,
         indoorEquipment: false,
