@@ -46,7 +46,7 @@
             </template>
           </q-input>
           <q-input v-model="userInfo.branch"
-            label="Departement"
+            label="Daerah"
             readonly
             :stack-label="true">
             <template v-slot:prepend>
