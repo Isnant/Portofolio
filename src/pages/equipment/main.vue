@@ -54,18 +54,6 @@
             </template>
           </q-input>
         </div>
-        <div  style="margin-top:20px">
-         <font size="2">Roles:</font>
-          <q-option-group
-            :options="roles"
-            label="Roles"
-            type="checkbox"
-            color="indigo"
-            v-model="instance.roles"
-            @input="doRoles"
-            dense
-          />
-        </div>
       </q-card-section>
     </q-card>
   </div>
