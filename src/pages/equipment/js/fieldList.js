@@ -578,6 +578,10 @@ export default {
       this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(this.input.purchasedDate).format('DD/MM/YYYY')
       this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(this.input.updateDistanceDate).format('DD/MM/YYYY')
       this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(this.input.installationDate).format('DD/MM/YYYY')
+      this.input.installationDateLeg1 = this.input.installationDateLeg1 === null || this.input.installationDateLeg1 === '' ? '' : moment(this.input.installationDateLeg1).format('DD/MM/YYYY')
+      this.input.installationDateLeg2 = this.input.installationDateLeg2 === null || this.input.installationDateLeg2 === '' ? '' : moment(this.input.installationDateLeg2).format('DD/MM/YYYY')
+      this.input.installationDateLeg3 = this.input.installationDateLeg3 === null || this.input.installationDateLeg3 === '' ? '' : moment(this.input.installationDateLeg3).format('DD/MM/YYYY')
+      this.input.installationDateLeg4 = this.input.installationDateLeg4 === null || this.input.installationDateLeg4 === '' ? '' : moment(this.input.installationDateLeg4).format('DD/MM/YYYY')
       this.getMigrationHistory(cell)
       this.getSelectOptionForDetail()
     },
@@ -867,6 +871,7 @@ export default {
       var vCapacity = false
       var vCapacityUnits = false
       var vPredecessor = false
+      var vPredecessorLeg = false
       var vCombination = false
 
       if (this.input.technology !== 'FTTH' && this.input.productType !== 'FIBERNODE' && this.input.productType !== 'WDM') {
@@ -895,6 +900,9 @@ export default {
       }
 
       if (this.input.productType === 'AMPLIFIER' || this.input.productType === 'AMPLIFIER INDOOR') {
+        this.$refs.fPredecessorLeg.validate()
+        vPredecessorLeg = this.$refs.fPredecessorLeg.hasError
+
         if (this.input.amplifierCode.length === 10) {
           this.$refs.fAmplifierCodeBlue.validate()
           vAmplifierCode = this.$refs.fAmplifierCodeBlue.hasError
@@ -988,7 +996,7 @@ export default {
       }
 
       if (!vEquipmentName && !vCombination && !vProductType && !vProductSeries && !vManufacturer && !vBrand && !vQuantity && !vHubCode && !vDivision && !vDepartment) {
-        if (!vPropertyOf && !vStatusReason && !vService && !vTechnology && !vItCode && !vPowerSupplyCode && !vAmplifierCode && !vCapacity && !vCapacityUnits && !vPredecessor && !vNodeCode) {
+        if (!vPropertyOf && !vStatusReason && !vService && !vTechnology && !vItCode && !vPowerSupplyCode && !vAmplifierCode && !vCapacity && !vCapacityUnits && !vPredecessor && !vPredecessorLeg && !vNodeCode) {
           this.doSaveEquipment()
         }
       }
@@ -998,6 +1006,10 @@ export default {
       this.showLoading()
       this.input.purchasedDate = this.input.purchasedDate === null || this.input.purchasedDate === '' ? '' : moment(String(this.input.purchasedDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.input.installationDate = this.input.installationDate === null || this.input.installationDate === '' ? '' : moment(String(this.input.installationDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.installationDateLeg1 = this.input.installationDateLeg1 === null || this.input.installationDateLeg1 === '' ? '' : moment(String(this.input.installationDateLeg1), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.installationDateLeg2 = this.input.installationDateLeg2 === null || this.input.installationDateLeg2 === '' ? '' : moment(String(this.input.installationDateLeg2), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.installationDateLeg3 = this.input.installationDateLeg3 === null || this.input.installationDateLeg3 === '' ? '' : moment(String(this.input.installationDateLeg3), 'DD/MM/YYYY').format('YYYY-MM-DD')
+      this.input.installationDateLeg4 = this.input.installationDateLeg4 === null || this.input.installationDateLeg4 === '' ? '' : moment(String(this.input.installationDateLeg4), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.input.updateDistanceDate = this.input.updateDistanceDate === null || this.input.updateDistanceDate === '' ? '' : moment(String(this.input.updateDistanceDate), 'DD/MM/YYYY').format('YYYY-MM-DD')
       this.$axios.post(`${process.env.urlPrefix}doSaveEquipment`, this.input)
         .then((response) => {
@@ -2196,6 +2208,19 @@ export default {
 
           this.$q.loading.hide()
         })
+    },
+    validateInputForm (type) {
+      if (type === 'predecessorLeg') {
+        if (this.input.predecessorLeg.length > 9) {
+          if (this.input.predecessorLeg.substring(0, 10) !== this.input.equipmentName.substring(0, 10)) {
+            this.$q.notify({
+              color: 'negative',
+              icon: 'report_problem',
+              message: 'Predecessor Leg: ' + this.input.predecessorLeg + ' no match with Equipment Name: ' + this.input.predecessor
+            })
+          }
+        }
+      }
     },
     compare (a, b) {
       const statusA = a.messageStatus.toUpperCase()
