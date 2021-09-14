@@ -219,10 +219,12 @@
               type="file"
               @input="val => { doAttachFile(val[0]) }"
             />
-            <q-btn v-show="uploadButton" round color="primary" @click="doUploadFile()">
-              <q-icon name="fas fa-file-upload"/>
-              <q-tooltip>Upload</q-tooltip>
-            </q-btn>
+            <div align="right" style="margin-top:10px">
+              <q-btn v-show="uploadButton" round color="orange-5" @click="doUploadFile()">
+                <q-icon name="fas fa-file-upload"/>
+                <q-tooltip>Upload</q-tooltip>
+              </q-btn>
+            </div>
           <!-- </q-field> -->
         </q-card-section>
       </q-card>
