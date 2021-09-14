@@ -23,11 +23,11 @@ export default {
       fileAttach: {
         fileName: '',
         file64: '',
-        equipmentCategory: 'Hub'
+        equipmentCategory: 'Indoor'
       },
       input: {
         id: '',
-        equipmentCategory: 'Hub',
+        equipmentCategory: 'Indoor',
         equipmentName: '',
         description: '',
         productType: '',
@@ -92,7 +92,7 @@ export default {
       },
       searchVal: {
         id: '',
-        equipmentCategory: 'Hub',
+        equipmentCategory: 'Indoor',
         productType: 'ALL',
         productSeries: 'ALL',
         hubCode: 'ALL',
