@@ -8,8 +8,8 @@ export default {
       userInfo: {},
       major: '1.',
       minor: '1.',
-      patch: '1',
-      lastVersionDate: '09/09/2021 05:00',
+      patch: '2',
+      lastVersionDate: '14/09/2021 05:00',
       menu: {
         fieldEquipment: false,
         indoorEquipment: false,

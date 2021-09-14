@@ -617,22 +617,6 @@
                     style="margin-top:20px"/>
                   </div>
 
-                  <div v-if="input.productType === 'AMPLIFIER'">
-                    <q-input v-model="input.predecessorLeg" ref="fPredecessorLeg"
-                      :rules="[val => !! val || 'Predecessor Leg is required']"
-                      :stack-label="true"
-                      label="Predecessor Leg*"
-                      @input="validateInputForm('predecessorLeg')"
-                      tabindex="43"/>
-                  </div>
-                  <!-- <div v-else>
-                    <q-input v-model="input.predecessorLeg"
-                    :stack-label="true"
-                    label="Predecessor Leg"
-                    tabindex="43"
-                    style="margin-top:20px;margin-bottom:20px"/>
-                  </div> -->
-
                   <q-input v-model="input.itCode" ref="fItCode"
                     :rules="[val => !! val || 'IT Code is required']"
                     :stack-label="true"
@@ -671,12 +655,12 @@
                       </q-icon>
                     </template>
                   </q-input>
-                  <q-input v-model="input.installationDate" ref="mInstallationDate"
+                  <q-input v-model="input.installationDate" ef="mInstallationDate"
                     :rules="[val => !! val || 'Installation Date is required']"
                     :stack-label="true"
                     label="Installation Date*"
-                    style="margin-top:20px"
-                    tabindex="36">
+                    tabindex="36"
+                    style="margin-top:20px">
                     <template v-slot:after>
                       <q-icon name="event">
                         <q-popup-proxy ref="qInstallationDate" transition-show="scale" transition-hide="scale">
@@ -685,62 +669,10 @@
                       </q-icon>
                     </template>
                   </q-input>
-                  <q-input v-model="input.installationDateLeg1"
-                    :stack-label="true"
-                    label="Installation Date Leg 1"
-                    tabindex="36">
-                    <template v-slot:after>
-                      <q-icon name="event">
-                        <q-popup-proxy ref="qInstallationDateLeg1" transition-show="scale" transition-hide="scale">
-                          <q-date v-model="input.installationDateLeg1" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDateLeg1.hide()" />
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
-                   <q-input v-model="input.installationDateLeg2"
-                    :stack-label="true"
-                    label="Installation Date Leg 2"
-                    tabindex="36"
-                    style="margin-top:20px">
-                    <template v-slot:after>
-                      <q-icon name="event">
-                        <q-popup-proxy ref="qInstallationDateLeg2" transition-show="scale" transition-hide="scale">
-                          <q-date v-model="input.installationDateLeg2" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDateLeg2.hide()" />
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
-                  <q-input v-model="input.installationDateLeg3"
-                    :stack-label="true"
-                    label="Installation Date Leg 3"
-                    tabindex="36"
-                    style="margin-top:20px">
-                    <template v-slot:after>
-                      <q-icon name="event">
-                        <q-popup-proxy ref="qInstallationDateLeg3" transition-show="scale" transition-hide="scale">
-                          <q-date v-model="input.installationDateLeg3" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDateLeg3.hide()" />
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
-                   <q-input v-model="input.installationDateLeg4"
-                    :stack-label="true"
-                    label="Installation Date Leg 4"
-                    tabindex="36"
-                    style="margin-top:20px">
-                    <template v-slot:after>
-                      <q-icon name="event">
-                        <q-popup-proxy ref="qInstallationDateLeg4" transition-show="scale" transition-hide="scale">
-                          <q-date v-model="input.installationDateLeg4" mask="DD/MM/YYYY" @input="() => $refs.qInstallationDateLeg4.hide()" />
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
                   <q-input v-model="input.installedBy"
                     :stack-label="true"
                     label="Installed By"
-                    tabindex="37"
-                    style="margin-top:20px"/>
+                    tabindex="37"/>
                   <q-select v-model="input.service" ref="fService"
                     :rules="[val => !! val || 'Service is required']"
                     :stack-label="true"
@@ -1004,8 +936,8 @@
               <q-btn dense flat icon="close" v-close-popup />
             </q-bar>
             <q-card-section>
-              <a href="/statics/template/Form Upload - Field v3.xlsx">Download Template
-                <q-tooltip>Form Upload - Field v2.xlsx</q-tooltip>
+              <a href="/statics/template/Form Upload - Field.xlsx">Download Template
+                <q-tooltip>Form Upload - Field.xlsx</q-tooltip>
               </a>
             </q-card-section>
             <q-card-section>
