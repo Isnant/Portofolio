@@ -71,7 +71,9 @@ module.exports = function (ctx) {
         'QDate',
         'QPopupProxy',
         'QSeparator',
-        'QBtnDropdown'
+        'QBtnDropdown',
+        'QParallax',
+        'QIntersection'
       ],
 
       directives: [
@@ -120,8 +122,8 @@ module.exports = function (ctx) {
       open: true // opens browser window automatically
     },
 
-    // animations: 'all', // --- includes all animations
-    animations: [],
+    animations: 'all', // --- includes all animations
+    // animations: [],
 
     ssr: {
       pwa: false

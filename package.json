@@ -2,7 +2,7 @@
   "name": "engineering-equipment",
   "version": "0.0.1",
   "description": "Application for Engineering Equipment maintenance",
-  "productName": "SEAL | System for Equipment And Location",
+  "productName": "ISNAN | Fullstack Developer",
   "cordovaId": "org.cordova.quasar.app",
   "author": "Benny Hidayat <benny.hidayat@llinknet.co.id>",
   "private": true,
